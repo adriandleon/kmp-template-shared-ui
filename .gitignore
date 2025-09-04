@@ -1,0 +1,76 @@
+# Android Studio
+/*/build/
+/*/local.properties
+/*/out
+/*/*/build
+/*/*/production
+captures/
+.navigation/
+*.ipr
+*~
+*.swp
+*.iml
+*.idea/
+.idea
+!*/gradle/wrapper/gradle-wrapper.jar
+
+### Xcode ###
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/project.xcworkspace/
+!*.xcodeproj/xcshareddata/
+!*.xcworkspace/contents.xcworkspacedata/
+/*.gcno
+**/xcshareddata/WorkspaceSettings.xcsettings
+*.xcuserstate
+*.xcscheme
+*.xcworkspace
+xcuserdata
+
+## iOS App packaging
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Android App packaging
+*.apk
+*.ap_
+*.aab
+
+# macOs
+.DS_Store
+
+# Generated files
+bin/
+gen/
+*.class
+*.dex
+.externalNativeBuild
+.cxx
+
+# Gradle files
+.gradle/
+build/
+**/build/
+!src/**/build/
+
+# Local configuration file
+local.properties
+
+# Fastlane
+**/fastlane/report.xml
+**/fastlane/test_output
+**/fastlane/.env
+
+# Kotlin files
+.kotlin/
+
+# Firebase
+google-services.json
+**/GoogleService-Info.plist
+
+# VSCode
+.vscode/
+
+# SweetPad
+buildServer.json
