@@ -5,18 +5,19 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.ktfmt.gradle)
 }
 
 kotlin {
     androidTarget { compilerOptions.jvmTarget.set(JvmTarget.JVM_17) }
-    
+
     listOf(iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
             isStatic = true
         }
     }
-    
+
     sourceSets {
         androidMain.dependencies {
             implementation(compose.preview)
@@ -32,9 +33,7 @@ kotlin {
             implementation(libs.lifecycle.viewmodel.compose)
             implementation(libs.lifecycle.runtime.compose)
         }
-        commonTest.dependencies {
-            implementation(libs.kotlin.test)
-        }
+        commonTest.dependencies { implementation(libs.kotlin.test) }
     }
 }
 
@@ -86,7 +85,10 @@ android {
     }
 }
 
-dependencies {
-    debugImplementation(compose.uiTooling)
-}
+dependencies { debugImplementation(compose.uiTooling) }
 
+ktfmt {
+    kotlinLangStyle()
+    removeUnusedImports = true
+    manageTrailingCommas = true
+}
