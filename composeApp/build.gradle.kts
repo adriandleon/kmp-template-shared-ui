@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.ktfmt.gradle)
+    alias(libs.plugins.detekt)
 }
 
 kotlin {
@@ -85,10 +86,19 @@ android {
     }
 }
 
-dependencies { debugImplementation(compose.uiTooling) }
+dependencies {
+    debugImplementation(compose.uiTooling)
+    detektPlugins(libs.detekt.compose)
+}
 
 ktfmt {
     kotlinLangStyle()
     removeUnusedImports = true
     manageTrailingCommas = true
+}
+
+detekt {
+    parallel = true
+    buildUponDefaultConfig = true
+    config.setFrom("$rootDir/config/detekt.yml")
 }
