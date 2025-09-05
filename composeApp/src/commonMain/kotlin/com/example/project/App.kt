@@ -19,12 +19,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import apptemplate.composeapp.generated.resources.Res
 import apptemplate.composeapp.generated.resources.compose_multiplatform
+import apptemplate.composeapp.generated.resources.localized_text
 import coil3.compose.AsyncImage
 import com.example.project.analytics.analyticsModule
 import com.example.project.common.commonModule
 import com.example.project.features.featureFlagModule
 import com.example.project.logger.loggerModule
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.KoinMultiplatformApplication
 import org.koin.core.annotation.KoinExperimentalAPI
@@ -51,7 +53,7 @@ internal fun App() {
                         .fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Button(onClick = { showContent = !showContent }) { Text("Click Me!") }
+                Button(onClick = { showContent = !showContent }) { Text(stringResource(Res.string.localized_text)) }
                 AnimatedVisibility(showContent) {
                     val greeting = remember { Greeting().greet() }
                     Column(
