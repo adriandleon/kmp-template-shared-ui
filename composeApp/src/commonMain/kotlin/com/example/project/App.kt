@@ -21,13 +21,12 @@ import apptemplate.composeapp.generated.resources.Res
 import apptemplate.composeapp.generated.resources.compose_multiplatform
 import coil3.compose.AsyncImage
 import com.example.project.analytics.analyticsModule
-import com.example.project.data.SampleRepository
-import com.example.project.data.commonModule
+import com.example.project.common.commonModule
+import com.example.project.features.featureFlagModule
 import com.example.project.logger.loggerModule
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.KoinMultiplatformApplication
-import org.koin.compose.koinInject
 import org.koin.core.annotation.KoinExperimentalAPI
 import org.koin.core.logger.Level
 import org.koin.dsl.koinConfiguration
@@ -37,12 +36,12 @@ import org.koin.dsl.koinConfiguration
 @Preview
 internal fun App() {
     KoinMultiplatformApplication(
-        config = koinConfiguration { modules(commonModule, loggerModule, analyticsModule) },
+        config =
+            koinConfiguration {
+                modules(commonModule, loggerModule, analyticsModule, featureFlagModule)
+            },
         logLevel = Level.DEBUG,
     ) {
-        val myService = koinInject<SampleRepository>()
-        val myDevice = koinInject<MyDevice>()
-
         MaterialTheme {
             var showContent by remember { mutableStateOf(false) }
             Column(
@@ -52,7 +51,7 @@ internal fun App() {
                         .fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Button(onClick = { showContent = !showContent }) { Text(myService.getSample()) }
+                Button(onClick = { showContent = !showContent }) { Text("Click Me!") }
                 AnimatedVisibility(showContent) {
                     val greeting = remember { Greeting().greet() }
                     Column(
@@ -61,7 +60,6 @@ internal fun App() {
                     ) {
                         Image(painterResource(Res.drawable.compose_multiplatform), null)
                         Text("Compose: $greeting")
-                        Text(myDevice.model + " " + myDevice.manufacturer)
                     }
                 }
 
