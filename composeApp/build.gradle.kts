@@ -18,6 +18,7 @@ plugins {
     alias(libs.plugins.kover)
     alias(libs.plugins.ksp)
     alias(libs.plugins.ktfmt.gradle)
+    alias(libs.plugins.mokkery)
     alias(libs.plugins.test.logger)
 }
 
