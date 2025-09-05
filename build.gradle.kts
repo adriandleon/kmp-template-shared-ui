@@ -11,7 +11,9 @@ plugins {
     alias(libs.plugins.crashlytics) apply false
     alias(libs.plugins.detekt) apply false
     alias(libs.plugins.google.services) apply false
+    alias(libs.plugins.kotest) apply false
     alias(libs.plugins.kotlin.multiplatform) apply false
+    alias(libs.plugins.kover) apply false
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.ktfmt.gradle) apply false
 }

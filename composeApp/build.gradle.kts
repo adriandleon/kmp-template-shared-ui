@@ -12,8 +12,10 @@ plugins {
     alias(libs.plugins.crashlytics)
     alias(libs.plugins.detekt)
     alias(libs.plugins.google.services)
+    alias(libs.plugins.kotest)
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.kover)
     alias(libs.plugins.ksp)
     alias(libs.plugins.ktfmt.gradle)
     alias(libs.plugins.test.logger)
@@ -71,6 +73,7 @@ kotlin {
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.serialization.kotlinx.json)
         }
+
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
@@ -81,7 +84,12 @@ kotlin {
 
         commonTest.dependencies {
             implementation(libs.kermit.test)
-            implementation(libs.kotlin.test)
+            implementation(libs.koin.test)
+            implementation(libs.kotest.assertions.core)
+            implementation(libs.kotest.extensions.koin)
+            implementation(libs.kotest.framework.engine)
+            implementation(libs.kotest.property)
+            implementation(libs.kotlinx.coroutines.test)
             implementation(libs.ktor.client.mock)
         }
     }
@@ -133,6 +141,8 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+
+    testOptions.unitTests.all { it.useJUnitPlatform() }
 }
 
 dependencies {
@@ -152,6 +162,17 @@ detekt {
     buildUponDefaultConfig = true
     config.setFrom("$rootDir/config/detekt.yml")
 }
+
+kover.reports {
+    verify.rule { minBound(90) }
+
+    filters.excludes {
+        classes("*.*.generated.resources.*")
+        classes("*Module*")
+        files("*Module*", "*di*", "**/generated/resources/**")
+    }
+}
+
 
 testlogger {
     theme = ThemeType.MOCHA
