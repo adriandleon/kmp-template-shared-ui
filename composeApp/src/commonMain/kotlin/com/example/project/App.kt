@@ -20,37 +20,57 @@ import androidx.compose.ui.Modifier
 import apptemplate.composeapp.generated.resources.Res
 import apptemplate.composeapp.generated.resources.compose_multiplatform
 import coil3.compose.AsyncImage
+import com.example.project.analytics.analyticsModule
+import com.example.project.data.SampleRepository
+import com.example.project.data.commonModule
+import com.example.project.logger.loggerModule
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.KoinMultiplatformApplication
+import org.koin.compose.koinInject
+import org.koin.core.annotation.KoinExperimentalAPI
+import org.koin.core.logger.Level
+import org.koin.dsl.koinConfiguration
 
+@OptIn(KoinExperimentalAPI::class)
 @Composable
 @Preview
 internal fun App() {
-    MaterialTheme {
-        var showContent by remember { mutableStateOf(false) }
-        Column(
-            modifier =
-                Modifier.background(MaterialTheme.colorScheme.primaryContainer)
-                    .safeContentPadding()
-                    .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Button(onClick = { showContent = !showContent }) { Text("Click me!") }
-            AnimatedVisibility(showContent) {
-                val greeting = remember { Greeting().greet() }
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Image(painterResource(Res.drawable.compose_multiplatform), null)
-                    Text("Compose: $greeting")
-                }
-            }
+    KoinMultiplatformApplication(
+        config = koinConfiguration { modules(commonModule, loggerModule, analyticsModule) },
+        logLevel = Level.DEBUG,
+    ) {
+        val myService = koinInject<SampleRepository>()
+        val myDevice = koinInject<MyDevice>()
 
-            AsyncImage(
-                model = "https://www.pacificflying.com/wp-content/uploads/airbus-boeing-1200.webp",
-                contentDescription = null,
-            )
+        MaterialTheme {
+            var showContent by remember { mutableStateOf(false) }
+            Column(
+                modifier =
+                    Modifier.background(MaterialTheme.colorScheme.primaryContainer)
+                        .safeContentPadding()
+                        .fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Button(onClick = { showContent = !showContent }) { Text(myService.getSample()) }
+                AnimatedVisibility(showContent) {
+                    val greeting = remember { Greeting().greet() }
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        Image(painterResource(Res.drawable.compose_multiplatform), null)
+                        Text("Compose: $greeting")
+                        Text(myDevice.model + " " + myDevice.manufacturer)
+                    }
+                }
+
+                AsyncImage(
+                    model =
+                        "https://www.pacificflying.com/wp-content/uploads/airbus-boeing-1200.webp",
+                    contentDescription = null,
+                )
+            }
         }
     }
 }
