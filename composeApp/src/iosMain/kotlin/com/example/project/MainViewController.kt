@@ -3,15 +3,21 @@ package com.example.project
 import androidx.compose.ui.window.ComposeUIViewController
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
+import com.arkivanov.essenty.lifecycle.resume
 import com.example.project.root.DefaultRootComponent
 import com.example.project.root.RootContent
 
-@Suppress("FunctionName")
+/**
+ * This is the main view controller for the iOS app. It creates the root component and starts the
+ * Compose UI. It uses the DefaultComponentContext for the root component. It uses the
+ * LifecycleRegistry for the lifecycle management. It uses the RootContent for the root content.
+ */
+@Suppress("FunctionName", "unused")
 fun MainViewController() = ComposeUIViewController {
-    // Create the root component before starting Compose
     val lifecycle = LifecycleRegistry()
-    val root =
-        DefaultRootComponent(componentContext = DefaultComponentContext(lifecycle = lifecycle))
+    val root = DefaultRootComponent(componentContext = DefaultComponentContext(lifecycle))
+
+    lifecycle.resume()
 
     RootContent(component = root)
 }
