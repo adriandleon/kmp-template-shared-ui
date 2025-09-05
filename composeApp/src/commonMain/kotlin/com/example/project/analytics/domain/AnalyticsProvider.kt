@@ -84,4 +84,3 @@ internal interface AnalyticsProvider {
      */
     fun track(event: AnalyticsEvent)
 }
-

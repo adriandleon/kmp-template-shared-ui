@@ -13,13 +13,13 @@ import com.example.project.features.domain.repository.FeaturesRepository
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.remoteconfig.FirebaseRemoteConfig
 import dev.gitlive.firebase.remoteconfig.remoteConfig
+import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
-import kotlin.time.Duration.Companion.minutes
 
 /**
  * Koin module for feature flag dependency injection.

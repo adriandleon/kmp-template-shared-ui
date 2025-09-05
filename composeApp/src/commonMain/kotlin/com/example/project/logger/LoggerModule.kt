@@ -16,9 +16,8 @@ import org.koin.dsl.module
  * Koin dependency injection module for logging components.
  *
  * This module provides the necessary dependencies for the logging system, including the main
- * [Logger] implementation and platform-specific log writers. It supports multiple logging
- * backends and automatically configures the appropriate logging strategy based on the build
- * environment.
+ * [Logger] implementation and platform-specific log writers. It supports multiple logging backends
+ * and automatically configures the appropriate logging strategy based on the build environment.
  *
  * The module is designed to be:
  * - **Environment-aware**: Different logging strategies for debug and release builds
@@ -36,7 +35,6 @@ import org.koin.dsl.module
  * @see KermitLoggerImpl for the Kermit-based implementation
  * @see ConfigCatLoggerImpl for ConfigCat SDK integration
  * @see co.touchlab.kermit.Logger for the underlying Kermit logger
- *
  * @example
  *
  * ```kotlin

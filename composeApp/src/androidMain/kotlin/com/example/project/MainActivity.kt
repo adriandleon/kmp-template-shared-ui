@@ -4,20 +4,17 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
+import com.arkivanov.decompose.defaultComponentContext
+import com.example.project.root.DefaultRootComponent
+import com.example.project.root.RootContent
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
-        setContent { App() }
-    }
-}
+        val root = DefaultRootComponent(componentContext = defaultComponentContext())
 
-@Preview
-@Composable
-private fun AppAndroidPreview() {
-    App()
+        setContent { RootContent(component = root) }
+    }
 }

@@ -66,4 +66,3 @@ internal interface AnalyticsEvent {
      */
     val parameters: Map<String, Any>
 }
-

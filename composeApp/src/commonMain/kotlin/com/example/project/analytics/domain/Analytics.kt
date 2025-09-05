@@ -1,6 +1,5 @@
 package com.example.project.analytics.domain
 
-
 /**
  * Main analytics interface for tracking user events and app behavior.
  *
@@ -87,4 +86,3 @@ internal interface Analytics {
      */
     fun track(events: List<AnalyticsEvent>)
 }
-

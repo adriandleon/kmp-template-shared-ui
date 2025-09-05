@@ -174,7 +174,6 @@ kover.reports {
     }
 }
 
-
 testlogger {
     theme = ThemeType.MOCHA
     showFullStackTraces = false
