@@ -1,3 +1,9 @@
+---
+description: "Kotlin Compose Multiplatform Rules"
+globs: []
+alwaysApply: true
+---
+
 # Compose Multiplatform Project Rules - Template
 
 ## Project Overview
@@ -221,7 +227,7 @@ val appModule = module {
 ## Build Configuration
 - **Gradle**: Use Kotlin DSL and version catalogs
 - **Multiplatform**: Configure Android and iOS targets
-- **Dependencies**: Manage through `libs.versions.toml`
+- **Dependencies**: Manage through `libs.versions.toml`. Each section should be order alphabetically
 - **Signing**: Configure proper APK/AAB signing
 
 ## Customization for New Projects

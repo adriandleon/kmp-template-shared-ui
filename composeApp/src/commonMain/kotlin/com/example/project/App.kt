@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import apptemplate.composeapp.generated.resources.Res
 import apptemplate.composeapp.generated.resources.compose_multiplatform
+import coil3.compose.AsyncImage
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -45,6 +46,11 @@ internal fun App() {
                     Text("Compose: $greeting")
                 }
             }
+
+            AsyncImage(
+                model = "https://www.pacificflying.com/wp-content/uploads/airbus-boeing-1200.webp",
+                contentDescription = null,
+            )
         }
     }
 }

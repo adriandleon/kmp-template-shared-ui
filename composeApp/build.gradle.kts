@@ -1,12 +1,22 @@
+import com.adarshr.gradle.testlogger.theme.ThemeType
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.BOOLEAN
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-    alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.application)
-    alias(libs.plugins.compose.multiplatform)
+    alias(libs.plugins.buildkonfig)
     alias(libs.plugins.compose.compiler)
-    alias(libs.plugins.ktfmt.gradle)
+    alias(libs.plugins.compose.multiplatform)
+    alias(libs.plugins.crashlytics)
     alias(libs.plugins.detekt)
+    alias(libs.plugins.google.services)
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.ktfmt.gradle)
+    alias(libs.plugins.test.logger)
 }
 
 kotlin {
@@ -20,21 +30,59 @@ kotlin {
     }
 
     sourceSets {
-        androidMain.dependencies {
-            implementation(compose.preview)
-            implementation(libs.androidx.activity.compose)
-        }
         commonMain.dependencies {
+            api(libs.essenty.lifecycle)
+            api(libs.koin.core)
+            api(libs.decompose)
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
+            implementation(libs.decompose)
+            implementation(libs.decompose.extensions)
+            implementation(libs.coil.compose)
+            implementation(libs.coil.network.ktor)
+            implementation(libs.koin.compose)
+            implementation(libs.kotlinx.coroutines)
+            implementation(libs.kotlinx.datetime)
+            implementation(libs.kotlinx.serialization)
             implementation(libs.lifecycle.viewmodel.compose)
             implementation(libs.lifecycle.runtime.compose)
+            implementation(libs.configcat)
+            implementation(libs.datastore.preferences)
+            implementation(libs.crashkios.crashlytics)
+            implementation(libs.essenty.lifecycle.coroutines)
+            implementation(libs.firebase.analytics)
+            implementation(libs.firebase.common)
+            implementation(libs.firebase.config)
+            implementation(libs.firebase.crashlytics)
+            implementation(libs.kermit)
+            implementation(libs.kermit.crashlytics)
+            implementation(libs.kermit.koin)
+            implementation(libs.mvikotlin.coroutines)
+            implementation(libs.mvikotlin.core)
+            implementation(libs.mvikotlin.logging)
+            implementation(libs.mvikotlin.main)
+            implementation(libs.mvikotlin.timetravel)
+            implementation(libs.slf4j.nop)
+            implementation(libs.supabase.postgrest)
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.serialization.kotlinx.json)
         }
-        commonTest.dependencies { implementation(libs.kotlin.test) }
+        androidMain.dependencies {
+            implementation(compose.preview)
+            implementation(libs.androidx.activity.compose)
+            implementation(libs.ktor.client.okhttp)
+        }
+
+        iosMain.dependencies { implementation(libs.ktor.client.darwin) }
+
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
+            implementation(libs.ktor.client.mock)
+        }
     }
 }
 
@@ -87,6 +135,7 @@ android {
 }
 
 dependencies {
+    implementation(platform(libs.firebase.bom))
     debugImplementation(compose.uiTooling)
     detektPlugins(libs.detekt.compose)
 }
@@ -101,4 +150,173 @@ detekt {
     parallel = true
     buildUponDefaultConfig = true
     config.setFrom("$rootDir/config/detekt.yml")
+}
+
+testlogger {
+    theme = ThemeType.MOCHA
+    showFullStackTraces = false
+    slowThreshold = 2000
+    showSummary = true
+    showPassed = true
+    showSkipped = true
+}
+
+buildkonfig {
+    packageName = "com.example.project"
+
+    // DefaultConfig
+    defaultConfigs {
+        buildConfigField(
+            type = BOOLEAN,
+            name = "DEBUG",
+            value = "true",
+            nullable = false,
+            const = true,
+        )
+
+        buildConfigField(
+            type = STRING,
+            name = "SUPABASE_KEY",
+            value = getSecret("SUPABASE_KEY_DEV"),
+            nullable = false,
+            const = true,
+        )
+
+        buildConfigField(
+            type = STRING,
+            name = "SUPABASE_URL",
+            value = getSecret("SUPABASE_URL_DEV_AND"),
+            nullable = false,
+            const = true,
+        )
+
+        buildConfigField(
+            type = STRING,
+            name = "CONFIGCAT_KEY",
+            value = getSecret("CONFIGCAT_AND_TEST_KEY"),
+            nullable = false,
+            const = true,
+        )
+    }
+
+    // Flavored DefaultConfig
+    defaultConfigs("release") {
+        buildConfigField(
+            type = BOOLEAN,
+            name = "DEBUG",
+            value = "false",
+            nullable = false,
+            const = true,
+        )
+
+        buildConfigField(
+            type = STRING,
+            name = "SUPABASE_KEY",
+            value = getSecret("SUPABASE_KEY_PROD"),
+            nullable = false,
+            const = true,
+        )
+
+        buildConfigField(
+            type = STRING,
+            name = "SUPABASE_URL",
+            value = getSecret("SUPABASE_URL_PROD"),
+            nullable = false,
+            const = true,
+        )
+
+        buildConfigField(
+            type = STRING,
+            name = "CONFIGCAT_KEY",
+            value = getSecret("CONFIGCAT_AND_LIVE_KEY"),
+            nullable = false,
+            const = true,
+        )
+    }
+
+    // TargetConfig
+    targetConfigs {
+        create("iosArm64") {
+            buildConfigField(
+                type = STRING,
+                name = "SUPABASE_URL",
+                value = getSecret("SUPABASE_URL_DEV_IOS"),
+                nullable = false,
+                const = true,
+            )
+
+            buildConfigField(
+                type = STRING,
+                name = "CONFIGCAT_KEY",
+                value = getSecret("CONFIGCAT_IOS_TEST_KEY"),
+                nullable = false,
+                const = true,
+            )
+        }
+
+        create("iosSimulatorArm64") {
+            buildConfigField(
+                type = STRING,
+                name = "SUPABASE_URL",
+                value = getSecret("SUPABASE_URL_DEV_IOS"),
+                nullable = false,
+                const = true,
+            )
+
+            buildConfigField(
+                type = STRING,
+                name = "CONFIGCAT_KEY",
+                value = getSecret("CONFIGCAT_IOS_TEST_KEY"),
+                nullable = false,
+                const = true,
+            )
+        }
+    }
+
+    // Flavored TargetConfig
+    targetConfigs("release") {
+        create("iosArm64") {
+            buildConfigField(
+                type = STRING,
+                name = "SUPABASE_URL",
+                value = getSecret("SUPABASE_URL_PROD"),
+                nullable = false,
+                const = true,
+            )
+
+            buildConfigField(
+                type = STRING,
+                name = "CONFIGCAT_KEY",
+                value = getSecret("CONFIGCAT_IOS_LIVE_KEY"),
+                nullable = false,
+                const = true,
+            )
+        }
+
+        create("iosSimulatorArm64") {
+            buildConfigField(
+                type = STRING,
+                name = "SUPABASE_URL",
+                value = getSecret("SUPABASE_URL_PROD"),
+                nullable = false,
+                const = true,
+            )
+
+            buildConfigField(
+                type = STRING,
+                name = "CONFIGCAT_KEY",
+                value = getSecret("CONFIGCAT_IOS_LIVE_KEY"),
+                nullable = false,
+                const = true,
+            )
+        }
+    }
+}
+
+fun getSecret(key: String): String {
+    return gradleLocalProperties(rootDir, providers).getProperty(key)
+        ?: System.getenv(key)
+        ?: throw InvalidUserDataException(
+            "Missing secret $key in local.properties or environment variables"
+        )
 }
