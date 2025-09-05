@@ -80,6 +80,7 @@ kotlin {
         iosMain.dependencies { implementation(libs.ktor.client.darwin) }
 
         commonTest.dependencies {
+            implementation(libs.kermit.test)
             implementation(libs.kotlin.test)
             implementation(libs.ktor.client.mock)
         }
