@@ -22,7 +22,6 @@ import apptemplate.composeapp.generated.resources.Res
 import apptemplate.composeapp.generated.resources.compose_multiplatform
 import apptemplate.composeapp.generated.resources.localized_text
 import coil3.compose.AsyncImage
-import com.example.project.Greeting
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -52,13 +51,12 @@ fun HomeContent(component: HomeComponent, modifier: Modifier = Modifier) {
         }
 
         AnimatedVisibility(showContent) {
-            val greeting = remember { Greeting().greet() }
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Image(painterResource(Res.drawable.compose_multiplatform), null)
-                Text("Compose: $greeting")
+                Text("Compose: Multiplatform UI")
             }
         }
 

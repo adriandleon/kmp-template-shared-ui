@@ -11,43 +11,30 @@ import com.arkivanov.decompose.extensions.compose.stack.animation.plus
 import com.arkivanov.decompose.extensions.compose.stack.animation.scale
 import com.arkivanov.decompose.extensions.compose.stack.animation.slide
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
-import com.example.project.analytics.analyticsModule
-import com.example.project.common.commonModule
-import com.example.project.features.featureFlagModule
 import com.example.project.home.HomeContent
-import com.example.project.logger.loggerModule
-import org.koin.compose.KoinMultiplatformApplication
-import org.koin.core.annotation.KoinExperimentalAPI
-import org.koin.core.logger.Level
-import org.koin.dsl.koinConfiguration
+import com.example.project.onboarding.presentation.OnboardingContent
 
 /** Root content composable that displays the root component with navigation */
-@OptIn(KoinExperimentalAPI::class)
 @Composable
 fun RootContent(component: RootComponent, modifier: Modifier = Modifier) {
-    KoinMultiplatformApplication(
-        config =
-            koinConfiguration {
-                modules(commonModule, loggerModule, analyticsModule, featureFlagModule)
-            },
-        logLevel = Level.DEBUG,
-    ) {
-        MaterialTheme {
-            Surface(
-                modifier = modifier.fillMaxSize(),
-                color = MaterialTheme.colorScheme.background,
-            ) {
-                Children(
-                    stack = component.stack,
-                    animation = stackAnimation(slide() + fade() + scale()),
-                ) { child ->
-                    when (val childComponent = child.instance) {
-                        is RootComponent.Child.Home -> {
-                            HomeContent(
-                                component = childComponent.component,
-                                modifier = Modifier.fillMaxSize(),
-                            )
-                        }
+    MaterialTheme {
+        Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+            Children(
+                stack = component.stack,
+                animation = stackAnimation(slide() + fade() + scale()),
+            ) { child ->
+                when (val childComponent = child.instance) {
+                    is RootComponent.Child.Onboarding -> {
+                        OnboardingContent(
+                            component = childComponent.component,
+                            modifier = Modifier.fillMaxSize(),
+                        )
+                    }
+                    is RootComponent.Child.Home -> {
+                        HomeContent(
+                            component = childComponent.component,
+                            modifier = Modifier.fillMaxSize(),
+                        )
                     }
                 }
             }
