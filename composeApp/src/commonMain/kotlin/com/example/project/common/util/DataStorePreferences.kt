@@ -9,5 +9,3 @@ internal const val DataStoreFileName = "app_template.preferences_pb"
 
 internal fun createDataStore(producePath: () -> String): DataStore<Preferences> =
     PreferenceDataStoreFactory.createWithPath(produceFile = { producePath().toPath() })
-
-internal expect fun dataStore(): DataStore<Preferences>
