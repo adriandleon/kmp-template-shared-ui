@@ -19,9 +19,7 @@ class DefaultRootComponent(
     private val onboardingRepository: OnboardingRepository,
 ) : RootComponent, ComponentContext by componentContext {
 
-    private val hasSeenOnboarding = runBlocking {
-        onboardingRepository.resetOnboardingStatus()
-        onboardingRepository.hasSeenOnboarding() }
+    private val hasSeenOnboarding = runBlocking { onboardingRepository.hasSeenOnboarding() }
     private val navigation = StackNavigation<Configuration>()
 
     override val stack: Value<ChildStack<*, Child>> =
