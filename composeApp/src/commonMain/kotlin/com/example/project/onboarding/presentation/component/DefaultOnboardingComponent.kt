@@ -6,6 +6,7 @@ import com.arkivanov.decompose.value.operator.map
 import com.arkivanov.essenty.lifecycle.coroutines.coroutineScope
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.extensions.coroutines.labels
+import com.example.project.common.util.DispatcherProvider
 import com.example.project.common.util.asValue
 import com.example.project.onboarding.presentation.component.OnboardingComponent.OnboardingState
 import com.example.project.onboarding.presentation.mapper.stateToModel
@@ -21,12 +22,13 @@ internal class DefaultOnboardingComponent(
     private val onNavigateToHome: () -> Unit,
 ) : OnboardingComponent, ComponentContext by componentContext, KoinComponent {
 
+    private val dispatcher = get<DispatcherProvider>()
     private val store = instanceKeeper.getStore { OnboardingStoreFactory(get()).create() }
 
     override val state: Value<OnboardingState> = store.asValue().map(stateToModel)
 
     init {
-        coroutineScope().launch { store.labels.collect(::observeLabels) }
+        coroutineScope(dispatcher.main).launch { store.labels.collect(::observeLabels) }
     }
 
     override fun nextSlide() {

@@ -1,12 +1,17 @@
 package com.example.project.root
 
+import com.example.project.common.di.testModule
 import com.example.project.common.util.assertActiveInstance
 import com.example.project.common.util.createComponentForTest
 import com.example.project.onboarding.domain.OnboardingRepository
+import com.example.project.root.RootComponent.Child
 import dev.mokkery.answering.returns
 import dev.mokkery.everySuspend
 import dev.mokkery.mock
+import io.kotest.core.extensions.Extension
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.koin.KoinExtension
+import org.koin.test.KoinTest
 
 class RootComponentTest :
     FunSpec({
@@ -16,7 +21,7 @@ class RootComponentTest :
             everySuspend { onboardingRepository.hasSeenOnboarding() } returns true
             val stack = createComponent(onboardingRepository).stack
 
-            stack.assertActiveInstance<RootComponent.Child.Home>()
+            stack.assertActiveInstance<Child.Home>()
         }
 
         test(
@@ -25,9 +30,20 @@ class RootComponentTest :
             everySuspend { onboardingRepository.hasSeenOnboarding() } returns false
             val stack = createComponent(onboardingRepository).stack
 
-            stack.assertActiveInstance<RootComponent.Child.Onboarding>()
+            stack.assertActiveInstance<Child.Onboarding>()
         }
-    })
+
+        test("should navigate to home when onNavigateToHome is called") {
+            val component = createComponent(onboardingRepository)
+
+            component.onNavigateToHome()
+
+            component.stack.assertActiveInstance<Child.Home>()
+        }
+    }),
+    KoinTest {
+    override val extensions: List<Extension> = listOf(KoinExtension(testModule))
+}
 
 private fun createComponent(onboardingRepository: OnboardingRepository = mock()): RootComponent =
     createComponentForTest { componentContext ->

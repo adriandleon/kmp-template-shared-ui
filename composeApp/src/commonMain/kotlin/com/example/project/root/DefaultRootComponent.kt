@@ -6,7 +6,6 @@ import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.replaceCurrent
 import com.arkivanov.decompose.value.Value
-import com.example.project.BuildKonfig
 import com.example.project.home.DefaultHomeComponent
 import com.example.project.home.HomeComponent
 import com.example.project.onboarding.domain.OnboardingRepository
@@ -23,12 +22,7 @@ class DefaultRootComponent(
     private val onboardingRepository: OnboardingRepository,
 ) : RootComponent, ComponentContext by componentContext {
 
-    private val hasSeenOnboarding = runBlocking {
-        if (BuildKonfig.DEBUG) {
-            onboardingRepository.resetOnboardingStatus()
-        }
-        onboardingRepository.hasSeenOnboarding()
-    }
+    private val hasSeenOnboarding = runBlocking { onboardingRepository.hasSeenOnboarding() }
     private val navigation = StackNavigation<Configuration>()
 
     override val stack: Value<ChildStack<*, Child>> =
