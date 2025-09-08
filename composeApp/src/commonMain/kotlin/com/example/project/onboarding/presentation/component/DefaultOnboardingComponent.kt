@@ -29,12 +29,6 @@ internal class DefaultOnboardingComponent(
         coroutineScope().launch { store.labels.collect(::observeLabels) }
     }
 
-    private fun observeLabels(label: Label) {
-        when (label) {
-            Label.NavigateToHome -> onNavigateToHome()
-        }
-    }
-
     override fun nextSlide() {
         store.accept(Intent.NextSlide)
     }
@@ -49,5 +43,11 @@ internal class DefaultOnboardingComponent(
 
     override fun completeOnboarding() {
         store.accept(Intent.CompleteOnboarding)
+    }
+
+    private fun observeLabels(label: Label) {
+        when (label) {
+            Label.NavigateToHome -> onNavigateToHome()
+        }
     }
 }

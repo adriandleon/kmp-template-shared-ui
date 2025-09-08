@@ -1,69 +1,65 @@
 package com.example.project.home
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.material3.Button
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import apptemplate.composeapp.generated.resources.Res
-import apptemplate.composeapp.generated.resources.compose_multiplatform
-import apptemplate.composeapp.generated.resources.localized_text
-import coil3.compose.AsyncImage
-import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.resources.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 /** Home content composable that displays the home screen */
 @Composable
 fun HomeContent(component: HomeComponent, modifier: Modifier = Modifier) {
-    var showContent by remember { mutableStateOf(false) }
-
-    Column(
-        modifier =
-            modifier
-                .background(MaterialTheme.colorScheme.primaryContainer)
-                .safeContentPadding()
-                .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+    Box(
+        modifier = modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
+        contentAlignment = Alignment.Center,
     ) {
-        Text(
-            text = component.title,
-            style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
-        )
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.padding(32.dp),
+        ) {
+            Text(text = "🏠", style = MaterialTheme.typography.displayLarge, fontSize = 64.sp)
 
-        Button(onClick = { showContent = !showContent }) {
-            Text(stringResource(Res.string.localized_text))
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text(
+                text = component.title,
+                style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onBackground,
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = "You have successfully completed onboarding!",
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            Text(
+                text = "This is where the main app content will be displayed.",
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
-
-        AnimatedVisibility(showContent) {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Image(painterResource(Res.drawable.compose_multiplatform), null)
-                Text("Compose: Multiplatform UI")
-            }
-        }
-
-        AsyncImage(
-            model = "https://www.pacificflying.com/wp-content/uploads/airbus-boeing-1200.webp",
-            contentDescription = null,
-        )
     }
 }
 

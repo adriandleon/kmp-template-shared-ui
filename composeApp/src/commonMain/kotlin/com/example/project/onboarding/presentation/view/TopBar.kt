@@ -34,6 +34,7 @@ fun TopBar(onSkip: () -> Unit, modifier: Modifier = Modifier) {
             Text(
                 text = stringResource(Res.string.skip),
                 style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.surfaceVariant,
             )
         }
     }
