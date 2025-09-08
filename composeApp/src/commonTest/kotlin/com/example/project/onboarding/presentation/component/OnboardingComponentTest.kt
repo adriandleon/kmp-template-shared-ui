@@ -1,5 +1,6 @@
 package com.example.project.onboarding.presentation.component
 
+import com.arkivanov.mvikotlin.core.utils.isAssertOnMainThreadEnabled
 import com.example.project.common.di.testModule
 import com.example.project.common.util.createComponentForTest
 import dev.mokkery.mock
@@ -12,6 +13,11 @@ import org.koin.test.KoinTest
 
 class OnboardingComponentTest :
     FunSpec({
+        beforeSpec { isAssertOnMainThreadEnabled = false }
+
+        afterSpec {
+            isAssertOnMainThreadEnabled = true
+        }
 
         test("should create component successfully") {
             val component = createComponent()
