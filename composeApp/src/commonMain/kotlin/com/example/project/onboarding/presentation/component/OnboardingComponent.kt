@@ -11,24 +11,16 @@ import com.example.project.onboarding.domain.entity.SlideEntity
 interface OnboardingComponent {
     val state: Value<OnboardingState>
 
-    /**
-     * Function to navigate to the next slide
-     */
+    /** Function to navigate to the next slide */
     fun nextSlide()
 
-    /**
-     * Function to navigate to the previous slide
-     */
+    /** Function to navigate to the previous slide */
     fun previousSlide()
 
-    /**
-     * Function to skip the onboarding process
-     */
+    /** Function to skip the onboarding process */
     fun skipOnboarding()
 
-    /**
-     * Function to complete the onboarding process
-     */
+    /** Function to complete the onboarding process */
     fun completeOnboarding()
 
     /**
@@ -36,7 +28,8 @@ interface OnboardingComponent {
      *
      * @property currentSlide The index of the currently visible slide (starting from 0).
      * @property totalSlides The total number of slides in the onboarding flow.
-     * @property isLoading True if the onboarding is performing a loading operation (e.g., saving status).
+     * @property isLoading True if the onboarding is performing a loading operation (e.g., saving
+     *   status).
      * @property slides List of slides to be displayed in the onboarding flow.
      */
     data class OnboardingState(

@@ -10,19 +10,17 @@ import org.koin.core.component.get
 
 internal class OnboardingStoreFactory(private val storeFactory: StoreFactory) : KoinComponent {
 
-    fun create(onNavigateToHome: (() -> Unit)): OnboardingStore {
-        return OnboardingStoreImpl(onNavigateToHome)
+    fun create(): OnboardingStore {
+        return OnboardingStoreImpl()
     }
 
-    private inner class OnboardingStoreImpl(
-        private val onNavigateToHome: (() -> Unit)?
-    ) :
+    private inner class OnboardingStoreImpl :
         OnboardingStore,
         Store<Intent, State, Label> by storeFactory.create(
             name = "OnboardingStore",
             initialState = State(),
             bootstrapper = OnboardingBootstrapper(get(), get()),
-            executorFactory = { OnboardingExecutor(get(), get(), get(), onNavigateToHome) },
+            executorFactory = { OnboardingExecutor(get(), get(), get()) },
             reducer = OnboardingReducer,
         )
 }
