@@ -12,7 +12,7 @@ import com.arkivanov.decompose.extensions.compose.stack.animation.scale
 import com.arkivanov.decompose.extensions.compose.stack.animation.slide
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.example.project.home.HomeContent
-import com.example.project.onboarding.presentation.OnboardingContent
+import com.example.project.onboarding.presentation.view.OnboardingView
 
 /** Root content composable that displays the root component with navigation */
 @Composable
@@ -25,7 +25,7 @@ fun RootContent(component: RootComponent, modifier: Modifier = Modifier) {
             ) { child ->
                 when (val childComponent = child.instance) {
                     is RootComponent.Child.Onboarding -> {
-                        OnboardingContent(
+                        OnboardingView(
                             component = childComponent.component,
                             modifier = Modifier.fillMaxSize(),
                         )

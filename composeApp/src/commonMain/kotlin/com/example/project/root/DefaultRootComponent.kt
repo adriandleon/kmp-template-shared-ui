@@ -8,8 +8,8 @@ import com.arkivanov.decompose.value.Value
 import com.example.project.home.DefaultHomeComponent
 import com.example.project.home.HomeComponent
 import com.example.project.onboarding.domain.OnboardingRepository
-import com.example.project.onboarding.presentation.DefaultOnboardingComponent
-import com.example.project.onboarding.presentation.OnboardingComponent
+import com.example.project.onboarding.presentation.component.DefaultOnboardingComponent
+import com.example.project.onboarding.presentation.component.OnboardingComponent
 import com.example.project.root.RootComponent.Child
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
@@ -19,7 +19,9 @@ class DefaultRootComponent(
     private val onboardingRepository: OnboardingRepository,
 ) : RootComponent, ComponentContext by componentContext {
 
-    private val hasSeenOnboarding = runBlocking { onboardingRepository.hasSeenOnboarding() }
+    private val hasSeenOnboarding = runBlocking {
+        onboardingRepository.resetOnboardingStatus()
+        onboardingRepository.hasSeenOnboarding() }
     private val navigation = StackNavigation<Configuration>()
 
     override val stack: Value<ChildStack<*, Child>> =

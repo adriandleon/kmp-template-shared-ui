@@ -1,0 +1,37 @@
+package com.example.project.onboarding.presentation.component
+
+import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.value.Value
+import com.arkivanov.decompose.value.operator.map
+import com.arkivanov.mvikotlin.core.instancekeeper.getStore
+import com.example.project.common.util.asValue
+import com.example.project.onboarding.presentation.component.OnboardingComponent.OnboardingState
+import com.example.project.onboarding.presentation.mapper.stateToModel
+import com.example.project.onboarding.presentation.store.OnboardingStore.Intent
+import com.example.project.onboarding.presentation.store.OnboardingStoreFactory
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
+
+internal class DefaultOnboardingComponent(private val componentContext: ComponentContext) :
+    OnboardingComponent, ComponentContext by componentContext, KoinComponent {
+
+    private val store = instanceKeeper.getStore { OnboardingStoreFactory(get()).create() }
+
+    override val state: Value<OnboardingState> = store.asValue().map(stateToModel)
+
+    override fun nextSlide() {
+        store.accept(Intent.NextSlide)
+    }
+
+    override fun previousSlide() {
+        store.accept(Intent.PreviousSlide)
+    }
+
+    override fun skipOnboarding() {
+        store.accept(Intent.SkipOnboarding)
+    }
+
+    override fun completeOnboarding() {
+        store.accept(Intent.CompleteOnboarding)
+    }
+}

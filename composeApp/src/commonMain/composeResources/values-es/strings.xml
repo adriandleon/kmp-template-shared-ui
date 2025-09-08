@@ -1,3 +1,7 @@
 <resources>
     <string name="localized_text">Texto en español</string>
+    <string name="skip">Saltar</string>
+    <string name="previous">Anterior</string>
+    <string name="next">Siguiente</string>
+    <string name="get_started">Comenzar</string>
 </resources>

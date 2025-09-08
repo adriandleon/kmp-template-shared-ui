@@ -4,7 +4,7 @@ import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.backhandler.BackHandlerOwner
 import com.example.project.home.HomeComponent
-import com.example.project.onboarding.presentation.OnboardingComponent
+import com.example.project.onboarding.presentation.component.OnboardingComponent
 
 /**
  * The root component
