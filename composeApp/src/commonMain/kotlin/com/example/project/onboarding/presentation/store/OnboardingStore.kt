@@ -25,7 +25,9 @@ internal interface OnboardingStore : Store<Intent, State, Label> {
         data object NextSlide : Intent
     }
 
-    sealed interface Label
+    sealed interface Label {
+        data object NavigateToHome : Label
+    }
 
     sealed interface Message {
         data object OnPreviousClicked : Message

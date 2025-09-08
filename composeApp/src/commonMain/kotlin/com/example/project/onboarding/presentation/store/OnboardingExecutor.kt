@@ -10,41 +10,35 @@ import com.example.project.onboarding.presentation.store.OnboardingStore.Label
 import com.example.project.onboarding.presentation.store.OnboardingStore.Message
 import com.example.project.onboarding.presentation.store.OnboardingStore.State
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 internal class OnboardingExecutor(
     private val repository: OnboardingRepository,
     private val logger: Logger,
-    dispatcher: DispatcherProvider,
+    private val dispatcher: DispatcherProvider,
 ) : CoroutineExecutor<Intent, Action, State, Message, Label>(mainContext = dispatcher.default) {
 
     override fun executeIntent(intent: Intent) {
         when (intent) {
             Intent.SkipOnboarding -> {
                 logger.info { "Skip onboarding clicked" }
-
-                scope.launch {
-                    try {
-                        repository.markOnboardingCompleted()
-                    } catch (e: Exception) {
-                        logger.error(e) { "Failed to mark onboarding as completed" }
-                    }
-                }
+                scope.launch { completeOnboarding() }
             }
 
             Intent.CompleteOnboarding -> {
                 logger.info { "Completing onboarding clicked" }
-
-                scope.launch {
-                    try {
-                        repository.markOnboardingCompleted()
-                    } catch (e: Exception) {
-                        logger.error(e) { "Failed to mark onboarding as completed" }
-                    }
-                }
+                scope.launch { completeOnboarding() }
             }
 
-            Intent.NextSlide -> dispatch(Message.OnNextClicked)
-            Intent.PreviousSlide -> dispatch(Message.OnPreviousClicked)
+            Intent.NextSlide -> {
+                logger.info { "Next slide clicked" }
+                dispatch(Message.OnNextClicked)
+            }
+
+            Intent.PreviousSlide -> {
+                logger.info { "Previous slide clicked" }
+                dispatch(Message.OnPreviousClicked)
+            }
         }
     }
 
@@ -52,5 +46,10 @@ internal class OnboardingExecutor(
         when (action) {
             is Action.LoadSlides -> dispatch(Message.LoadSlides(action.slides))
         }
+    }
+
+    private suspend fun completeOnboarding() {
+        repository.markOnboardingCompleted()
+        withContext(dispatcher.main) { publish(Label.NavigateToHome) }
     }
 }
