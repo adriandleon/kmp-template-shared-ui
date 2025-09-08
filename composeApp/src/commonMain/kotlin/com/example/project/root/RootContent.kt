@@ -21,7 +21,7 @@ fun RootContent(component: RootComponent, modifier: Modifier = Modifier) {
         Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
             Children(
                 stack = component.stack,
-                animation = stackAnimation(slide() + fade() + scale()),
+                animation = stackAnimation(fade()),
             ) { child ->
                 when (val childComponent = child.instance) {
                     is RootComponent.Child.Onboarding -> {

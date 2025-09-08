@@ -15,6 +15,9 @@ interface RootComponent : BackHandlerOwner {
 
     val stack: Value<ChildStack<*, Child>>
 
+    /** Function to be called when navigation to home should occur */
+    fun onNavigateToHome()
+
     sealed interface Child {
 
         /** @param component Child component for the onboarding screen */

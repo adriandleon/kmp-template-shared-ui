@@ -12,10 +12,12 @@ import com.example.project.onboarding.presentation.store.OnboardingStoreFactory
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 
-internal class DefaultOnboardingComponent(private val componentContext: ComponentContext) :
+internal class DefaultOnboardingComponent(
+    private val componentContext: ComponentContext,
+    private val output: () -> Unit) :
     OnboardingComponent, ComponentContext by componentContext, KoinComponent {
 
-    private val store = instanceKeeper.getStore { OnboardingStoreFactory(get()).create() }
+    private val store = instanceKeeper.getStore { OnboardingStoreFactory(get()).create { output() } }
 
     override val state: Value<OnboardingState> = store.asValue().map(stateToModel)
 

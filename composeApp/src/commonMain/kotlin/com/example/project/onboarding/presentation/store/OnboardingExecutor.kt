@@ -10,11 +10,13 @@ import com.example.project.onboarding.presentation.store.OnboardingStore.Label
 import com.example.project.onboarding.presentation.store.OnboardingStore.Message
 import com.example.project.onboarding.presentation.store.OnboardingStore.State
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 internal class OnboardingExecutor(
     private val repository: OnboardingRepository,
     private val logger: Logger,
-    dispatcher: DispatcherProvider,
+    private val dispatcher: DispatcherProvider,
+    private val onNavigateToHome: (() -> Unit)? = null,
 ) : CoroutineExecutor<Intent, Action, State, Message, Label>(mainContext = dispatcher.default) {
 
     override fun executeIntent(intent: Intent) {
@@ -23,11 +25,8 @@ internal class OnboardingExecutor(
                 logger.info { "Skip onboarding clicked" }
 
                 scope.launch {
-                    try {
-                        repository.markOnboardingCompleted()
-                    } catch (e: Exception) {
-                        logger.error(e) { "Failed to mark onboarding as completed" }
-                    }
+                    repository.markOnboardingCompleted()
+                    withContext(dispatcher.main) { onNavigateToHome?.invoke() }
                 }
             }
 
@@ -35,11 +34,8 @@ internal class OnboardingExecutor(
                 logger.info { "Completing onboarding clicked" }
 
                 scope.launch {
-                    try {
-                        repository.markOnboardingCompleted()
-                    } catch (e: Exception) {
-                        logger.error(e) { "Failed to mark onboarding as completed" }
-                    }
+                    repository.markOnboardingCompleted()
+                    withContext(dispatcher.main) { onNavigateToHome?.invoke() }
                 }
             }
 
