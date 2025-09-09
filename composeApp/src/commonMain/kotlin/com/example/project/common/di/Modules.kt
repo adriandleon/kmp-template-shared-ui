@@ -1,5 +1,6 @@
 package com.example.project.common.di
 
+import com.example.project.about.aboutModule
 import com.example.project.analytics.analyticsModule
 import com.example.project.features.featureFlagModule
 import com.example.project.logger.loggerModule
@@ -135,4 +136,5 @@ internal val sharedModules: List<Module> =
         featureFlagModule, // Feature flags, A/B testing, remote config
         loggerModule, // Cross-platform logging (Kermit)
         onboardingModule, // User onboarding flow, first-time user experience
+        aboutModule, // About screen, app version, build info
     )

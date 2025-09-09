@@ -1,0 +1,30 @@
+package com.example.project.about.presentation.component
+
+import com.arkivanov.decompose.ComponentContext
+import com.example.project.analytics.domain.Analytics
+import com.example.project.analytics.domain.CommonAnalyticsEvent
+import com.example.project.logger.domain.Logger
+
+internal class DefaultAboutComponent(
+    componentContext: ComponentContext,
+    private val logger: Logger,
+    private val analytics: Analytics,
+    override val onBackClicked: () -> Unit,
+) : AboutComponent, ComponentContext by componentContext {
+
+    override val title: String
+        get() {
+            analytics.track(
+                CommonAnalyticsEvent.ScreenView(
+                    screenName = SCREEN_TITLE,
+                    screenClass = "DefaultAboutComponent"
+                )
+            )
+            logger.debug { "Message from about screen" }
+            return SCREEN_TITLE
+        }
+
+    private companion object {
+        private const val SCREEN_TITLE = "About Screen"
+    }
+}
