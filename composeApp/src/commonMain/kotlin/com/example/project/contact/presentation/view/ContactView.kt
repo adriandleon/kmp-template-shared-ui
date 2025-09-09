@@ -1,4 +1,4 @@
-package com.example.project.home
+package com.example.project.contact.presentation.view
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -17,11 +17,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.project.contact.presentation.component.ContactComponent
+import com.example.project.contact.presentation.component.PreviewContactComponent
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
-/** Home content composable that displays the home screen */
+/** Contact content composable that displays the contact screen */
 @Composable
-fun HomeContent(component: HomeComponent, modifier: Modifier = Modifier) {
+fun ContactView(component: ContactComponent, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.Center,
@@ -31,7 +33,7 @@ fun HomeContent(component: HomeComponent, modifier: Modifier = Modifier) {
             verticalArrangement = Arrangement.Center,
             modifier = Modifier.padding(32.dp),
         ) {
-            Text(text = "🏠", style = MaterialTheme.typography.displayLarge, fontSize = 64.sp)
+            Text(text = "📞", style = MaterialTheme.typography.displayLarge, fontSize = 64.sp)
 
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -45,7 +47,7 @@ fun HomeContent(component: HomeComponent, modifier: Modifier = Modifier) {
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "You have successfully completed onboarding!",
+                text = "Get in touch with us for support and inquiries.",
                 style = MaterialTheme.typography.bodyLarge,
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -54,7 +56,7 @@ fun HomeContent(component: HomeComponent, modifier: Modifier = Modifier) {
             Spacer(modifier = Modifier.height(32.dp))
 
             Text(
-                text = "This is where the main app content will be displayed.",
+                text = "This is where the contact content will be displayed.",
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -65,13 +67,6 @@ fun HomeContent(component: HomeComponent, modifier: Modifier = Modifier) {
 
 @Preview
 @Composable
-private fun HomeContentPreview() {
-    MaterialTheme {
-        HomeContent(
-            component =
-                object : HomeComponent {
-                    override val title: String = "Home Screen"
-                }
-        )
-    }
+private fun ContactViewPreview() {
+    MaterialTheme { ContactView(component = PreviewContactComponent()) }
 }

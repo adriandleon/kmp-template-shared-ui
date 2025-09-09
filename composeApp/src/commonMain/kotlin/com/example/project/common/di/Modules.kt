@@ -2,7 +2,9 @@ package com.example.project.common.di
 
 import com.example.project.about.aboutModule
 import com.example.project.analytics.analyticsModule
+import com.example.project.contact.contactModule
 import com.example.project.features.featureFlagModule
+import com.example.project.home.homeModule
 import com.example.project.logger.loggerModule
 import com.example.project.onboarding.onboardingModule
 import org.koin.core.module.Module
@@ -136,5 +138,7 @@ internal val sharedModules: List<Module> =
         featureFlagModule, // Feature flags, A/B testing, remote config
         loggerModule, // Cross-platform logging (Kermit)
         onboardingModule, // User onboarding flow, first-time user experience
+        homeModule, // Home screen, dashboard, navigation
         aboutModule, // About screen, app version, build info
+        contactModule, // Contact screen, support info FAQs
     )

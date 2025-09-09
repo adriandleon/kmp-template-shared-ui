@@ -1,4 +1,4 @@
-package com.example.project.home
+package com.example.project.home.presentation.component
 
 import com.arkivanov.decompose.ComponentContext
 import com.example.project.logger.domain.Logger
@@ -18,7 +18,7 @@ internal class DefaultHomeComponent(componentContext: ComponentContext) :
 
     override val title: String
         get() {
-            logger.info { "Fetching title for Home Screen" }
+            logger.info { "Message from home screen" }
             return "Home Screen"
         }
 }

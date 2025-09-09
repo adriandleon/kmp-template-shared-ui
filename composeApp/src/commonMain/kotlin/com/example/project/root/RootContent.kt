@@ -7,11 +7,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.arkivanov.decompose.extensions.compose.stack.Children
 import com.arkivanov.decompose.extensions.compose.stack.animation.fade
-import com.arkivanov.decompose.extensions.compose.stack.animation.plus
-import com.arkivanov.decompose.extensions.compose.stack.animation.scale
-import com.arkivanov.decompose.extensions.compose.stack.animation.slide
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
-import com.example.project.home.HomeContent
+import com.example.project.home.presentation.view.HomeView
 import com.example.project.onboarding.presentation.view.OnboardingView
 
 /** Root content composable that displays the root component with navigation */
@@ -31,7 +28,7 @@ fun RootContent(component: RootComponent, modifier: Modifier = Modifier) {
                         )
                     }
                     is RootComponent.Child.Home -> {
-                        HomeContent(
+                        HomeView(
                             component = childComponent.component,
                             modifier = Modifier.fillMaxSize(),
                         )

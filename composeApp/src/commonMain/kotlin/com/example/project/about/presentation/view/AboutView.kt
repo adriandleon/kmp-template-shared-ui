@@ -23,7 +23,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 /** About content composable that displays the about screen */
 @Composable
-fun AboutContent(component: AboutComponent, modifier: Modifier = Modifier) {
+fun AboutView(component: AboutComponent, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.Center,
@@ -68,5 +68,5 @@ fun AboutContent(component: AboutComponent, modifier: Modifier = Modifier) {
 @Preview
 @Composable
 private fun AboutViewPreview() {
-    MaterialTheme { AboutContent(component = PreviewAboutComponent()) }
+    MaterialTheme { AboutView(component = PreviewAboutComponent()) }
 }

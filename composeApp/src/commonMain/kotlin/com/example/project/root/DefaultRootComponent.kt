@@ -6,8 +6,8 @@ import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.replaceCurrent
 import com.arkivanov.decompose.value.Value
-import com.example.project.home.DefaultHomeComponent
-import com.example.project.home.HomeComponent
+import com.example.project.home.presentation.component.DefaultHomeComponent
+import com.example.project.home.presentation.component.HomeComponent
 import com.example.project.onboarding.domain.OnboardingRepository
 import com.example.project.onboarding.presentation.component.DefaultOnboardingComponent
 import com.example.project.onboarding.presentation.component.OnboardingComponent
