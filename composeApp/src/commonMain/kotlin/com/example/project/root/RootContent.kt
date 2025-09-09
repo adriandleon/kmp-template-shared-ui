@@ -4,10 +4,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import com.arkivanov.decompose.extensions.compose.stack.Children
-import com.arkivanov.decompose.extensions.compose.stack.animation.fade
-import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
+import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.example.project.home.presentation.view.HomeView
 import com.example.project.onboarding.presentation.view.OnboardingView
 
@@ -16,22 +15,18 @@ import com.example.project.onboarding.presentation.view.OnboardingView
 fun RootContent(component: RootComponent, modifier: Modifier = Modifier) {
     MaterialTheme {
         Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-            Children(
-                stack = component.stack,
-                animation = stackAnimation(fade()),
-            ) { child ->
-                when (val childComponent = child.instance) {
+            val slot by component.slot.subscribeAsState()
+
+            slot.child?.instance?.let { child ->
+                when (child) {
                     is RootComponent.Child.Onboarding -> {
                         OnboardingView(
-                            component = childComponent.component,
+                            component = child.component,
                             modifier = Modifier.fillMaxSize(),
                         )
                     }
                     is RootComponent.Child.Home -> {
-                        HomeView(
-                            component = childComponent.component,
-                            modifier = Modifier.fillMaxSize(),
-                        )
+                        HomeView(component = child.component, modifier = Modifier.fillMaxSize())
                     }
                 }
             }

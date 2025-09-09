@@ -1,6 +1,6 @@
 package com.example.project.root
 
-import com.arkivanov.decompose.router.stack.ChildStack
+import com.arkivanov.decompose.router.slot.ChildSlot
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.backhandler.BackHandlerOwner
 import com.example.project.home.presentation.component.HomeComponent
@@ -13,7 +13,7 @@ import com.example.project.onboarding.presentation.component.OnboardingComponent
  */
 interface RootComponent : BackHandlerOwner {
 
-    val stack: Value<ChildStack<*, Child>>
+    val slot: Value<ChildSlot<*, Child>>
 
     /** Function to be called when navigation to home should occur */
     fun onNavigateToHome()

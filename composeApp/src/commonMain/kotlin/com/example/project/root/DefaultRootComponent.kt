@@ -1,10 +1,10 @@
 package com.example.project.root
 
 import com.arkivanov.decompose.ComponentContext
-import com.arkivanov.decompose.router.stack.ChildStack
-import com.arkivanov.decompose.router.stack.StackNavigation
-import com.arkivanov.decompose.router.stack.childStack
-import com.arkivanov.decompose.router.stack.replaceCurrent
+import com.arkivanov.decompose.router.slot.ChildSlot
+import com.arkivanov.decompose.router.slot.SlotNavigation
+import com.arkivanov.decompose.router.slot.activate
+import com.arkivanov.decompose.router.slot.childSlot
 import com.arkivanov.decompose.value.Value
 import com.example.project.home.presentation.component.DefaultHomeComponent
 import com.example.project.home.presentation.component.HomeComponent
@@ -23,19 +23,22 @@ class DefaultRootComponent(
 ) : RootComponent, ComponentContext by componentContext {
 
     private val hasSeenOnboarding = runBlocking { onboardingRepository.hasSeenOnboarding() }
-    private val navigation = StackNavigation<Configuration>()
+    private val navigation = SlotNavigation<Configuration>()
 
-    override val stack: Value<ChildStack<*, Child>> =
-        childStack(
+    override val slot: Value<ChildSlot<*, Child>> =
+        childSlot(
             source = navigation,
             serializer = Configuration.serializer(),
-            initialConfiguration = if (hasSeenOnboarding) Home else Onboarding,
             handleBackButton = true,
             childFactory = ::createChild,
         )
 
+    init {
+        navigation.activate(if (hasSeenOnboarding) Home else Onboarding)
+    }
+
     override fun onNavigateToHome() {
-        navigation.replaceCurrent(Home)
+        navigation.activate(Home)
     }
 
     private fun createChild(configuration: Configuration, context: ComponentContext): Child =

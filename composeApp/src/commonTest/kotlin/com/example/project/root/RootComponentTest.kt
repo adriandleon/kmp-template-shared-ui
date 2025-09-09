@@ -2,6 +2,7 @@ package com.example.project.root
 
 import com.example.project.common.di.testModule
 import com.example.project.common.util.assertActiveInstance
+import com.example.project.common.util.assertActiveSlotInstance
 import com.example.project.common.util.createComponentForTest
 import com.example.project.onboarding.domain.OnboardingRepository
 import com.example.project.root.RootComponent.Child
@@ -19,18 +20,18 @@ class RootComponentTest :
 
         test("should create root component with home screen if user has seen onboarding") {
             everySuspend { onboardingRepository.hasSeenOnboarding() } returns true
-            val stack = createComponent(onboardingRepository).stack
+            val slot = createComponent(onboardingRepository).slot
 
-            stack.assertActiveInstance<Child.Home>()
+            slot.assertActiveSlotInstance<Child.Home>()
         }
 
         test(
             "should create root component with onboarding screen if user has not seen onboarding"
         ) {
             everySuspend { onboardingRepository.hasSeenOnboarding() } returns false
-            val stack = createComponent(onboardingRepository).stack
+            val slot = createComponent(onboardingRepository).slot
 
-            stack.assertActiveInstance<Child.Onboarding>()
+            slot.assertActiveSlotInstance<Child.Onboarding>()
         }
 
         test("should navigate to home when onNavigateToHome is called") {
@@ -38,7 +39,7 @@ class RootComponentTest :
 
             component.onNavigateToHome()
 
-            component.stack.assertActiveInstance<Child.Home>()
+            component.slot.assertActiveSlotInstance<Child.Home>()
         }
     }),
     KoinTest {
