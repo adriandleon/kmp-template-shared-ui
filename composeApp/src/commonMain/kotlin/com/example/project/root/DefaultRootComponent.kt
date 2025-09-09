@@ -29,7 +29,6 @@ class DefaultRootComponent(
         childSlot(
             source = navigation,
             serializer = Configuration.serializer(),
-            handleBackButton = true,
             childFactory = ::createChild,
         )
 
