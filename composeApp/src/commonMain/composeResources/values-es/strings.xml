@@ -4,4 +4,7 @@
     <string name="previous">Anterior</string>
     <string name="next">Siguiente</string>
     <string name="get_started">Comenzar</string>
+    <string name="home_label">Inicio</string>
+    <string name="contact_label">Contácto</string>
+    <string name="about_label">Acerca de</string>
 </resources>

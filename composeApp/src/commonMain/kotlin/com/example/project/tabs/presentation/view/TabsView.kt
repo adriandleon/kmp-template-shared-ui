@@ -12,8 +12,10 @@ import com.arkivanov.decompose.extensions.compose.pages.PagesScrollAnimation
 import com.example.project.about.presentation.view.AboutView
 import com.example.project.contact.presentation.view.ContactView
 import com.example.project.home.presentation.view.HomeView
+import com.example.project.tabs.presentation.component.PreviewTabsComponent
 import com.example.project.tabs.presentation.component.TabsComponent
 import com.example.project.tabs.presentation.component.TabsComponent.Child
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 /** Tabs content composable that displays the tabs container with bottom navigation */
 @Composable
@@ -21,9 +23,7 @@ fun TabsView(component: TabsComponent, modifier: Modifier = Modifier) {
     MaterialTheme {
         Scaffold(
             modifier = modifier.fillMaxSize(),
-            bottomBar = {
-                TabsBottomBar(component = component)
-            },
+            bottomBar = { TabsBottomBar(component = component) },
         ) { paddingValues ->
             Box(modifier = Modifier.padding(paddingValues)) {
                 ChildPages(
@@ -33,10 +33,7 @@ fun TabsView(component: TabsComponent, modifier: Modifier = Modifier) {
                 ) { _, child ->
                     when (child) {
                         is Child.Home -> {
-                            HomeView(
-                                component = child.component,
-                                modifier = Modifier.fillMaxSize(),
-                            )
+                            HomeView(component = child.component, modifier = Modifier.fillMaxSize())
                         }
                         is Child.About -> {
                             AboutView(
@@ -55,4 +52,10 @@ fun TabsView(component: TabsComponent, modifier: Modifier = Modifier) {
             }
         }
     }
+}
+
+@Preview
+@Composable
+private fun TabsViewPreview() {
+    MaterialTheme { TabsView(PreviewTabsComponent()) }
 }

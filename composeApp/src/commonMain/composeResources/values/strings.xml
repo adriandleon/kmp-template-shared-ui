@@ -4,4 +4,7 @@
     <string name="previous">Previous</string>
     <string name="next">Next</string>
     <string name="get_started">Get Started</string>
+    <string name="home_label">Home</string>
+    <string name="contact_label">Contact</string>
+    <string name="about_label">About</string>
 </resources>
