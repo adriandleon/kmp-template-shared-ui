@@ -71,6 +71,7 @@ kotlin {
             implementation(libs.mvikotlin.main)
             implementation(libs.mvikotlin.timetravel)
             implementation(libs.slf4j.nop)
+            implementation(libs.supabase.auth)
             implementation(libs.supabase.postgrest)
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.serialization.kotlinx.json)
