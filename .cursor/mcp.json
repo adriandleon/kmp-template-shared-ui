@@ -2,7 +2,10 @@
   "mcpServers": {
     "github": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-github"
+      ],
       "env": {
         "GITHUB_TOKEN": "${env.PERSONAL_GITHUB_API_KEY}"
       }
@@ -11,6 +14,18 @@
       "url": "https://mcp.context7.com/mcp",
       "headers": {
         "CONTEXT7_API_KEY": "${env.PERSONAL_CONTEXT7_API_KEY}"
+      }
+    },
+    "supabase": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@supabase/mcp-server-supabase",
+        "--read-only",
+        "--project-ref=xczgtnrrctxteviropdv"
+      ],
+      "env": {
+        "SUPABASE_ACCESS_TOKEN": "${env.PERSONAL_SUPABASE_ACCESS_TOKEN}"
       }
     }
   }

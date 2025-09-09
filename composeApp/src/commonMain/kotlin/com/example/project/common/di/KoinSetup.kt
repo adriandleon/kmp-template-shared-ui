@@ -1,6 +1,8 @@
 package com.example.project.common.di
 
 import com.arkivanov.decompose.ComponentContext
+import com.example.project.auth.domain.AuthRepository
+import com.example.project.common.util.DispatcherProvider
 import com.example.project.onboarding.domain.OnboardingRepository
 import com.example.project.root.DefaultRootComponent
 import com.example.project.root.RootComponent
@@ -12,12 +14,16 @@ object KoinSetup : KoinComponent {
 
     /** Create a RootComponent with proper dependency injection */
     fun createRootComponent(componentContext: ComponentContext): RootComponent {
-        // Get the OnboardingRepository from Koin
+        // Get the repositories from Koin
         val onboardingRepository: OnboardingRepository by inject()
+        val authRepository: AuthRepository by inject()
+        val dispatcher: DispatcherProvider by inject()
 
         return DefaultRootComponent(
             componentContext = componentContext,
             onboardingRepository = onboardingRepository,
+            authRepository = authRepository,
+            dispatcher = dispatcher,
         )
     }
 }

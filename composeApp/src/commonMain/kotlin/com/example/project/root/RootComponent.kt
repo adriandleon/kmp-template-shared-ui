@@ -3,6 +3,7 @@ package com.example.project.root
 import com.arkivanov.decompose.router.slot.ChildSlot
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.backhandler.BackHandlerOwner
+import com.example.project.auth.presentation.component.AuthComponent
 import com.example.project.onboarding.presentation.component.OnboardingComponent
 import com.example.project.tabs.presentation.component.TabsComponent
 
@@ -19,6 +20,8 @@ interface RootComponent : BackHandlerOwner {
     fun onNavigateToHome()
 
     sealed interface Child {
+        /** @param component Child component for the auth screen */
+        data class Auth(val component: AuthComponent) : Child
 
         /** @param component Child component for the onboarding screen */
         data class Onboarding(val component: OnboardingComponent) : Child

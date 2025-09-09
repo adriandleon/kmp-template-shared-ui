@@ -1,5 +1,6 @@
 package com.example.project.root
 
+import com.example.project.auth.domain.AuthRepository
 import com.example.project.common.di.testModule
 import com.example.project.common.util.assertActiveInstance
 import com.example.project.common.util.assertActiveSlotInstance
@@ -17,10 +18,13 @@ import org.koin.test.KoinTest
 class RootComponentTest :
     FunSpec({
         val onboardingRepository = mock<OnboardingRepository>()
+        val authRepository = mock<AuthRepository>()
 
         test("should create root component with tabs container if user has seen onboarding") {
+            everySuspend { onboardingRepository.resetOnboardingStatus() } returns Unit
             everySuspend { onboardingRepository.hasSeenOnboarding() } returns true
-            val slot = createComponent(onboardingRepository).slot
+            everySuspend { authRepository.isUserAuthenticated() } returns true
+            val slot = createComponent(onboardingRepository, authRepository).slot
 
             slot.assertActiveSlotInstance<Child.Tabs>()
         }
@@ -28,14 +32,18 @@ class RootComponentTest :
         test(
             "should create root component with onboarding screen if user has not seen onboarding"
         ) {
+            everySuspend { onboardingRepository.resetOnboardingStatus() } returns Unit
             everySuspend { onboardingRepository.hasSeenOnboarding() } returns false
-            val slot = createComponent(onboardingRepository).slot
+            everySuspend { authRepository.isUserAuthenticated() } returns true
+            val slot = createComponent(onboardingRepository, authRepository).slot
 
             slot.assertActiveSlotInstance<Child.Onboarding>()
         }
 
         test("should navigate to tabs container when onNavigateToHome is called") {
-            val component = createComponent(onboardingRepository)
+            everySuspend { onboardingRepository.resetOnboardingStatus() } returns Unit
+            everySuspend { authRepository.isUserAuthenticated() } returns true
+            val component = createComponent(onboardingRepository, authRepository)
 
             component.onNavigateToHome()
 
@@ -46,10 +54,14 @@ class RootComponentTest :
     override val extensions: List<Extension> = listOf(KoinExtension(testModule))
 }
 
-private fun createComponent(onboardingRepository: OnboardingRepository = mock()): RootComponent =
+private fun createComponent(
+    onboardingRepository: OnboardingRepository = mock(),
+    authRepository: AuthRepository = mock()
+): RootComponent =
     createComponentForTest { componentContext ->
         DefaultRootComponent(
             componentContext = componentContext,
             onboardingRepository = onboardingRepository,
+            authRepository = authRepository,
         )
     }

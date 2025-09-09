@@ -6,23 +6,36 @@ import com.arkivanov.decompose.router.slot.SlotNavigation
 import com.arkivanov.decompose.router.slot.activate
 import com.arkivanov.decompose.router.slot.childSlot
 import com.arkivanov.decompose.value.Value
+import com.arkivanov.essenty.lifecycle.coroutines.coroutineScope
+import com.example.project.auth.domain.AuthRepository
+import com.example.project.auth.presentation.component.AuthComponent
+import com.example.project.auth.presentation.component.DefaultAuthComponentFactory
+import com.example.project.common.util.DispatcherProvider
 import com.example.project.onboarding.domain.OnboardingRepository
 import com.example.project.onboarding.presentation.component.DefaultOnboardingComponent
 import com.example.project.onboarding.presentation.component.OnboardingComponent
+import com.example.project.root.DefaultRootComponent.Configuration.Auth
 import com.example.project.root.DefaultRootComponent.Configuration.Onboarding
 import com.example.project.root.DefaultRootComponent.Configuration.Tabs
 import com.example.project.root.RootComponent.Child
 import com.example.project.tabs.presentation.component.DefaultTabsComponent
 import com.example.project.tabs.presentation.component.TabsComponent
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 
-class DefaultRootComponent(
+internal class DefaultRootComponent(
     componentContext: ComponentContext,
     private val onboardingRepository: OnboardingRepository,
+    private val authRepository: AuthRepository,
+    private val dispatcher: DispatcherProvider,
 ) : RootComponent, ComponentContext by componentContext {
 
-    private val hasSeenOnboarding = runBlocking { onboardingRepository.hasSeenOnboarding() }
+//    private val hasSeenOnboarding = runBlocking {
+//        onboardingRepository.resetOnboardingStatus()
+//        onboardingRepository.hasSeenOnboarding()
+//    }
     private val navigation = SlotNavigation<Configuration>()
 
     override val slot: Value<ChildSlot<*, Child>> =
@@ -33,15 +46,50 @@ class DefaultRootComponent(
         )
 
     init {
-        navigation.activate(if (hasSeenOnboarding) Tabs else Onboarding)
+        // Start observing authentication state
+        coroutineScope(dispatcher.default).launch {
+            authRepository.isAuthenticated.collect { isAuthenticated ->
+                withContext(dispatcher.main) { navigateBasedOnAuthState(isAuthenticated) }
+            }
+        }
+
+        // Initial navigation based on current state
+        val isCurrentlyAuthenticated = runBlocking { authRepository.isUserAuthenticated() }
+        coroutineScope(dispatcher.main).launch { navigateBasedOnAuthState(isCurrentlyAuthenticated) }
     }
 
     override fun onNavigateToHome() {
-        navigation.activate(Tabs)
+        // When navigating to home, check current authentication and onboarding state
+        coroutineScope(dispatcher.default).launch {
+            val isAuthenticated = authRepository.isUserAuthenticated()
+            withContext(dispatcher.main) {
+                navigateBasedOnAuthState(isAuthenticated)
+            }
+        }
+    }
+
+    private suspend fun navigateBasedOnAuthState(isAuthenticated: Boolean) {
+        when {
+            !isAuthenticated -> {
+                // User is not logged in, navigate to Auth
+                navigation.activate(Auth)
+            }
+            onboardingRepository.hasSeenOnboarding() -> {
+                // User is authenticated and has seen onboarding, navigate to Tabs
+                navigation.activate(Tabs)
+            }
+            else -> {
+                // User is authenticated but hasn't seen onboarding, navigate to Onboarding
+                navigation.activate(Onboarding)
+            }
+        }
     }
 
     private fun createChild(configuration: Configuration, context: ComponentContext): Child =
         when (configuration) {
+            is Auth -> {
+                Child.Auth(authComponent(context))
+            }
             is Onboarding -> {
                 Child.Onboarding(onboardingComponent(context))
             }
@@ -49,6 +97,9 @@ class DefaultRootComponent(
                 Child.Tabs(tabsComponent(context))
             }
         }
+
+    private fun authComponent(componentContext: ComponentContext): AuthComponent =
+        DefaultAuthComponentFactory().create(componentContext)
 
     private fun onboardingComponent(componentContext: ComponentContext): OnboardingComponent =
         DefaultOnboardingComponent(
@@ -61,6 +112,8 @@ class DefaultRootComponent(
 
     @Serializable
     private sealed interface Configuration {
+
+        @Serializable data object Auth : Configuration
 
         @Serializable data object Onboarding : Configuration
 

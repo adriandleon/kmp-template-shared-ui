@@ -1,0 +1,56 @@
+package com.example.project.auth
+
+import com.example.project.BuildKonfig
+import com.example.project.auth.data.SupabaseAuthDataSource
+import com.example.project.auth.domain.AuthRepository
+import com.example.project.auth.presentation.component.AuthComponentFactory
+import com.example.project.auth.presentation.component.DefaultAuthComponentFactory
+import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.auth.Auth
+import io.github.jan.supabase.createSupabaseClient
+import io.github.jan.supabase.logging.LogLevel
+import io.github.jan.supabase.postgrest.Postgrest
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.module
+
+/**
+ * Authentication module for dependency injection.
+ *
+ * This module provides all authentication-related dependencies including:
+ * - Supabase client configuration
+ * - Authentication repository implementation
+ * - Data source implementation
+ */
+internal val authModule = module {
+    // Supabase client
+    singleOf(::supabaseClient)
+    
+    // Authentication repository
+    single<AuthRepository> { 
+        SupabaseAuthDataSource(get())
+    }
+    
+    // Authentication component factory
+    single<AuthComponentFactory> { 
+        DefaultAuthComponentFactory()
+    }
+}
+
+/**
+ * Creates and configures the Supabase client with authentication and database support.
+ *
+ * @return Configured SupabaseClient instance
+ */
+private fun supabaseClient(): SupabaseClient =
+    createSupabaseClient(
+        supabaseUrl = BuildKonfig.SUPABASE_URL,
+        supabaseKey = BuildKonfig.SUPABASE_KEY,
+    ) {
+        defaultLogLevel = if (BuildKonfig.DEBUG) LogLevel.DEBUG else LogLevel.NONE
+        install(Auth) {
+            // Configure Auth settings if needed
+        }
+        install(Postgrest) {
+            // Configure PostgREST settings if needed
+        }
+    }

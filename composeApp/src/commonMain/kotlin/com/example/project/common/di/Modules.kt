@@ -2,6 +2,7 @@ package com.example.project.common.di
 
 import com.example.project.about.aboutModule
 import com.example.project.analytics.analyticsModule
+import com.example.project.auth.authModule
 import com.example.project.contact.contactModule
 import com.example.project.features.featureFlagModule
 import com.example.project.home.homeModule
@@ -138,6 +139,7 @@ internal val sharedModules: List<Module> =
         analyticsModule, // Firebase Analytics, Crashlytics, Performance Monitoring
         featureFlagModule, // Feature flags, A/B testing, remote config
         loggerModule, // Cross-platform logging (Kermit)
+        authModule, // Authentication, login, signup, password reset
         onboardingModule, // User onboarding flow, first-time user experience
         tabsModule, // Tab navigation, bottom navigation bar
         homeModule, // Home screen, dashboard, navigation

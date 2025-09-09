@@ -218,7 +218,7 @@ buildkonfig {
         buildConfigField(
             type = STRING,
             name = "CONFIGCAT_KEY",
-            value = getSecret("CONFIGCAT_AND_TEST_KEY"),
+            value = getSecret("CONFIGCAT_TEST_KEY"),
             nullable = false,
             const = true,
         )
@@ -253,7 +253,7 @@ buildkonfig {
         buildConfigField(
             type = STRING,
             name = "CONFIGCAT_KEY",
-            value = getSecret("CONFIGCAT_AND_LIVE_KEY"),
+            value = getSecret("CONFIGCAT_LIVE_KEY"),
             nullable = false,
             const = true,
         )
@@ -273,7 +273,7 @@ buildkonfig {
             buildConfigField(
                 type = STRING,
                 name = "CONFIGCAT_KEY",
-                value = getSecret("CONFIGCAT_IOS_TEST_KEY"),
+                value = getSecret("CONFIGCAT_TEST_KEY"),
                 nullable = false,
                 const = true,
             )
@@ -291,7 +291,7 @@ buildkonfig {
             buildConfigField(
                 type = STRING,
                 name = "CONFIGCAT_KEY",
-                value = getSecret("CONFIGCAT_IOS_TEST_KEY"),
+                value = getSecret("CONFIGCAT_TEST_KEY"),
                 nullable = false,
                 const = true,
             )
@@ -312,7 +312,7 @@ buildkonfig {
             buildConfigField(
                 type = STRING,
                 name = "CONFIGCAT_KEY",
-                value = getSecret("CONFIGCAT_IOS_LIVE_KEY"),
+                value = getSecret("CONFIGCAT_LIVE_KEY"),
                 nullable = false,
                 const = true,
             )
@@ -330,7 +330,7 @@ buildkonfig {
             buildConfigField(
                 type = STRING,
                 name = "CONFIGCAT_KEY",
-                value = getSecret("CONFIGCAT_IOS_LIVE_KEY"),
+                value = getSecret("CONFIGCAT_LIVE_KEY"),
                 nullable = false,
                 const = true,
             )

@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
+import com.example.project.auth.presentation.view.AuthScreen
 import com.example.project.onboarding.presentation.view.OnboardingView
 import com.example.project.root.RootComponent.Child
 import com.example.project.tabs.presentation.view.TabsView
@@ -20,6 +21,9 @@ fun RootContent(component: RootComponent, modifier: Modifier = Modifier) {
 
             slot.child?.instance?.let { child ->
                 when (child) {
+                    is Child.Auth -> {
+                        AuthScreen(component = child.component, modifier = Modifier.fillMaxSize())
+                    }
                     is Child.Onboarding -> {
                         OnboardingView(
                             component = child.component,
