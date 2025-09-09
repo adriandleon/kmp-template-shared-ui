@@ -6,14 +6,14 @@ import com.arkivanov.decompose.router.slot.SlotNavigation
 import com.arkivanov.decompose.router.slot.activate
 import com.arkivanov.decompose.router.slot.childSlot
 import com.arkivanov.decompose.value.Value
-import com.example.project.home.presentation.component.DefaultHomeComponent
-import com.example.project.home.presentation.component.HomeComponent
 import com.example.project.onboarding.domain.OnboardingRepository
 import com.example.project.onboarding.presentation.component.DefaultOnboardingComponent
 import com.example.project.onboarding.presentation.component.OnboardingComponent
-import com.example.project.root.DefaultRootComponent.Configuration.Home
 import com.example.project.root.DefaultRootComponent.Configuration.Onboarding
+import com.example.project.root.DefaultRootComponent.Configuration.Tabs
 import com.example.project.root.RootComponent.Child
+import com.example.project.tabs.presentation.component.DefaultTabsComponent
+import com.example.project.tabs.presentation.component.TabsComponent
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
 
@@ -34,11 +34,11 @@ class DefaultRootComponent(
         )
 
     init {
-        navigation.activate(if (hasSeenOnboarding) Home else Onboarding)
+        navigation.activate(if (hasSeenOnboarding) Tabs else Onboarding)
     }
 
     override fun onNavigateToHome() {
-        navigation.activate(Home)
+        navigation.activate(Tabs)
     }
 
     private fun createChild(configuration: Configuration, context: ComponentContext): Child =
@@ -46,8 +46,8 @@ class DefaultRootComponent(
             is Onboarding -> {
                 Child.Onboarding(onboardingComponent(context))
             }
-            is Home -> {
-                Child.Home(homeComponent(context))
+            is Tabs -> {
+                Child.Tabs(tabsComponent(context))
             }
         }
 
@@ -57,14 +57,14 @@ class DefaultRootComponent(
             onNavigateToHome = ::onNavigateToHome,
         )
 
-    private fun homeComponent(componentContext: ComponentContext): HomeComponent =
-        DefaultHomeComponent(componentContext = componentContext)
+    private fun tabsComponent(componentContext: ComponentContext): TabsComponent =
+        DefaultTabsComponent(componentContext = componentContext)
 
     @Serializable
     private sealed interface Configuration {
 
         @Serializable data object Onboarding : Configuration
 
-        @Serializable data object Home : Configuration
+        @Serializable data object Tabs : Configuration
     }
 }

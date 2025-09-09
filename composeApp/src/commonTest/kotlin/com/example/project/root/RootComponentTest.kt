@@ -18,11 +18,11 @@ class RootComponentTest :
     FunSpec({
         val onboardingRepository = mock<OnboardingRepository>()
 
-        test("should create root component with home screen if user has seen onboarding") {
+        test("should create root component with tabs container if user has seen onboarding") {
             everySuspend { onboardingRepository.hasSeenOnboarding() } returns true
             val slot = createComponent(onboardingRepository).slot
 
-            slot.assertActiveSlotInstance<Child.Home>()
+            slot.assertActiveSlotInstance<Child.Tabs>()
         }
 
         test(
@@ -34,12 +34,12 @@ class RootComponentTest :
             slot.assertActiveSlotInstance<Child.Onboarding>()
         }
 
-        test("should navigate to home when onNavigateToHome is called") {
+        test("should navigate to tabs container when onNavigateToHome is called") {
             val component = createComponent(onboardingRepository)
 
             component.onNavigateToHome()
 
-            component.slot.assertActiveSlotInstance<Child.Home>()
+            component.slot.assertActiveSlotInstance<Child.Tabs>()
         }
     }),
     KoinTest {

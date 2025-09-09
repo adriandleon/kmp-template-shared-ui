@@ -9,7 +9,6 @@ internal class DefaultAboutComponent(
     componentContext: ComponentContext,
     private val logger: Logger,
     private val analytics: Analytics,
-    override val onBackClicked: () -> Unit,
 ) : AboutComponent, ComponentContext by componentContext {
 
     override val title: String

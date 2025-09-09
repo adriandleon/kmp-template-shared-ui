@@ -6,6 +6,5 @@ package com.example.project.about.presentation.component
  * @see AboutComponent
  */
 class PreviewAboutComponent : AboutComponent {
-    override val onBackClicked: () -> Unit = {}
     override val title: String = "About View"
 }

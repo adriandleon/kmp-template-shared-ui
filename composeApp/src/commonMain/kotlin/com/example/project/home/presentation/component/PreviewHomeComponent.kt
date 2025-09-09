@@ -8,6 +8,5 @@ import com.example.project.about.presentation.component.AboutComponent
  * @see HomeComponent
  */
 class PreviewHomeComponent : AboutComponent {
-    override val onBackClicked: () -> Unit = {}
     override val title: String = "Home View"
 }

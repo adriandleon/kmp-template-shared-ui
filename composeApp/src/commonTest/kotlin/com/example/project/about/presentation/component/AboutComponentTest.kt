@@ -7,7 +7,6 @@ import com.example.project.common.util.lastLogEntry
 import com.example.project.common.util.testLogger
 import dev.mokkery.MockMode
 import dev.mokkery.mock
-import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 
@@ -28,32 +27,17 @@ class AboutComponentTest :
             lastLogEntry.message shouldBe "Message from about screen"
         }
 
-        test("onBackClicked should be called when clicked") {
-            var clicked = false
-            val component = createComponent(onBackClicked = { clicked = true })
-
-            component.onBackClicked()
-
-            clicked shouldBe true
-        }
-
         context("PreviewAboutComponent") {
             val component = PreviewAboutComponent()
 
             test("title should be \"About View\"") { component.title shouldBe "About View" }
-
-            test("preview functions does not throw any exceptions") {
-                shouldNotThrowAny { component.onBackClicked() }
-            }
         }
     })
 
-private fun createComponent(onBackClicked: () -> Unit = {}): AboutComponent =
-    createComponentForTest { componentContext ->
-        DefaultAboutComponent(
-            componentContext = componentContext,
-            logger = testLogger,
-            analytics = mock(mode = MockMode.autoUnit),
-            onBackClicked = onBackClicked,
-        )
-    }
+private fun createComponent(): AboutComponent = createComponentForTest { componentContext ->
+    DefaultAboutComponent(
+        componentContext = componentContext,
+        logger = testLogger,
+        analytics = mock(mode = MockMode.autoUnit),
+    )
+}

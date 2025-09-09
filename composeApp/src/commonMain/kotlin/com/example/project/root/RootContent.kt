@@ -7,8 +7,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
-import com.example.project.home.presentation.view.HomeView
 import com.example.project.onboarding.presentation.view.OnboardingView
+import com.example.project.root.RootComponent.Child
+import com.example.project.tabs.presentation.view.TabsView
 
 /** Root content composable that displays the root component with navigation */
 @Composable
@@ -19,14 +20,14 @@ fun RootContent(component: RootComponent, modifier: Modifier = Modifier) {
 
             slot.child?.instance?.let { child ->
                 when (child) {
-                    is RootComponent.Child.Onboarding -> {
+                    is Child.Onboarding -> {
                         OnboardingView(
                             component = child.component,
                             modifier = Modifier.fillMaxSize(),
                         )
                     }
-                    is RootComponent.Child.Home -> {
-                        HomeView(component = child.component, modifier = Modifier.fillMaxSize())
+                    is Child.Tabs -> {
+                        TabsView(component = child.component, modifier = Modifier.fillMaxSize())
                     }
                 }
             }

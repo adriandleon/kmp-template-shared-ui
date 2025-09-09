@@ -9,7 +9,6 @@ internal class DefaultContactComponent(
     componentContext: ComponentContext,
     private val logger: Logger,
     private val analytics: Analytics,
-    override val onBackClicked: () -> Unit,
 ) : ContactComponent, ComponentContext by componentContext {
 
     override val title: String

@@ -4,7 +4,6 @@ import co.touchlab.kermit.ExperimentalKermitApi
 import com.example.project.common.di.testModule
 import com.example.project.common.util.createComponentForTest
 import com.example.project.common.util.lastLogEntry
-import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.core.extensions.Extension
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.koin.KoinExtension
@@ -30,10 +29,6 @@ class HomeComponentTest :
             val component = PreviewHomeComponent()
 
             test("title should be \"Home View\"") { component.title shouldBe "Home View" }
-
-            test("preview functions does not throw any exceptions") {
-                shouldNotThrowAny { component.onBackClicked() }
-            }
         }
     }),
     KoinTest {
