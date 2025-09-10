@@ -2,9 +2,8 @@ package com.example.project.auth.presentation.view
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import com.example.project.auth.domain.entity.SessionEvent
 import com.example.project.auth.domain.entity.UserSession
 import com.example.project.auth.presentation.component.SessionAwareComponent
@@ -13,8 +12,8 @@ import kotlinx.coroutines.flow.collectLatest
 /**
  * Composable that listens to session changes and handles navigation.
  *
- * This composable can be used in any view that needs to react to authentication
- * state changes, such as automatically navigating to login when session expires.
+ * This composable can be used in any view that needs to react to authentication state changes, such
+ * as automatically navigating to login when session expires.
  */
 @Composable
 fun SessionListener(
@@ -63,14 +62,11 @@ fun SessionListener(
 /**
  * Composable that provides session state to child composables.
  *
- * This composable can be used to wrap content that needs access to
- * authentication state without requiring a full component.
+ * This composable can be used to wrap content that needs access to authentication state without
+ * requiring a full component.
  */
 @Composable
-fun SessionProvider(
-    component: SessionAwareComponent,
-    content: @Composable (UserSession) -> Unit
-) {
+fun SessionProvider(component: SessionAwareComponent, content: @Composable (UserSession) -> Unit) {
     val currentSession by component.currentSession.collectAsState()
     content(currentSession)
 }

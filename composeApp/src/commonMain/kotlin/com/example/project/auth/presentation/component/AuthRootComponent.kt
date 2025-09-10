@@ -22,8 +22,9 @@ interface AuthRootComponent : ComponentContext {
     /** Child components that can be displayed */
     sealed class Child {
         /** Authentication guard that manages auth state */
-        data class AuthGuard(val component: com.example.project.auth.presentation.component.AuthGuard) :
-            Child()
+        data class AuthGuard(
+            val component: com.example.project.auth.presentation.component.AuthGuard
+        ) : Child()
 
         /** Other root-level content */
         data class OtherContent(val component: Any) : Child()

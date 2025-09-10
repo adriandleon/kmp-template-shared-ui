@@ -1,22 +1,16 @@
 package com.example.project.auth.domain
 
-import com.example.project.auth.domain.entity.AuthError
 import com.example.project.auth.domain.entity.SessionEvent
 import com.example.project.auth.domain.entity.User
 import com.example.project.auth.domain.entity.UserSession
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
 
 /**
  * Session manager interface for handling user authentication state.
  *
- * This interface provides a provider-agnostic way to manage user sessions,
- * making it easy to switch between different authentication providers.
+ * This interface provides a provider-agnostic way to manage user sessions, making it easy to switch
+ * between different authentication providers.
  */
 interface SessionManager {
     /** Current session state */
@@ -44,7 +38,11 @@ interface SessionManager {
     suspend fun signInWithPhone(phone: String, password: String): Result<Unit>
 
     /** Sign up with phone and password */
-    suspend fun signUpWithPhone(phone: String, password: String, displayName: String? = null): Result<Unit>
+    suspend fun signUpWithPhone(
+        phone: String,
+        password: String,
+        displayName: String? = null,
+    ): Result<Unit>
 
     /** Sign in with OTP */
     suspend fun signInWithOtp(identifier: String, otp: String): Result<Unit>

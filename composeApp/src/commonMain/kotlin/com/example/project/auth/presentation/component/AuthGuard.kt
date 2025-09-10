@@ -18,8 +18,8 @@ import kotlinx.serialization.Serializable
 /**
  * Authentication guard component that protects routes based on authentication state.
  *
- * This component automatically navigates to authentication flow when the user
- * is not authenticated and the protected content requires authentication.
+ * This component automatically navigates to authentication flow when the user is not authenticated
+ * and the protected content requires authentication.
  */
 interface AuthGuard : ComponentContext {
     /** Current slot state showing either protected content or auth flow */
@@ -38,8 +38,8 @@ interface AuthGuard : ComponentContext {
 /**
  * Default implementation of AuthGuard.
  *
- * This implementation automatically manages navigation between authentication
- * and protected content based on the current session state.
+ * This implementation automatically manages navigation between authentication and protected content
+ * based on the current session state.
  */
 internal class DefaultAuthGuard(
     componentContext: ComponentContext,
@@ -50,12 +50,13 @@ internal class DefaultAuthGuard(
 
     private val navigation = SlotNavigation<Configuration>()
 
-    override val slot: Value<ChildSlot<*, AuthGuard.Child>> = childSlot(
-        source = navigation,
-        serializer = Configuration.serializer(),
-        handleBackButton = true,
-        childFactory = ::createChild,
-    )
+    override val slot: Value<ChildSlot<*, AuthGuard.Child>> =
+        childSlot(
+            source = navigation,
+            serializer = Configuration.serializer(),
+            handleBackButton = true,
+            childFactory = ::createChild,
+        )
 
     private val scope = CoroutineScope(SupervisorJob())
 
@@ -79,17 +80,22 @@ internal class DefaultAuthGuard(
             .launchIn(scope)
     }
 
-    private fun createChild(configuration: Configuration, context: ComponentContext): AuthGuard.Child {
-        val authContext = DefaultAuthenticatedComponentContext(
-            componentContext = context,
-            sessionManager = sessionManager,
-            onRequireAuthentication = { navigation.activate(Configuration.Auth) },
-            onNavigateToHome = { navigation.activate(Configuration.Protected) }
-        )
+    private fun createChild(
+        configuration: Configuration,
+        context: ComponentContext,
+    ): AuthGuard.Child {
+        val authContext =
+            DefaultAuthenticatedComponentContext(
+                componentContext = context,
+                sessionManager = sessionManager,
+                onRequireAuthentication = { navigation.activate(Configuration.Auth) },
+                onNavigateToHome = { navigation.activate(Configuration.Protected) },
+            )
 
         return when (configuration) {
             is Configuration.Auth -> AuthGuard.Child.Auth(createAuthComponent(authContext))
-            is Configuration.Protected -> AuthGuard.Child.Protected(createProtectedComponent(authContext))
+            is Configuration.Protected ->
+                AuthGuard.Child.Protected(createProtectedComponent(authContext))
         }
     }
 
@@ -99,10 +105,8 @@ internal class DefaultAuthGuard(
 
     @Serializable
     private sealed interface Configuration {
-        @Serializable
-        data object Auth : Configuration
+        @Serializable data object Auth : Configuration
 
-        @Serializable
-        data object Protected : Configuration
+        @Serializable data object Protected : Configuration
     }
 }

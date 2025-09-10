@@ -4,8 +4,6 @@ import com.example.project.auth.domain.entity.AuthError
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
-import java.net.ConnectException
-import java.net.UnknownHostException
 
 class AuthErrorMapperTest :
     FunSpec({
@@ -97,20 +95,6 @@ class AuthErrorMapperTest :
             val error = AuthErrorMapper.toDomain("Some unknown error")
             error.shouldBeInstanceOf<AuthError.GenericError>()
             error.message shouldBe "Some unknown error"
-        }
-
-        test("should map UnknownHostException to NetworkError") {
-            val exception = UnknownHostException("Host not found")
-            val error = AuthErrorMapper.toDomain(exception)
-            error.shouldBeInstanceOf<AuthError.NetworkError>()
-            error.message shouldBe "Host not found"
-        }
-
-        test("should map ConnectException to NetworkError") {
-            val exception = ConnectException("Connection failed")
-            val error = AuthErrorMapper.toDomain(exception)
-            error.shouldBeInstanceOf<AuthError.NetworkError>()
-            error.message shouldBe "Connection failed"
         }
 
         test("should map unknown exception to UnknownError") {

@@ -1,28 +1,26 @@
 package com.example.project.auth.domain
 
-import kotlin.time.Clock
 import com.example.project.auth.domain.entity.AuthResult
 import com.example.project.auth.domain.entity.SessionEvent
 import com.example.project.auth.domain.entity.User
 import com.example.project.auth.domain.entity.UserSession
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.ExperimentalTime
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlin.time.Duration.Companion.hours
-import kotlin.time.ExperimentalTime
 
 /**
  * Default implementation of SessionManager using Supabase.
  *
- * This implementation provides a clean abstraction over Supabase authentication
- * while maintaining provider-agnostic interfaces.
+ * This implementation provides a clean abstraction over Supabase authentication while maintaining
+ * provider-agnostic interfaces.
  */
-internal class DefaultSessionManager(
-    private val authRepository: AuthRepository,
-) : SessionManager {
+internal class DefaultSessionManager(private val authRepository: AuthRepository) : SessionManager {
 
     private val _currentSession = MutableStateFlow<UserSession>(UserSession.Unauthenticated)
     override val currentSession: StateFlow<UserSession> = _currentSession.asStateFlow()
@@ -43,7 +41,11 @@ internal class DefaultSessionManager(
         return handleAuthResult(authRepository.signInWithEmail(email, password))
     }
 
-    override suspend fun signUp(email: String, password: String, displayName: String?): Result<Unit> {
+    override suspend fun signUp(
+        email: String,
+        password: String,
+        displayName: String?,
+    ): Result<Unit> {
         return handleAuthResult(authRepository.signUpWithEmail(email, password, displayName))
     }
 
@@ -51,25 +53,31 @@ internal class DefaultSessionManager(
         return handleAuthResult(authRepository.signInWithPhone(phone, password))
     }
 
-    override suspend fun signUpWithPhone(phone: String, password: String, displayName: String?): Result<Unit> {
+    override suspend fun signUpWithPhone(
+        phone: String,
+        password: String,
+        displayName: String?,
+    ): Result<Unit> {
         return handleAuthResult(authRepository.signUpWithPhone(phone, password, displayName))
     }
 
     override suspend fun signInWithOtp(identifier: String, otp: String): Result<Unit> {
-        val result = if (identifier.contains("@")) {
-            authRepository.signInWithEmailOtp(identifier, otp)
-        } else {
-            authRepository.signInWithPhoneOtp(identifier, otp)
-        }
+        val result =
+            if (identifier.contains("@")) {
+                authRepository.signInWithEmailOtp(identifier, otp)
+            } else {
+                authRepository.signInWithPhoneOtp(identifier, otp)
+            }
         return handleAuthResult(result)
     }
 
     override suspend fun sendOtp(identifier: String): Result<Unit> {
-        val result = if (identifier.contains("@")) {
-            authRepository.sendEmailOtp(identifier)
-        } else {
-            authRepository.sendPhoneOtp(identifier)
-        }
+        val result =
+            if (identifier.contains("@")) {
+                authRepository.sendEmailOtp(identifier)
+            } else {
+                authRepository.sendPhoneOtp(identifier)
+            }
         return handleAuthResult(result)
     }
 
@@ -87,15 +95,19 @@ internal class DefaultSessionManager(
     }
 
     override suspend fun updateProfile(displayName: String?, avatarUrl: String?): Result<Unit> {
-        val result = when {
-            displayName != null -> authRepository.updateDisplayName(displayName)
-            avatarUrl != null -> authRepository.updateAvatarUrl(avatarUrl)
-            else -> return Result.success(Unit)
-        }
+        val result =
+            when {
+                displayName != null -> authRepository.updateDisplayName(displayName)
+                avatarUrl != null -> authRepository.updateAvatarUrl(avatarUrl)
+                else -> return Result.success(Unit)
+            }
         return handleAuthResult(result)
     }
 
-    override suspend fun updatePassword(currentPassword: String, newPassword: String): Result<Unit> {
+    override suspend fun updatePassword(
+        currentPassword: String,
+        newPassword: String,
+    ): Result<Unit> {
         return handleAuthResult(authRepository.updatePassword(currentPassword, newPassword))
     }
 
@@ -107,19 +119,21 @@ internal class DefaultSessionManager(
         // Clear any error state if needed
     }
 
-    /**
-     * Handle authentication results and update session state.
-     */
+    /** Handle authentication results and update session state. */
     @OptIn(ExperimentalTime::class)
     private suspend fun handleAuthResult(result: AuthResult): Result<Unit> {
         return when (result) {
             is AuthResult.Success -> {
-                val session = UserSession.Authenticated(
-                    user = result.user,
-                    accessToken = "mock_token_${Clock.System.now().toEpochMilliseconds()}", // Replace with actual token
-                    refreshToken = "mock_refresh_token",
-                    expiresAt = Clock.System.now().plus(1.hours).toEpochMilliseconds() // 1 hour
-                )
+                val session =
+                    UserSession.Authenticated(
+                        user = result.user,
+                        accessToken =
+                            "mock_token_${Clock.System.now().toEpochMilliseconds()}", // Replace
+                                                                                      // with actual
+                                                                                      // token
+                        refreshToken = "mock_refresh_token",
+                        expiresAt = Clock.System.now().plus(1.hours).toEpochMilliseconds(), // 1 hour
+                    )
                 _currentSession.value = session
                 _sessionEvents.emit(SessionEvent.UserSignedIn(session))
                 Result.success(Unit)
