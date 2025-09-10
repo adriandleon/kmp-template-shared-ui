@@ -1,205 +1,235 @@
-# Authentication Module
+# Authentication Middleware for Decompose
 
-This module provides a comprehensive, provider-agnostic authentication system for the Compose Multiplatform application. It follows clean architecture principles and allows easy switching between different authentication providers.
+This authentication middleware provides a comprehensive solution for managing user sessions in Decompose applications, following the patterns discussed in the [Decompose repository discussions](https://github.com/arkivanov/Decompose/discussions/151).
 
-## Architecture
+## 🏗️ Architecture
 
-The authentication module is structured using clean architecture with three main layers:
+The middleware is built around the concept of **Custom ComponentContext** as suggested by [@arkivanov](https://github.com/arkivanov/Decompose/discussions/151#issuecomment-1192000000) and [@malliaridis](https://github.com/arkivanov/Decompose/discussions/151#issuecomment-1192000000), providing authentication context throughout the component tree.
 
-### Domain Layer
-- **Entities**: `User`, `AuthResult`, `AuthError`
-- **Repository Interface**: `AuthRepository`
-- **Use Cases**: Business logic for authentication operations
+### Key Components
 
-### Data Layer
-- **Data Source**: `SupabaseAuthDataSource` (Supabase implementation)
-- **Mappers**: Convert between provider-specific and domain models
-- **Repository Implementation**: Implements the domain repository interface
+1. **SessionManager** - Provider-agnostic session management
+2. **AuthenticatedComponentContext** - Custom context with auth capabilities
+3. **AuthGuard** - Route protection based on authentication state
+4. **SessionAwareComponent** - Base interface for auth-aware components
+5. **SessionListener** - Compose utilities for session state observation
 
-### Presentation Layer
-- **Store**: `AuthStore` (MVI pattern)
-- **Component**: `AuthComponent` (Decompose integration)
-- **View**: `AuthScreen` (Compose UI)
+## 🚀 Quick Start
 
-## Features
-
-### Authentication Methods
-- **Email/Password**: Sign up and sign in with email and password
-- **Phone/Password**: Sign up and sign in with phone number and password
-- **OTP Authentication**: Sign in with one-time passwords via email or SMS
-- **Password Reset**: Reset password via email
-- **Account Management**: Update profile, change password, delete account
-
-### Provider Agnostic
-The system is designed to be provider-agnostic, allowing easy switching between:
-- Supabase (current implementation)
-- Firebase Authentication
-- Custom authentication providers
-
-## Usage
-
-### Basic Setup
-
-1. **Configure Supabase**: Set up your Supabase project and add credentials to `BuildKonfig`
-2. **Inject Dependencies**: The `AuthModule` is already included in the main DI configuration
-3. **Create Component**: Use `AuthComponentFactory` to create authentication components
-
-### Example Usage
+### 1. Set up SessionManager
 
 ```kotlin
-// Create authentication component
-val authComponent = authComponentFactory.create(componentContext)
+// Create session manager with your auth repository
+val sessionManager = DefaultSessionManager(authRepository)
 
-// Sign up with email
-authComponent.signUpWithEmail("user@example.com", "password123", "John Doe")
+// Or use dependency injection
+val sessionManager: SessionManager by inject()
+```
 
-// Sign in with email
-authComponent.signInWithEmail("user@example.com", "password123")
+### 2. Create AuthenticatedComponentContext
 
-// Listen to authentication state
-authComponent.state.collect { state ->
-    when {
-        state.isAuthenticated -> {
-            // User is authenticated
-            val user = state.user
+```kotlin
+val authContext = DefaultAuthenticatedComponentContext(
+    componentContext = componentContext,
+    sessionManager = sessionManager,
+    onRequireAuthentication = { /* Navigate to auth */ },
+    onNavigateToHome = { /* Navigate to home */ }
+)
+```
+
+### 3. Use AuthGuard for Route Protection
+
+```kotlin
+val authGuard = DefaultAuthGuard(
+    componentContext = componentContext,
+    sessionManager = sessionManager,
+    createAuthComponent = { authContext -> /* Create auth component */ },
+    createProtectedComponent = { authContext -> /* Create protected component */ }
+)
+```
+
+### 4. Use SessionAwareComponent in Your Components
+
+```kotlin
+class MyFeatureComponent(
+    componentContext: ComponentContext,
+    private val authContext: AuthenticatedComponentContext,
+) : SessionAwareComponent, ComponentContext by DefaultSessionAwareComponent(componentContext, authContext) {
+    
+    // Your component logic here
+    // Access auth state via authContext.currentSession, etc.
+}
+```
+
+### 5. Use SessionListener in Compose Views
+
+```kotlin
+@Composable
+fun MyView(component: SessionAwareComponent) {
+    SessionListener(
+        component = component,
+        onSessionExpired = { /* Handle session expiry */ },
+        onUserSignedIn = { session -> /* Handle sign in */ },
+        onUserSignedOut = { /* Handle sign out */ }
+    ) {
+        // Your UI content
+    }
+}
+```
+
+## 📋 Features
+
+### ✅ Provider Agnostic
+- Works with any authentication provider (Supabase, Firebase, custom)
+- Clean abstraction over provider-specific implementations
+
+### ✅ Automatic Route Protection
+- AuthGuard automatically navigates between auth and protected content
+- No need to manually check authentication state in every component
+
+### ✅ Session State Management
+- Centralized session state management
+- Automatic session refresh handling
+- Session expiry detection
+
+### ✅ Compose Integration
+- Easy-to-use Compose utilities
+- Reactive session state observation
+- Automatic UI updates on session changes
+
+### ✅ Type Safety
+- Strongly typed session states and events
+- Compile-time safety for authentication operations
+
+## 🔧 Configuration
+
+### Session States
+
+```kotlin
+sealed interface UserSession {
+    object Unauthenticated : UserSession
+    data class Authenticated(
+        val user: User,
+        val accessToken: String,
+        val refreshToken: String? = null,
+        val expiresAt: Long? = null
+    ) : UserSession
+    object Refreshing : UserSession
+    object Expired : UserSession
+}
+```
+
+### Session Events
+
+```kotlin
+sealed interface SessionEvent {
+    data class UserSignedIn(val session: UserSession.Authenticated) : SessionEvent
+    object UserSignedOut : SessionEvent
+    data class SessionRefreshed(val session: UserSession.Authenticated) : SessionEvent
+    object SessionExpired : SessionEvent
+    data class AuthenticationFailed(val error: AuthError) : SessionEvent
+}
+```
+
+## 🎯 Usage Examples
+
+### Basic Authentication Flow
+
+```kotlin
+// In your root component
+class RootComponent(
+    componentContext: ComponentContext,
+    sessionManager: SessionManager,
+) : ComponentContext by componentContext {
+    
+    private val authGuard = DefaultAuthGuard(
+        componentContext = componentContext,
+        sessionManager = sessionManager,
+        createAuthComponent = { authContext -> 
+            SignInComponent(authContext) 
+        },
+        createProtectedComponent = { authContext -> 
+            MainAppComponent(authContext) 
         }
-        state.isLoading -> {
-            // Authentication operation in progress
+    )
+}
+```
+
+### Protected Component
+
+```kotlin
+class ProfileComponent(
+    componentContext: ComponentContext,
+    private val authContext: AuthenticatedComponentContext,
+) : SessionAwareComponent, ComponentContext by DefaultSessionAwareComponent(componentContext, authContext) {
+    
+    fun updateProfile() {
+        if (!isAuthenticated) {
+            requireAuthentication()
+            return
         }
-        state.error != null -> {
-            // Handle authentication error
+        
+        // Update profile logic
+        authContext.sessionManager.updateProfile(displayName = "New Name")
+    }
+}
+```
+
+### Compose View with Session Awareness
+
+```kotlin
+@Composable
+fun ProfileView(component: SessionAwareComponent) {
+    SessionProvider(component) { session ->
+        when (session) {
+            is UserSession.Authenticated -> {
+                ProfileContent(user = session.user)
+            }
+            is UserSession.Unauthenticated -> {
+                SignInPrompt()
+            }
+            // Handle other states...
         }
     }
 }
 ```
 
-### UI Integration
+## 🔒 Security Considerations
+
+1. **Token Management**: Access tokens are managed securely by the SessionManager
+2. **Session Refresh**: Automatic session refresh prevents token expiry issues
+3. **Route Protection**: AuthGuard ensures protected routes are only accessible when authenticated
+4. **Error Handling**: Comprehensive error handling for authentication failures
+
+## 🧪 Testing
+
+The middleware is designed to be easily testable:
 
 ```kotlin
-@Composable
-fun MyAuthScreen(authComponent: AuthComponent) {
-    val state by authComponent.state.collectAsState()
-    
-    AuthScreen(
-        authComponent = authComponent,
-        modifier = Modifier.fillMaxSize()
+// Mock session manager for testing
+val mockSessionManager = object : SessionManager {
+    override val currentSession = MutableStateFlow(UserSession.Unauthenticated)
+    // ... implement other methods
+}
+
+// Test your components with mock session manager
+val testComponent = MyFeatureComponent(
+    componentContext = testComponentContext,
+    authContext = DefaultAuthenticatedComponentContext(
+        componentContext = testComponentContext,
+        sessionManager = mockSessionManager,
+        onRequireAuthentication = {},
+        onNavigateToHome = {}
     )
-}
+)
 ```
 
-## Error Handling
+## 📚 References
 
-The system provides comprehensive error handling with specific error types:
+- [Decompose Authentication Discussion #151](https://github.com/arkivanov/Decompose/discussions/151)
+- [Decompose Custom ComponentContext Documentation](https://arkivanov.github.io/Decompose/component/custom-component-context/)
+- [Supabase Kotlin Documentation](https://supabase.com/docs/reference/kotlin)
 
-- `NetworkError`: Network connectivity issues
-- `InvalidCredentials`: Wrong email/password
-- `UserNotFound`: User doesn't exist
-- `EmailAlreadyExists`: Email already registered
-- `PhoneAlreadyExists`: Phone already registered
-- `EmailNotVerified`: Email needs verification
-- `PhoneNotVerified`: Phone needs verification
-- `WeakPassword`: Password doesn't meet requirements
-- `InvalidEmail`: Invalid email format
-- `InvalidPhone`: Invalid phone format
-- `InvalidOtp`: Wrong OTP code
-- `OtpExpired`: OTP has expired
-- `TooManyAttempts`: Rate limiting
-- `UserDisabled`: Account is disabled
-- `GenericError`: General error
-- `UnknownError`: Unexpected error
+## 🤝 Contributing
 
-## Testing
-
-The module includes comprehensive unit tests for:
-- Domain entities
-- Data mappers
-- Error handling
-- Business logic
-
-Run tests with:
-```bash
-./gradlew :composeApp:testDebugUnitTest
-```
-
-## Future Enhancements
-
-### Planned Features
-- **Social Authentication**: Google, Apple, Facebook login
-- **Multi-Factor Authentication**: TOTP, SMS verification
-- **Biometric Authentication**: Fingerprint, face recognition
-- **Session Management**: Token refresh, session persistence
-- **Offline Support**: Local authentication state management
-
-### Provider Migration
-To switch to a different authentication provider:
-
-1. **Create New Data Source**: Implement `AuthRepository` interface
-2. **Update Mappers**: Create provider-specific mappers
-3. **Update DI**: Replace Supabase implementation in `AuthModule`
-4. **Test**: Ensure all functionality works with new provider
-
-Example for Firebase:
-```kotlin
-class FirebaseAuthDataSource(
-    private val firebaseAuth: FirebaseAuth
-) : AuthRepository {
-    // Implement all AuthRepository methods
-}
-```
-
-## Dependencies
-
-- **Supabase**: Authentication and database
-- **Koin**: Dependency injection
-- **Decompose**: Navigation and component lifecycle
-- **MVIKotlin**: State management
-- **Kotlinx Coroutines**: Asynchronous operations
-- **Compose**: UI framework
-
-## Configuration
-
-### Supabase Setup
-1. Create a Supabase project
-2. Get your project URL and API key
-3. Add them to `local.properties`:
-   ```
-   SUPABASE_URL_DEV_AND=your_supabase_url
-   SUPABASE_KEY_DEV=your_supabase_key
-   ```
-
-### Environment Variables
-The system supports different configurations for development and production:
-- Development: Uses dev Supabase project
-- Production: Uses production Supabase project
-- iOS: Separate configuration for iOS targets
-
-## Security Considerations
-
-- **API Keys**: Never commit API keys to version control
-- **Password Requirements**: Enforce strong password policies
-- **Rate Limiting**: Implement rate limiting for authentication attempts
-- **Session Management**: Proper session token handling
-- **Data Validation**: Validate all user inputs
-- **Error Messages**: Don't expose sensitive information in error messages
-
-## Troubleshooting
-
-### Common Issues
-
-1. **Network Errors**: Check internet connectivity and Supabase service status
-2. **Invalid Credentials**: Verify email/password combination
-3. **Email Not Verified**: Check email for verification link
-4. **Rate Limiting**: Wait before retrying authentication
-5. **Configuration**: Verify Supabase URL and API key
-
-### Debug Mode
-Enable debug logging by setting `BuildKonfig.DEBUG = true` in development builds.
-
-## Contributing
-
-When adding new authentication features:
-1. Follow clean architecture principles
-2. Add comprehensive tests
-3. Update documentation
-4. Consider provider compatibility
-5. Handle errors gracefully
+This middleware follows the patterns established in the Decompose community discussions and can be extended to support additional authentication providers or features as needed.

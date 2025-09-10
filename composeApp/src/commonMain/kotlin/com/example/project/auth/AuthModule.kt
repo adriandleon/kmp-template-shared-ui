@@ -5,6 +5,8 @@ import com.arkivanov.mvikotlin.main.store.DefaultStoreFactory
 import com.example.project.BuildKonfig
 import com.example.project.auth.data.SupabaseAuthDataSource
 import com.example.project.auth.domain.AuthRepository
+import com.example.project.auth.domain.DefaultSessionManager
+import com.example.project.auth.domain.SessionManager
 import com.example.project.auth.presentation.component.AuthComponentFactory
 import com.example.project.auth.presentation.component.DefaultAuthComponentFactory
 import com.example.project.auth.presentation.store.AuthStore
@@ -14,6 +16,7 @@ import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.logging.LogLevel
 import io.github.jan.supabase.postgrest.Postgrest
+import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
@@ -43,6 +46,12 @@ internal val authModule = module {
 
     // Authentication component factory
     single<AuthComponentFactory> { DefaultAuthComponentFactory() }
+
+    // Session Manager
+    singleOf(::DefaultSessionManager) { bind<SessionManager>() }
+
+    // Auth Repository (assuming it exists)
+    // singleOf(::DefaultAuthRepository) { bind<AuthRepository>() }
 }
 
 /**
