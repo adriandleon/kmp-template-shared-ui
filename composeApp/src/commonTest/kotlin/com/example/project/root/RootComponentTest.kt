@@ -2,7 +2,7 @@ package com.example.project.root
 
 import com.example.project.auth.domain.AuthRepository
 import com.example.project.common.di.testModule
-import com.example.project.common.util.assertActiveInstance
+import com.example.project.common.util.DispatcherProvider
 import com.example.project.common.util.assertActiveSlotInstance
 import com.example.project.common.util.createComponentForTest
 import com.example.project.onboarding.domain.OnboardingRepository
@@ -13,6 +13,7 @@ import dev.mokkery.mock
 import io.kotest.core.extensions.Extension
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.koin.KoinExtension
+import kotlinx.coroutines.Dispatchers
 import org.koin.test.KoinTest
 
 class RootComponentTest :
@@ -56,12 +57,16 @@ class RootComponentTest :
 
 private fun createComponent(
     onboardingRepository: OnboardingRepository = mock(),
-    authRepository: AuthRepository = mock()
-): RootComponent =
-    createComponentForTest { componentContext ->
-        DefaultRootComponent(
-            componentContext = componentContext,
-            onboardingRepository = onboardingRepository,
-            authRepository = authRepository,
-        )
-    }
+    authRepository: AuthRepository = mock(),
+): RootComponent = createComponentForTest { componentContext ->
+    DefaultRootComponent(
+        componentContext = componentContext,
+        onboardingRepository = onboardingRepository,
+        authRepository = authRepository,
+        dispatcher =
+            object : DispatcherProvider {
+                override val main = Dispatchers.Main
+                override val default = Dispatchers.Default
+            },
+    )
+}

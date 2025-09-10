@@ -3,8 +3,8 @@ package com.example.project.auth.domain.entity
 /**
  * Represents an authenticated user in the domain layer.
  *
- * This entity is provider-agnostic and contains only the essential user information
- * needed by the application. It abstracts away provider-specific details.
+ * This entity is provider-agnostic and contains only the essential user information needed by the
+ * application. It abstracts away provider-specific details.
  *
  * @property id Unique identifier for the user
  * @property email User's email address

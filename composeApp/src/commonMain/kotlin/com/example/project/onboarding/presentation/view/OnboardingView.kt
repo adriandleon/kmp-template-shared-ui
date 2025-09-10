@@ -35,18 +35,12 @@ import com.example.project.onboarding.presentation.component.OnboardingComponent
 fun OnboardingView(component: OnboardingComponent, modifier: Modifier = Modifier) {
     val state by component.state.subscribeAsState()
 
-    Surface(
-        modifier = modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
-    ) {
+    Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         if (state.isLoading) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(
                     modifier = Modifier.size(48.dp),
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.primary,
                 )
             }
         } else {
@@ -57,7 +51,7 @@ fun OnboardingView(component: OnboardingComponent, modifier: Modifier = Modifier
                 onNext = { component.nextSlide() },
                 onPrevious = { component.previousSlide() },
                 onSkip = { component.skipOnboarding() },
-                onComplete = { component.completeOnboarding() }
+                onComplete = { component.completeOnboarding() },
             )
         }
     }
@@ -73,14 +67,12 @@ private fun OnboardingPager(
     onPrevious: () -> Unit,
     onSkip: () -> Unit,
     onComplete: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val pagerState = rememberPagerState(pageCount = { totalSlides })
 
     // Sync pager state with component state
-    LaunchedEffect(currentSlide) {
-        pagerState.animateScrollToPage(currentSlide)
-    }
+    LaunchedEffect(currentSlide) { pagerState.animateScrollToPage(currentSlide) }
 
     // Sync component state with pager state
     LaunchedEffect(pagerState.currentPage) {
@@ -93,28 +85,16 @@ private fun OnboardingPager(
         }
     }
 
-    Column(
-        modifier = modifier.fillMaxSize().systemBarsPadding()
-    ) {
+    Column(modifier = modifier.fillMaxSize().systemBarsPadding()) {
         // Top bar with skip button
-        TopBar(
-            onSkip = onSkip,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        )
+        TopBar(onSkip = onSkip, modifier = Modifier.fillMaxWidth().padding(16.dp))
 
         // Horizontal pager content
-        HorizontalPager(
-            state = pagerState,
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-        ) { page ->
+        HorizontalPager(state = pagerState, modifier = Modifier.fillMaxWidth().weight(1f)) { page ->
             if (slides.isNotEmpty()) {
                 OnboardingPage(
                     slide = slides[page],
-                    modifier = Modifier.padding(horizontal = 32.dp)
+                    modifier = Modifier.padding(horizontal = 32.dp),
                 )
             }
         }
@@ -122,10 +102,7 @@ private fun OnboardingPager(
         // Page indicator - positioned outside pager content
         PageIndicator(
             pagerState = pagerState,
-            modifier = Modifier
-                .wrapContentHeight()
-                .fillMaxWidth()
-                .padding(bottom = 16.dp)
+            modifier = Modifier.wrapContentHeight().fillMaxWidth().padding(bottom = 16.dp),
         )
 
         // Bottom navigation
@@ -135,36 +112,23 @@ private fun OnboardingPager(
             onNext = onNext,
             onPrevious = onPrevious,
             onComplete = onComplete,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(32.dp)
+            modifier = Modifier.fillMaxWidth().padding(32.dp),
         )
     }
 }
 
 @Composable
-private fun PageIndicator(
-    pagerState: PagerState,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.Center
-    ) {
+private fun PageIndicator(pagerState: PagerState, modifier: Modifier = Modifier) {
+    Row(modifier = modifier, horizontalArrangement = Arrangement.Center) {
         repeat(pagerState.pageCount) { iteration ->
-            val color = if (pagerState.currentPage == iteration) {
-                MaterialTheme.colorScheme.primary
-            } else {
-                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
-            }
+            val color =
+                if (pagerState.currentPage == iteration) {
+                    MaterialTheme.colorScheme.primary
+                } else {
+                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
+                }
 
-            Box(
-                modifier = Modifier
-                    .padding(2.dp)
-                    .clip(CircleShape)
-                    .background(color)
-                    .size(16.dp)
-            )
+            Box(modifier = Modifier.padding(2.dp).clip(CircleShape).background(color).size(16.dp))
         }
     }
 }

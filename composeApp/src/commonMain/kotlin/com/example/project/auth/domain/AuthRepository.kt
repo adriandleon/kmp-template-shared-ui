@@ -7,20 +7,19 @@ import kotlinx.coroutines.flow.Flow
 /**
  * Repository interface for authentication operations.
  *
- * This interface defines all authentication-related operations in a provider-agnostic way,
- * allowing the application to easily switch between different authentication providers
- * (Supabase, Firebase, etc.) without changing the business logic.
+ * This interface defines all authentication-related operations in a provider-agnostic way, allowing
+ * the application to easily switch between different authentication providers (Supabase, Firebase,
+ * etc.) without changing the business logic.
  */
 interface AuthRepository {
     /**
-     * Current authentication state as a Flow.
-     * Emits the current user if authenticated, null if not authenticated.
+     * Current authentication state as a Flow. Emits the current user if authenticated, null if not
+     * authenticated.
      */
     val currentUser: Flow<User?>
 
     /**
-     * Current authentication session status.
-     * Emits true if user is authenticated, false otherwise.
+     * Current authentication session status. Emits true if user is authenticated, false otherwise.
      */
     val isAuthenticated: Flow<Boolean>
 
@@ -178,8 +177,7 @@ interface AuthRepository {
     suspend fun refreshSession(): AuthResult
 
     /**
-     * Get the current user synchronously.
-     * Returns null if no user is authenticated.
+     * Get the current user synchronously. Returns null if no user is authenticated.
      *
      * @return Current user or null
      */

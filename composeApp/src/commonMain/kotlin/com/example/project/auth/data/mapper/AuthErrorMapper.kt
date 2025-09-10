@@ -1,13 +1,13 @@
 package com.example.project.auth.data.mapper
 
 import com.example.project.auth.domain.entity.AuthError
-// Removed unused imports
+import dev.gitlive.firebase.FirebaseNetworkException
 
 /**
  * Mapper for converting Supabase authentication errors to domain AuthError entities.
  *
- * This mapper handles the conversion between provider-specific error messages and
- * the domain layer's AuthError sealed interface, providing consistent error handling.
+ * This mapper handles the conversion between provider-specific error messages and the domain
+ * layer's AuthError sealed interface, providing consistent error handling.
  */
 object AuthErrorMapper {
     /**
@@ -130,10 +130,8 @@ object AuthErrorMapper {
      */
     fun toDomain(throwable: Throwable): AuthError {
         return when (throwable) {
-            is java.net.UnknownHostException,
-            is java.net.ConnectException,
-            is java.net.SocketTimeoutException,
-            is java.io.IOException -> {
+            // TODO: This is not firebase
+            is FirebaseNetworkException -> {
                 AuthError.NetworkError(throwable.message ?: "Network error occurred")
             }
             else -> {

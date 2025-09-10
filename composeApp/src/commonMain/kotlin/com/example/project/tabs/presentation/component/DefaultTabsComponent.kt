@@ -13,7 +13,6 @@ import com.example.project.contact.presentation.component.ContactComponent
 import com.example.project.contact.presentation.component.DefaultContactComponent
 import com.example.project.home.presentation.component.DefaultHomeComponent
 import com.example.project.home.presentation.component.HomeComponent
-import com.example.project.tabs.presentation.component.TabsComponent
 import kotlinx.serialization.Serializable
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
@@ -29,11 +28,8 @@ internal class DefaultTabsComponent(componentContext: ComponentContext) :
             serializer = Configuration.serializer(),
             initialPages = {
                 Pages(
-                    items = listOf(
-                        Configuration.Home,
-                        Configuration.About,
-                        Configuration.Contact
-                    ), selectedIndex = 0
+                    items = listOf(Configuration.Home, Configuration.About, Configuration.Contact),
+                    selectedIndex = 0,
                 )
             },
             childFactory = ::createChild,
@@ -55,7 +51,10 @@ internal class DefaultTabsComponent(componentContext: ComponentContext) :
         navigation.select(2)
     }
 
-    private fun createChild(configuration: Configuration, context: ComponentContext): TabsComponent.Child =
+    private fun createChild(
+        configuration: Configuration,
+        context: ComponentContext,
+    ): TabsComponent.Child =
         when (configuration) {
             is Configuration.Home -> {
                 TabsComponent.Child.Home(homeComponent(context))
@@ -87,13 +86,10 @@ internal class DefaultTabsComponent(componentContext: ComponentContext) :
 
     @Serializable
     private sealed interface Configuration {
-        @Serializable
-        data object Home : Configuration
+        @Serializable data object Home : Configuration
 
-        @Serializable
-        data object About : Configuration
+        @Serializable data object About : Configuration
 
-        @Serializable
-        data object Contact : Configuration
+        @Serializable data object Contact : Configuration
     }
 }

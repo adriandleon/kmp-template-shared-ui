@@ -5,8 +5,8 @@ import com.example.project.auth.domain.entity.User
 /**
  * Mapper for converting between Supabase UserInfo and domain User entity.
  *
- * This mapper handles the conversion between provider-specific user data and
- * the domain layer's User entity, ensuring clean separation of concerns.
+ * This mapper handles the conversion between provider-specific user data and the domain layer's
+ * User entity, ensuring clean separation of concerns.
  */
 object UserMapper {
     /**
@@ -32,8 +32,8 @@ object UserMapper {
     }
 
     /**
-     * Converts domain User entity to Supabase UserInfo.
-     * This is primarily used for testing or when we need to create UserInfo from domain data.
+     * Converts domain User entity to Supabase UserInfo. This is primarily used for testing or when
+     * we need to create UserInfo from domain data.
      *
      * @param user Domain User entity
      * @return Supabase UserInfo

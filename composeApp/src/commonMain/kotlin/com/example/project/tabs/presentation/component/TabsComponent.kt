@@ -10,8 +10,8 @@ import com.example.project.home.presentation.component.HomeComponent
 /**
  * Component for bottom tab navigation container.
  *
- * This component manages three main pages: Home, About, and Contact.
- * It uses PagesNavigation for tab-based navigation.
+ * This component manages three main pages: Home, About, and Contact. It uses PagesNavigation for
+ * tab-based navigation.
  *
  * @see DefaultTabsComponent
  */

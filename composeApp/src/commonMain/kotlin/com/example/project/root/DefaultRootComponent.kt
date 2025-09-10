@@ -32,10 +32,10 @@ internal class DefaultRootComponent(
     private val dispatcher: DispatcherProvider,
 ) : RootComponent, ComponentContext by componentContext {
 
-//    private val hasSeenOnboarding = runBlocking {
-//        onboardingRepository.resetOnboardingStatus()
-//        onboardingRepository.hasSeenOnboarding()
-//    }
+    //    private val hasSeenOnboarding = runBlocking {
+    //        onboardingRepository.resetOnboardingStatus()
+    //        onboardingRepository.hasSeenOnboarding()
+    //    }
     private val navigation = SlotNavigation<Configuration>()
 
     override val slot: Value<ChildSlot<*, Child>> =
@@ -55,16 +55,16 @@ internal class DefaultRootComponent(
 
         // Initial navigation based on current state
         val isCurrentlyAuthenticated = runBlocking { authRepository.isUserAuthenticated() }
-        coroutineScope(dispatcher.main).launch { navigateBasedOnAuthState(isCurrentlyAuthenticated) }
+        coroutineScope(dispatcher.main).launch {
+            navigateBasedOnAuthState(isCurrentlyAuthenticated)
+        }
     }
 
     override fun onNavigateToHome() {
         // When navigating to home, check current authentication and onboarding state
         coroutineScope(dispatcher.default).launch {
             val isAuthenticated = authRepository.isUserAuthenticated()
-            withContext(dispatcher.main) {
-                navigateBasedOnAuthState(isAuthenticated)
-            }
+            withContext(dispatcher.main) { navigateBasedOnAuthState(isAuthenticated) }
         }
     }
 

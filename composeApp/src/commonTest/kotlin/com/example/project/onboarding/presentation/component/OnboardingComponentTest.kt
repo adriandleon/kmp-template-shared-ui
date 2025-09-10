@@ -15,9 +15,7 @@ class OnboardingComponentTest :
     FunSpec({
         beforeSpec { isAssertOnMainThreadEnabled = false }
 
-        afterSpec {
-            isAssertOnMainThreadEnabled = true
-        }
+        afterSpec { isAssertOnMainThreadEnabled = true }
 
         test("should create component successfully") {
             val component = createComponent()

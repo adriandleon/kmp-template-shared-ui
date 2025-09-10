@@ -14,8 +14,6 @@ interface OnboardingRepository {
     /** Reset onboarding status (for testing purposes) */
     suspend fun resetOnboardingStatus()
 
-    /**
-     * Get all slides for the onboarding
-     */
+    /** Get all slides for the onboarding */
     suspend fun allSlides(): List<SlideEntity>
 }

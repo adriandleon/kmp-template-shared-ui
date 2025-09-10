@@ -1,10 +1,14 @@
 package com.example.project.auth
 
+import com.arkivanov.mvikotlin.core.store.StoreFactory
+import com.arkivanov.mvikotlin.main.store.DefaultStoreFactory
 import com.example.project.BuildKonfig
 import com.example.project.auth.data.SupabaseAuthDataSource
 import com.example.project.auth.domain.AuthRepository
 import com.example.project.auth.presentation.component.AuthComponentFactory
 import com.example.project.auth.presentation.component.DefaultAuthComponentFactory
+import com.example.project.auth.presentation.store.AuthStore
+import com.example.project.auth.presentation.store.AuthStoreFactory
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.createSupabaseClient
@@ -24,16 +28,21 @@ import org.koin.dsl.module
 internal val authModule = module {
     // Supabase client
     singleOf(::supabaseClient)
-    
+
+    // Store factory for MVIKotlin
+    single<StoreFactory> { DefaultStoreFactory() }
+
     // Authentication repository
-    single<AuthRepository> { 
-        SupabaseAuthDataSource(get())
-    }
-    
+    single<AuthRepository> { SupabaseAuthDataSource(get()) }
+
+    // Authentication store factory
+    single<AuthStoreFactory> { AuthStoreFactory(get(), get(), get()) }
+
+    // Authentication store
+    single<AuthStore> { get<AuthStoreFactory>().create() }
+
     // Authentication component factory
-    single<AuthComponentFactory> { 
-        DefaultAuthComponentFactory()
-    }
+    single<AuthComponentFactory> { DefaultAuthComponentFactory() }
 }
 
 /**
@@ -47,10 +56,6 @@ private fun supabaseClient(): SupabaseClient =
         supabaseKey = BuildKonfig.SUPABASE_KEY,
     ) {
         defaultLogLevel = if (BuildKonfig.DEBUG) LogLevel.DEBUG else LogLevel.NONE
-        install(Auth) {
-            // Configure Auth settings if needed
-        }
-        install(Postgrest) {
-            // Configure PostgREST settings if needed
-        }
+        install(Auth)
+        install(Postgrest)
     }

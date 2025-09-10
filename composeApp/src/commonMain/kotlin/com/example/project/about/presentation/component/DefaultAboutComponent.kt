@@ -16,7 +16,7 @@ internal class DefaultAboutComponent(
             analytics.track(
                 CommonAnalyticsEvent.ScreenView(
                     screenName = SCREEN_TITLE,
-                    screenClass = "DefaultAboutComponent"
+                    screenClass = "DefaultAboutComponent",
                 )
             )
             logger.debug { "Message from about screen" }

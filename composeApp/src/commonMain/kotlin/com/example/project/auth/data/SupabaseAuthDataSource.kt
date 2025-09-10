@@ -9,32 +9,28 @@ import com.example.project.auth.domain.entity.User
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.providers.builtin.Email
-import io.github.jan.supabase.auth.providers.builtin.Phone
 import io.github.jan.supabase.auth.providers.builtin.OTP
-import io.github.jan.supabase.auth.user.UserInfo
+import io.github.jan.supabase.auth.providers.builtin.Phone
 import io.github.jan.supabase.auth.status.SessionStatus
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.put
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 
 /**
  * Supabase implementation of the AuthRepository interface.
  *
- * This class provides all authentication operations using Supabase as the backend provider.
- * It implements the provider-agnostic AuthRepository interface, allowing easy switching
- * between different authentication providers in the future.
+ * This class provides all authentication operations using Supabase as the backend provider. It
+ * implements the provider-agnostic AuthRepository interface, allowing easy switching between
+ * different authentication providers in the future.
  */
-class SupabaseAuthDataSource(
-    private val supabase: SupabaseClient,
-) : AuthRepository {
+class SupabaseAuthDataSource(private val supabase: SupabaseClient) : AuthRepository {
     private val _currentUser = MutableStateFlow<User?>(null)
     private val scope = CoroutineScope(SupervisorJob())
 
@@ -45,14 +41,10 @@ class SupabaseAuthDataSource(
     init {
         // Initialize current user from existing session
         val currentSession = supabase.auth.currentSessionOrNull()
-        currentSession?.user?.let { user ->
-            _currentUser.value = UserMapper.toDomain(user)
-        }
-        
+        currentSession?.user?.let { user -> _currentUser.value = UserMapper.toDomain(user) }
+
         // Start listening to session changes
-        scope.launch {
-            startSessionListener()
-        }
+        scope.launch { startSessionListener() }
     }
 
     private suspend fun startSessionListener() {
@@ -79,17 +71,18 @@ class SupabaseAuthDataSource(
         displayName: String?,
     ): AuthResult {
         return try {
-            val result = supabase.auth.signUpWith(Email) {
-                this.email = email
-                this.password = password
-                if (displayName != null) {
-                    data = buildJsonObject {
-                        put("display_name", displayName)
+            val result =
+                supabase.auth.signUpWith(Email) {
+                    this.email = email
+                    this.password = password
+                    if (displayName != null) {
+                        data = buildJsonObject { put("display_name", displayName) }
                     }
                 }
-            }
-            
-            val user = result?.let { UserMapper.toDomain(it) } ?: return AuthResult.Error(AuthError.GenericError("User creation failed"))
+
+            val user =
+                result?.let { UserMapper.toDomain(it) }
+                    ?: return AuthResult.Error(AuthError.GenericError("User creation failed"))
             _currentUser.value = user
             AuthResult.Success(user)
         } catch (e: Exception) {
@@ -103,17 +96,18 @@ class SupabaseAuthDataSource(
         displayName: String?,
     ): AuthResult {
         return try {
-            val result = supabase.auth.signUpWith(Phone) {
-                this.phone = phone
-                this.password = password
-                if (displayName != null) {
-                    data = buildJsonObject {
-                        put("display_name", displayName)
+            val result =
+                supabase.auth.signUpWith(Phone) {
+                    this.phone = phone
+                    this.password = password
+                    if (displayName != null) {
+                        data = buildJsonObject { put("display_name", displayName) }
                     }
                 }
-            }
-            
-            val user = result?.let { UserMapper.toDomain(it) } ?: return AuthResult.Error(AuthError.GenericError("User creation failed"))
+
+            val user =
+                result?.let { UserMapper.toDomain(it) }
+                    ?: return AuthResult.Error(AuthError.GenericError("User creation failed"))
             _currentUser.value = user
             AuthResult.Success(user)
         } catch (e: Exception) {
@@ -123,11 +117,12 @@ class SupabaseAuthDataSource(
 
     override suspend fun signInWithEmail(email: String, password: String): AuthResult {
         return try {
-            val result = supabase.auth.signInWith(Email) {
-                this.email = email
-                this.password = password
-            }
-            
+            val result =
+                supabase.auth.signInWith(Email) {
+                    this.email = email
+                    this.password = password
+                }
+
             val user = UserMapper.toDomain(result)
             _currentUser.value = user
             AuthResult.Success(user)
@@ -138,11 +133,12 @@ class SupabaseAuthDataSource(
 
     override suspend fun signInWithPhone(phone: String, password: String): AuthResult {
         return try {
-            val result = supabase.auth.signInWith(Phone) {
-                this.phone = phone
-                this.password = password
-            }
-            
+            val result =
+                supabase.auth.signInWith(Phone) {
+                    this.phone = phone
+                    this.password = password
+                }
+
             val user = UserMapper.toDomain(result)
             _currentUser.value = user
             AuthResult.Success(user)
@@ -153,12 +149,13 @@ class SupabaseAuthDataSource(
 
     override suspend fun signInWithEmailOtp(email: String, otp: String): AuthResult {
         return try {
-            val result = supabase.auth.verifyEmailOtp(
-                type = io.github.jan.supabase.auth.OtpType.Email.SIGNUP,
-                token = otp,
-                email = email
-            )
-            
+            val result =
+                supabase.auth.verifyEmailOtp(
+                    type = io.github.jan.supabase.auth.OtpType.Email.SIGNUP,
+                    token = otp,
+                    email = email,
+                )
+
             val user = UserMapper.toDomain(result)
             _currentUser.value = user
             AuthResult.Success(user)
@@ -169,12 +166,13 @@ class SupabaseAuthDataSource(
 
     override suspend fun signInWithPhoneOtp(phone: String, otp: String): AuthResult {
         return try {
-            val result = supabase.auth.verifyPhoneOtp(
-                type = io.github.jan.supabase.auth.OtpType.Phone.SMS,
-                token = otp,
-                phone = phone
-            )
-            
+            val result =
+                supabase.auth.verifyPhoneOtp(
+                    type = io.github.jan.supabase.auth.OtpType.Phone.SMS,
+                    token = otp,
+                    phone = phone,
+                )
+
             val user = UserMapper.toDomain(result)
             _currentUser.value = user
             AuthResult.Success(user)
@@ -185,9 +183,7 @@ class SupabaseAuthDataSource(
 
     override suspend fun sendEmailOtp(email: String): AuthResult {
         return try {
-            supabase.auth.signInWith(OTP) {
-                this.email = email
-            }
+            supabase.auth.signInWith(OTP) { this.email = email }
             AuthResult.Success(User("", "")) // Dummy success result for OTP sending
         } catch (e: Exception) {
             AuthResult.Error(AuthErrorMapper.toDomain(e))
@@ -196,9 +192,7 @@ class SupabaseAuthDataSource(
 
     override suspend fun sendPhoneOtp(phone: String): AuthResult {
         return try {
-            supabase.auth.signInWith(OTP) {
-                this.phone = phone
-            }
+            supabase.auth.signInWith(OTP) { this.phone = phone }
             AuthResult.Success(User("", "")) // Dummy success result for OTP sending
         } catch (e: Exception) {
             AuthResult.Error(AuthErrorMapper.toDomain(e))
@@ -226,10 +220,8 @@ class SupabaseAuthDataSource(
 
     override suspend fun updatePassword(currentPassword: String, newPassword: String): AuthResult {
         return try {
-            val result = supabase.auth.updateUser {
-                password = newPassword
-            }
-            
+            val result = supabase.auth.updateUser { password = newPassword }
+
             val user = UserMapper.toDomain(result)
             _currentUser.value = user
             AuthResult.Success(user)
@@ -240,10 +232,8 @@ class SupabaseAuthDataSource(
 
     override suspend fun updateEmail(newEmail: String, password: String): AuthResult {
         return try {
-            val result = supabase.auth.updateUser {
-                email = newEmail
-            }
-            
+            val result = supabase.auth.updateUser { email = newEmail }
+
             val user = UserMapper.toDomain(result)
             _currentUser.value = user
             AuthResult.Success(user)
@@ -254,10 +244,8 @@ class SupabaseAuthDataSource(
 
     override suspend fun updatePhone(newPhone: String, password: String): AuthResult {
         return try {
-            val result = supabase.auth.updateUser {
-                phone = newPhone
-            }
-            
+            val result = supabase.auth.updateUser { phone = newPhone }
+
             val user = UserMapper.toDomain(result)
             _currentUser.value = user
             AuthResult.Success(user)
@@ -268,12 +256,11 @@ class SupabaseAuthDataSource(
 
     override suspend fun updateDisplayName(displayName: String): AuthResult {
         return try {
-            val result = supabase.auth.updateUser {
-                data = buildJsonObject {
-                    put("display_name", displayName)
+            val result =
+                supabase.auth.updateUser {
+                    data = buildJsonObject { put("display_name", displayName) }
                 }
-            }
-            
+
             val user = UserMapper.toDomain(result)
             _currentUser.value = user
             AuthResult.Success(user)
@@ -284,12 +271,9 @@ class SupabaseAuthDataSource(
 
     override suspend fun updateAvatarUrl(avatarUrl: String): AuthResult {
         return try {
-            val result = supabase.auth.updateUser {
-                data = buildJsonObject {
-                    put("avatar_url", avatarUrl)
-                }
-            }
-            
+            val result =
+                supabase.auth.updateUser { data = buildJsonObject { put("avatar_url", avatarUrl) } }
+
             val user = UserMapper.toDomain(result)
             _currentUser.value = user
             AuthResult.Success(user)
