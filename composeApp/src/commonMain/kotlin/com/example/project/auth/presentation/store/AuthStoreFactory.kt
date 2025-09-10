@@ -3,7 +3,6 @@ package com.example.project.auth.presentation.store
 import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.example.project.auth.domain.AuthRepository
-import com.example.project.auth.domain.entity.AuthResult
 import com.example.project.auth.presentation.store.AuthStore.Intent
 import com.example.project.auth.presentation.store.AuthStore.Label
 import com.example.project.auth.presentation.store.AuthStore.State
@@ -38,18 +37,4 @@ internal class AuthStoreFactory(
             executorFactory = { AuthExecutor(authRepository, dispatcherProvider) },
             reducer = AuthReducer,
         )
-
-    /** Handle authentication results and update state accordingly. */
-    private fun State.handleAuthResult(result: AuthResult): State =
-        when (result) {
-            is AuthResult.Success -> {
-                copy(isLoading = false, user = result.user, isAuthenticated = true, error = null)
-            }
-            is AuthResult.Error -> {
-                copy(isLoading = false, error = result.error)
-            }
-            is AuthResult.Loading -> {
-                copy(isLoading = true)
-            }
-        }
 }
