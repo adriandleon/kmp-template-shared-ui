@@ -24,7 +24,7 @@ interface SessionAwareComponent : ComponentContext {
     val isAuthenticated: Boolean
 
     /** Get current user if authenticated */
-    val currentUserEntity: com.example.project.auth.domain.entity.UserEntity?
+    val currentUserEntity: UserEntity?
 
     /** Get current access token if authenticated */
     val accessToken: String?

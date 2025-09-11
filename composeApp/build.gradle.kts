@@ -44,7 +44,6 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
-            implementation(libs.decompose)
             implementation(libs.decompose.extensions)
             implementation(libs.coil.compose)
             implementation(libs.coil.network.ktor)
