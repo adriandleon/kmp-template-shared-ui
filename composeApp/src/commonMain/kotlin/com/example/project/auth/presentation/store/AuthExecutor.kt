@@ -1,7 +1,7 @@
 package com.example.project.auth.presentation.store
 
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
-import com.example.project.auth.domain.AuthRepository
+import com.example.project.auth.domain.repository.AuthRepository
 import com.example.project.auth.domain.entity.AuthResult
 import com.example.project.auth.presentation.store.AuthStore.Action
 import com.example.project.auth.presentation.store.AuthStore.Intent
@@ -21,7 +21,7 @@ internal class AuthExecutor(
 
     override fun executeAction(action: Action) {
         when (action) {
-            is Action.UserChanged -> dispatch(UserChanged(action.user))
+            is Action.UserChanged -> dispatch(UserChanged(action.userEntity))
             is Action.AuthResultReceived -> {}
             Action.ClearError -> {}
             is Action.SetLoading -> {}

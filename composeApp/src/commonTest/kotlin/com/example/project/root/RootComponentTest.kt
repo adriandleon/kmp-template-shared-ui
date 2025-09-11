@@ -1,6 +1,6 @@
 package com.example.project.root
 
-import com.example.project.auth.domain.AuthRepository
+import com.example.project.auth.domain.repository.AuthRepository
 import com.example.project.common.di.testModule
 import com.example.project.common.util.DispatcherProvider
 import com.example.project.common.util.assertActiveSlotInstance

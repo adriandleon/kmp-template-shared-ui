@@ -7,7 +7,7 @@ import com.arkivanov.decompose.router.slot.activate
 import com.arkivanov.decompose.router.slot.childSlot
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.lifecycle.coroutines.coroutineScope
-import com.example.project.auth.domain.AuthRepository
+import com.example.project.auth.domain.repository.AuthRepository
 import com.example.project.auth.presentation.component.AuthComponent
 import com.example.project.auth.presentation.component.DefaultAuthComponentFactory
 import com.example.project.common.util.DispatcherProvider

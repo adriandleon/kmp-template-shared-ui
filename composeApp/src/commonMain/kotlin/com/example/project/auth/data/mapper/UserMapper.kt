@@ -1,6 +1,6 @@
 package com.example.project.auth.data.mapper
 
-import com.example.project.auth.domain.entity.User
+import com.example.project.auth.domain.entity.UserEntity
 
 /**
  * Mapper for converting between Supabase UserInfo and domain User entity.
@@ -15,10 +15,10 @@ object UserMapper {
      * @param userInfo Supabase user information
      * @return Domain User entity
      */
-    fun toDomain(userInfo: Any): User {
+    fun toDomain(userInfo: Any): UserEntity {
         // TODO: Implement actual mapping when Supabase API is properly integrated
         // For now, return a mock user
-        return User(
+        return UserEntity(
             id = "mock-id",
             email = "mock@example.com",
             phone = null,
@@ -35,16 +35,16 @@ object UserMapper {
      * Converts domain User entity to Supabase UserInfo. This is primarily used for testing or when
      * we need to create UserInfo from domain data.
      *
-     * @param user Domain User entity
+     * @param userEntity Domain User entity
      * @return Supabase UserInfo
      */
-    fun toSupabase(user: User): Any {
+    fun toSupabase(userEntity: UserEntity): Any {
         // TODO: Implement actual mapping when Supabase API is properly integrated
         // For now, return a mock object
         return object {
-            val id = user.id
-            val email = user.email
-            val phone = user.phone
+            val id = userEntity.id
+            val email = userEntity.email
+            val phone = userEntity.phone
         }
     }
 }

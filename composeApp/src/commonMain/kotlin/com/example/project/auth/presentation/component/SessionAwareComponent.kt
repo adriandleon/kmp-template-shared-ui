@@ -2,7 +2,7 @@ package com.example.project.auth.presentation.component
 
 import com.arkivanov.decompose.ComponentContext
 import com.example.project.auth.domain.entity.SessionEvent
-import com.example.project.auth.domain.entity.User
+import com.example.project.auth.domain.entity.UserEntity
 import com.example.project.auth.domain.entity.UserSession
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -24,7 +24,7 @@ interface SessionAwareComponent : ComponentContext {
     val isAuthenticated: Boolean
 
     /** Get current user if authenticated */
-    val currentUser: com.example.project.auth.domain.entity.User?
+    val currentUserEntity: com.example.project.auth.domain.entity.UserEntity?
 
     /** Get current access token if authenticated */
     val accessToken: String?
@@ -50,7 +50,7 @@ internal class DefaultSessionAwareComponent(
     override val currentSession: StateFlow<UserSession> = authContext.currentSession
     override val sessionEvents: SharedFlow<SessionEvent> = authContext.sessionEvents
     override val isAuthenticated: Boolean = authContext.isAuthenticated
-    override val currentUser: User? = authContext.currentUser
+    override val currentUserEntity: UserEntity? = authContext.currentUserEntity
     override val accessToken: String? = authContext.accessToken
 
     override fun requireAuthentication() {

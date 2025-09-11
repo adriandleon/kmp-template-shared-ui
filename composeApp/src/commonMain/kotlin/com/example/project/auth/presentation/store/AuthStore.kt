@@ -3,7 +3,7 @@ package com.example.project.auth.presentation.store
 import com.arkivanov.mvikotlin.core.store.Store
 import com.example.project.auth.domain.entity.AuthError
 import com.example.project.auth.domain.entity.AuthResult
-import com.example.project.auth.domain.entity.User
+import com.example.project.auth.domain.entity.UserEntity
 
 /**
  * Authentication Store interface following MVIKotlin pattern.
@@ -62,7 +62,7 @@ interface AuthStore : Store<AuthStore.Intent, AuthStore.State, AuthStore.Label> 
 
     /** Current authentication state. */
     data class State(
-        val user: User? = null,
+        val userEntity: UserEntity? = null,
         val isAuthenticated: Boolean = false,
         val isLoading: Boolean = false,
         val error: AuthError? = null,
@@ -85,7 +85,7 @@ interface AuthStore : Store<AuthStore.Intent, AuthStore.State, AuthStore.Label> 
     sealed interface Message {
         data class SetLoading(val isLoading: Boolean) : Message
 
-        data class UserChanged(val user: User?) : Message
+        data class UserChanged(val userEntity: UserEntity?) : Message
 
         data class AuthResultReceived(val result: AuthResult) : Message
 
@@ -96,7 +96,7 @@ interface AuthStore : Store<AuthStore.Intent, AuthStore.State, AuthStore.Label> 
     sealed interface Action {
         data class SetLoading(val isLoading: Boolean) : Action
 
-        data class UserChanged(val user: User?) : Action
+        data class UserChanged(val userEntity: UserEntity?) : Action
 
         data class AuthResultReceived(val result: AuthResult) : Action
 

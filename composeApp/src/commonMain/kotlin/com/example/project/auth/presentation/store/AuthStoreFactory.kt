@@ -2,7 +2,7 @@ package com.example.project.auth.presentation.store
 
 import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
-import com.example.project.auth.domain.AuthRepository
+import com.example.project.auth.domain.repository.AuthRepository
 import com.example.project.auth.presentation.store.AuthStore.Intent
 import com.example.project.auth.presentation.store.AuthStore.Label
 import com.example.project.auth.presentation.store.AuthStore.State

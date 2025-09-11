@@ -16,7 +16,7 @@ package com.example.project.auth.domain.entity
  * @property createdAt Timestamp when the user was created
  * @property lastSignInAt Timestamp of the last sign-in
  */
-data class User(
+data class UserEntity(
     val id: String,
     val email: String,
     val phone: String? = null,

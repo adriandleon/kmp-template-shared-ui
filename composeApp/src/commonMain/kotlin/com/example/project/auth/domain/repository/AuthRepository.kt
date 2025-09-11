@@ -1,7 +1,7 @@
-package com.example.project.auth.domain
+package com.example.project.auth.domain.repository
 
 import com.example.project.auth.domain.entity.AuthResult
-import com.example.project.auth.domain.entity.User
+import com.example.project.auth.domain.entity.UserEntity
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -16,7 +16,7 @@ interface AuthRepository {
      * Current authentication state as a Flow. Emits the current user if authenticated, null if not
      * authenticated.
      */
-    val currentUser: Flow<User?>
+    val currentUserEntity: Flow<UserEntity?>
 
     /**
      * Current authentication session status. Emits true if user is authenticated, false otherwise.
@@ -181,7 +181,7 @@ interface AuthRepository {
      *
      * @return Current user or null
      */
-    fun getCurrentUser(): User?
+    fun getCurrentUser(): UserEntity?
 
     /**
      * Check if the current user is authenticated.

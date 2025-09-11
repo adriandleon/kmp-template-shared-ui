@@ -1,6 +1,6 @@
 package com.example.project.auth.data.mapper
 
-import com.example.project.auth.domain.entity.User
+import com.example.project.auth.domain.entity.UserEntity
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 
@@ -21,8 +21,8 @@ class UserMapperTest :
         }
 
         test("should map User domain entity to mock user info") {
-            val user =
-                User(
+            val userEntity =
+                UserEntity(
                     id = "123",
                     email = "test@example.com",
                     phone = "+1234567890",
@@ -34,7 +34,7 @@ class UserMapperTest :
                     lastSignInAt = 1234567891L,
                 )
 
-            val mockUserInfo = UserMapper.toSupabase(user)
+            val mockUserInfo = UserMapper.toSupabase(userEntity)
 
             // Mock implementation returns an object with id, email, phone
             mockUserInfo.toString() shouldBe mockUserInfo.toString() // Basic test for now

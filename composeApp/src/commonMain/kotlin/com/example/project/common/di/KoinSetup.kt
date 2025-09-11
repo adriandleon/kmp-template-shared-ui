@@ -1,7 +1,7 @@
 package com.example.project.common.di
 
 import com.arkivanov.decompose.ComponentContext
-import com.example.project.auth.domain.AuthRepository
+import com.example.project.auth.domain.repository.AuthRepository
 import com.example.project.common.util.DispatcherProvider
 import com.example.project.onboarding.domain.OnboardingRepository
 import com.example.project.root.DefaultRootComponent

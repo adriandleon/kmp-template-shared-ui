@@ -8,7 +8,7 @@ package com.example.project.auth.domain.entity
  */
 sealed interface AuthResult {
     /** Successful authentication result containing the authenticated user. */
-    data class Success(val user: User) : AuthResult
+    data class Success(val userEntity: UserEntity) : AuthResult
 
     /** Failed authentication result containing error information. */
     data class Error(val error: AuthError) : AuthResult

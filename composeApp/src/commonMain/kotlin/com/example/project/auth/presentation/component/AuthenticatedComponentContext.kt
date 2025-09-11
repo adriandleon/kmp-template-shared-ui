@@ -3,7 +3,7 @@ package com.example.project.auth.presentation.component
 import com.arkivanov.decompose.ComponentContext
 import com.example.project.auth.domain.SessionManager
 import com.example.project.auth.domain.entity.SessionEvent
-import com.example.project.auth.domain.entity.User
+import com.example.project.auth.domain.entity.UserEntity
 import com.example.project.auth.domain.entity.UserSession
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.StateFlow
  * across the component tree. Components can access the current session state and listen to
  * authentication events.
  */
-interface AuthenticatedComponentContext : ComponentContext {
+internal interface AuthenticatedComponentContext : ComponentContext {
     /** Session manager for authentication operations */
     val sessionManager: SessionManager
 
@@ -29,7 +29,7 @@ interface AuthenticatedComponentContext : ComponentContext {
     val isAuthenticated: Boolean
 
     /** Get current user if authenticated */
-    val currentUser: User?
+    val currentUserEntity: UserEntity?
 
     /** Get current access token if authenticated */
     val accessToken: String?
@@ -57,7 +57,7 @@ internal class DefaultAuthenticatedComponentContext(
     override val currentSession: StateFlow<UserSession> = sessionManager.currentSession
     override val sessionEvents: SharedFlow<SessionEvent> = sessionManager.sessionEvents
     override val isAuthenticated: Boolean = sessionManager.isAuthenticated
-    override val currentUser: User? = sessionManager.currentUser
+    override val currentUserEntity: UserEntity? = sessionManager.currentUserEntity
     override val accessToken: String? = sessionManager.accessToken
 
     override fun requireAuthentication() {

@@ -90,7 +90,7 @@ internal class DefaultAuthRootComponent(
 }
 
 /** Example of how to create an AuthenticatedComponentContext for child components. */
-fun createAuthenticatedContext(
+internal fun createAuthenticatedContext(
     componentContext: ComponentContext,
     sessionManager: SessionManager,
     onRequireAuthentication: () -> Unit = {},

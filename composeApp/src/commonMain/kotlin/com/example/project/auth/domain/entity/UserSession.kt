@@ -12,7 +12,7 @@ sealed interface UserSession {
 
     /** User is authenticated with session data */
     data class Authenticated(
-        val user: User,
+        val userEntity: UserEntity,
         val accessToken: String,
         val refreshToken: String? = null,
         val expiresAt: Long? = null,

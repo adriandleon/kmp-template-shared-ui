@@ -7,11 +7,11 @@ import io.kotest.matchers.types.shouldBeInstanceOf
 class AuthResultTest :
     FunSpec({
         test("AuthResult.Success should contain user") {
-            val user = User(id = "123", email = "test@example.com")
-            val result = AuthResult.Success(user)
+            val userEntity = UserEntity(id = "123", email = "test@example.com")
+            val result = AuthResult.Success(userEntity)
 
             result.shouldBeInstanceOf<AuthResult.Success>()
-            result.user shouldBe user
+            result.userEntity shouldBe userEntity
         }
 
         test("AuthResult.Error should contain error") {

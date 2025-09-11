@@ -79,7 +79,7 @@ private fun AuthenticatedContent(
     session: UserSession.Authenticated,
 ) {
     Text(
-        text = "Welcome, ${session.user.displayName ?: session.user.email}!",
+        text = "Welcome, ${session.userEntity.displayName ?: session.userEntity.email}!",
         style = MaterialTheme.typography.headlineMedium,
     )
 
