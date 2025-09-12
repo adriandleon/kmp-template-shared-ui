@@ -17,13 +17,23 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 
+/**
+ * This is the default implementation of the OnboardingComponent interface. It handles the
+ * onboarding process, including navigation between slides, skipping the onboarding, and completing
+ * the onboarding to navigate to the home screen.
+ *
+ * Default implementation of [OnboardingComponent]
+ *
+ * Deeplink URL: "example://template/onboarding?page={page}"
+ */
 internal class DefaultOnboardingComponent(
     private val componentContext: ComponentContext,
     private val onNavigateToHome: () -> Unit,
+    initialPage: Int = 2,
 ) : OnboardingComponent, ComponentContext by componentContext, KoinComponent {
 
     private val dispatcher = get<DispatcherProvider>()
-    private val store = instanceKeeper.getStore { OnboardingStoreFactory(get()).create() }
+    private val store = instanceKeeper.getStore { OnboardingStoreFactory(initialPage, get()).create() }
 
     override val state: Value<OnboardingState> = store.asValue().map(stateToModel)
 

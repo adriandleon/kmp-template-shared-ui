@@ -5,6 +5,11 @@ import com.example.project.analytics.domain.Analytics
 import com.example.project.analytics.domain.CommonAnalyticsEvent
 import com.example.project.logger.domain.Logger
 
+/**
+ * Represents a component for the Contact screen. Default implementation of [ContactComponent]
+ *
+ * Deeplink URL: "example://template/tabs/contact"
+ */
 internal class DefaultContactComponent(
     componentContext: ComponentContext,
     private val logger: Logger,

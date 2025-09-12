@@ -125,3 +125,4 @@ authContext.sessionManager.signOut()
 - Learn about [Testing](USER_SESSION_MIDDLEWARE_GUIDE.md#testing)
 
 That's it! You're ready to use the user session middleware in your Compose Multiplatform app. 🎉
+

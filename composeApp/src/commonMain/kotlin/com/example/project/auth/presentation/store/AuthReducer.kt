@@ -29,7 +29,12 @@ internal object AuthReducer : Reducer<AuthStore.State, Message> {
     private fun AuthStore.State.handleAuthResult(result: AuthResult): AuthStore.State =
         when (result) {
             is AuthResult.Success -> {
-                copy(isLoading = false, userEntity = result.userEntity, isAuthenticated = true, error = null)
+                copy(
+                    isLoading = false,
+                    userEntity = result.userEntity,
+                    isAuthenticated = true,
+                    error = null,
+                )
             }
             is AuthResult.Error -> {
                 copy(isLoading = false, error = result.error)

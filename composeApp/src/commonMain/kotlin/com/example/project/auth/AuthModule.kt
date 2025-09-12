@@ -4,9 +4,9 @@ import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.main.store.DefaultStoreFactory
 import com.example.project.BuildKonfig
 import com.example.project.auth.data.SupabaseAuthDataSource
-import com.example.project.auth.domain.repository.AuthRepository
 import com.example.project.auth.domain.DefaultSessionManager
 import com.example.project.auth.domain.SessionManager
+import com.example.project.auth.domain.repository.AuthRepository
 import com.example.project.auth.presentation.component.AuthComponentFactory
 import com.example.project.auth.presentation.component.DefaultAuthComponentFactory
 import com.example.project.auth.presentation.store.AuthStore

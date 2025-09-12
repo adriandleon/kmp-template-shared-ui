@@ -47,7 +47,7 @@ fun AboutView(component: AboutComponent, modifier: Modifier = Modifier) {
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "Learn more about this application and its features.",
+                text = "Learn more about this app and its features.",
                 style = MaterialTheme.typography.bodyLarge,
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,

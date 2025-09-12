@@ -658,3 +658,4 @@ private fun RootView(component: RootComponent) {
 4. Use the components in your app
 
 This complete example shows how to build a robust, session-aware application using the user session middleware with Compose Multiplatform and Decompose.
+

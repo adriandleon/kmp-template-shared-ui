@@ -3,6 +3,7 @@ package com.example.project.common.di
 import com.arkivanov.decompose.ComponentContext
 import com.example.project.auth.domain.repository.AuthRepository
 import com.example.project.common.util.DispatcherProvider
+import com.example.project.common.util.Url
 import com.example.project.onboarding.domain.OnboardingRepository
 import com.example.project.root.DefaultRootComponent
 import com.example.project.root.RootComponent
@@ -13,7 +14,10 @@ import org.koin.core.component.inject
 object KoinSetup : KoinComponent {
 
     /** Create a RootComponent with proper dependency injection */
-    fun createRootComponent(componentContext: ComponentContext): RootComponent {
+    fun createRootComponent(
+        componentContext: ComponentContext,
+        deepLinkUrl: Url? = null,
+    ): RootComponent {
         // Get the repositories from Koin
         val onboardingRepository: OnboardingRepository by inject()
         val authRepository: AuthRepository by inject()
@@ -24,6 +28,7 @@ object KoinSetup : KoinComponent {
             onboardingRepository = onboardingRepository,
             authRepository = authRepository,
             dispatcher = dispatcher,
+            deepLinkUrl = deepLinkUrl,
         )
     }
 }

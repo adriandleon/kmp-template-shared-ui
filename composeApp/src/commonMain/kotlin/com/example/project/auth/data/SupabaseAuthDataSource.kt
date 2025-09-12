@@ -2,10 +2,10 @@ package com.example.project.auth.data
 
 import com.example.project.auth.data.mapper.AuthErrorMapper
 import com.example.project.auth.data.mapper.UserMapper
-import com.example.project.auth.domain.repository.AuthRepository
 import com.example.project.auth.domain.entity.AuthError
 import com.example.project.auth.domain.entity.AuthResult
 import com.example.project.auth.domain.entity.UserEntity
+import com.example.project.auth.domain.repository.AuthRepository
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.providers.builtin.Email

@@ -1,6 +1,6 @@
 package com.example.project.tabs.presentation.component
 
-import com.arkivanov.decompose.router.pages.ChildPages
+import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.backhandler.BackHandlerOwner
 import com.example.project.about.presentation.component.AboutComponent
@@ -18,10 +18,7 @@ import com.example.project.home.presentation.component.HomeComponent
 interface TabsComponent : BackHandlerOwner {
 
     /** The current pages state with selected tab */
-    val pages: Value<ChildPages<*, Child>>
-
-    /** Navigate to a specific tab by index */
-    fun selectTab(index: Int)
+    val stack: Value<ChildStack<*, Child>>
 
     /** Navigate to Home tab */
     fun selectHomeTab()

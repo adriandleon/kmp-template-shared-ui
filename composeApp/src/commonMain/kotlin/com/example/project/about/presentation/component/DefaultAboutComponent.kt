@@ -5,6 +5,11 @@ import com.example.project.analytics.domain.Analytics
 import com.example.project.analytics.domain.CommonAnalyticsEvent
 import com.example.project.logger.domain.Logger
 
+/**
+ * This component is responsible for the "About" screen.
+ *
+ * Deeplink URL: "example://template/tabs/about"
+ */
 internal class DefaultAboutComponent(
     componentContext: ComponentContext,
     private val logger: Logger,

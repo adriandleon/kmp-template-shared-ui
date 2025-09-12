@@ -8,7 +8,10 @@ import com.example.project.onboarding.presentation.store.OnboardingStore.State
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 
-internal class OnboardingStoreFactory(private val storeFactory: StoreFactory) : KoinComponent {
+internal class OnboardingStoreFactory(
+    private val initialPage: Int = 0,
+    private val storeFactory: StoreFactory,
+) : KoinComponent {
 
     fun create(): OnboardingStore {
         return OnboardingStoreImpl()
@@ -18,7 +21,7 @@ internal class OnboardingStoreFactory(private val storeFactory: StoreFactory) : 
         OnboardingStore,
         Store<Intent, State, Label> by storeFactory.create(
             name = "OnboardingStore",
-            initialState = State(),
+            initialState = State(currentSlide = initialPage),
             bootstrapper = OnboardingBootstrapper(get(), get()),
             executorFactory = { OnboardingExecutor(get(), get(), get()) },
             reducer = OnboardingReducer,

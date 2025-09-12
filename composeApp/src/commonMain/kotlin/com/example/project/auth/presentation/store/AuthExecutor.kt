@@ -1,8 +1,8 @@
 package com.example.project.auth.presentation.store
 
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
-import com.example.project.auth.domain.repository.AuthRepository
 import com.example.project.auth.domain.entity.AuthResult
+import com.example.project.auth.domain.repository.AuthRepository
 import com.example.project.auth.presentation.store.AuthStore.Action
 import com.example.project.auth.presentation.store.AuthStore.Intent
 import com.example.project.auth.presentation.store.AuthStore.Label
