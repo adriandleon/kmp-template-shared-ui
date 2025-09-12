@@ -39,3 +39,7 @@ internal fun String.snakeCase(): String = buildString {
         append(c.lowercaseChar())
     }
 }
+
+internal fun Url.extractPageInt(): Int {
+    return parameters["page"]?.toIntOrNull() ?: 0
+}

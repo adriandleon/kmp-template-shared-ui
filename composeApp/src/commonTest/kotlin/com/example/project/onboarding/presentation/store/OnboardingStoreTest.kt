@@ -207,7 +207,7 @@ class OnboardingStoreTest :
 }
 
 private fun createStore(): Store<Intent, OnboardingStore.State, OnboardingStore.Label> {
-    return OnboardingStoreFactory(DefaultStoreFactory()).create()
+    return OnboardingStoreFactory(storeFactory = DefaultStoreFactory()).create()
 }
 
 private fun createTestSlides(count: Int): List<SlideEntity> {

@@ -29,7 +29,7 @@ import org.koin.core.component.get
 internal class DefaultOnboardingComponent(
     private val componentContext: ComponentContext,
     private val onNavigateToHome: () -> Unit,
-    initialPage: Int = 2,
+    initialPage: Int,
 ) : OnboardingComponent, ComponentContext by componentContext, KoinComponent {
 
     private val dispatcher = get<DispatcherProvider>()

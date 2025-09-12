@@ -32,4 +32,17 @@ in your IDE’s toolbar or open the [/iosApp](./iosApp) directory in Xcode and r
 
 ---
 
+## Documentation
+
+- [Deeplinking Guide](./docs/DEEPLINKING_GUIDE.md) - Complete guide for implementing deeplinks on both platforms
+
+## Features
+
+- **Deeplinking**: Cross-platform deeplink support for Android and iOS
+- **Navigation**: Decompose-based navigation with deeplink integration
+- **Compose Multiplatform**: Shared UI across Android and iOS
+- **Dependency Injection**: Koin for dependency management
+
+---
+
 Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…

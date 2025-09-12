@@ -13,6 +13,7 @@ import com.example.project.auth.presentation.component.DefaultAuthComponentFacto
 import com.example.project.common.util.DispatcherProvider
 import com.example.project.common.util.Url
 import com.example.project.common.util.consumePathSegment
+import com.example.project.common.util.extractPageInt
 import com.example.project.common.util.pathSegmentOf
 import com.example.project.onboarding.domain.OnboardingRepository
 import com.example.project.onboarding.presentation.component.DefaultOnboardingComponent
@@ -77,7 +78,8 @@ internal class DefaultRootComponent(
         val (path, childUrl) = deepLinkUrl.consumePathSegment()
         when (path) {
             pathSegmentOf<Auth>() -> navigation.activate(Auth)
-            pathSegmentOf<Onboarding>() -> navigation.activate(Onboarding)
+            pathSegmentOf<Onboarding>() ->
+                navigation.activate(Onboarding(initialPage = deepLinkUrl.extractPageInt()))
             pathSegmentOf<Tabs>() -> navigation.activate(Tabs(deepLinkUrl = childUrl))
             else -> navigation.activate(Tabs(deepLinkUrl = deepLinkUrl))
         }
@@ -95,7 +97,7 @@ internal class DefaultRootComponent(
             }
             else -> {
                 // User is authenticated but hasn't seen onboarding, navigate to Onboarding
-                navigation.activate(Onboarding)
+                navigation.activate(Onboarding(initialPage = 0))
             }
         }
     }
@@ -106,7 +108,7 @@ internal class DefaultRootComponent(
                 Child.Auth(authComponent(context))
             }
             is Onboarding -> {
-                Child.Onboarding(onboardingComponent(context))
+                Child.Onboarding(onboardingComponent(context, configuration.initialPage))
             }
             is Tabs -> {
                 Child.Tabs(tabsComponent(context, configuration.deepLinkUrl))
@@ -116,10 +118,14 @@ internal class DefaultRootComponent(
     private fun authComponent(componentContext: ComponentContext): AuthComponent =
         DefaultAuthComponentFactory().create(componentContext)
 
-    private fun onboardingComponent(componentContext: ComponentContext): OnboardingComponent =
+    private fun onboardingComponent(
+        componentContext: ComponentContext,
+        initialPage: Int,
+    ): OnboardingComponent =
         DefaultOnboardingComponent(
             componentContext = componentContext,
             onNavigateToHome = ::onNavigateToHome,
+            initialPage = initialPage,
         )
 
     private fun tabsComponent(
@@ -133,7 +139,8 @@ internal class DefaultRootComponent(
 
         return when (path) {
             pathSegmentOf<Auth>() -> listOf(Auth)
-            pathSegmentOf<Onboarding>() -> listOf(Onboarding)
+            pathSegmentOf<Onboarding>() ->
+                listOf(Onboarding(initialPage = deepLinkUrl.extractPageInt()))
             pathSegmentOf<Tabs>() -> listOf(Tabs(deepLinkUrl = childUrl))
             else -> listOf(Tabs(deepLinkUrl = childUrl))
         }
@@ -144,7 +151,7 @@ internal class DefaultRootComponent(
 
         @Serializable data object Auth : Configuration
 
-        @Serializable data object Onboarding : Configuration
+        @Serializable data class Onboarding(val initialPage: Int = 0) : Configuration
 
         @Serializable data class Tabs(val deepLinkUrl: Url? = null) : Configuration
     }

@@ -94,5 +94,6 @@ private fun createComponent(onNavigateToHome: () -> Unit = mock()): OnboardingCo
         DefaultOnboardingComponent(
             componentContext = componentContext,
             onNavigateToHome = onNavigateToHome,
+            initialPage = 0
         )
     }
