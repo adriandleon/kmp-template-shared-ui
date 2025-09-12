@@ -39,9 +39,9 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <!-- Accepts URIs that begin with "example://template/app” -->
+                <!-- Accepts URIs that begin with "example://app/tabs” -->
                 <data android:scheme="example" />
-                <data android:host="template" />
+                <data android:host="app" />
             </intent-filter>
         </activity>
     </application>

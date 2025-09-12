@@ -24,7 +24,7 @@ import org.koin.core.component.get
  *
  * Default implementation of [OnboardingComponent]
  *
- * Deeplink URL: "example://template/onboarding?page={page}"
+ * Deeplink URL: "example://app/onboarding?page={page}"
  */
 internal class DefaultOnboardingComponent(
     private val componentContext: ComponentContext,

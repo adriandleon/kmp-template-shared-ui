@@ -5,7 +5,7 @@ import co.touchlab.crashkios.crashlytics.setCrashlyticsUnhandledExceptionHook
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
-import com.example.project.common.di.KoinSetup
+import com.example.project.common.di.createRootComponent
 import com.example.project.common.di.initKoin
 import com.example.project.root.RootContent
 import dev.gitlive.firebase.Firebase
@@ -24,7 +24,7 @@ fun MainViewController() = ComposeUIViewController {
     initKoin()
 
     val lifecycle = LifecycleRegistry()
-    val root = KoinSetup.createRootComponent(componentContext = DefaultComponentContext(lifecycle))
+    val root = createRootComponent(componentContext = DefaultComponentContext(lifecycle))
 
     lifecycle.resume()
 

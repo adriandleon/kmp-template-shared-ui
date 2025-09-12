@@ -4,6 +4,7 @@ import com.arkivanov.decompose.router.slot.ChildSlot
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.backhandler.BackHandlerOwner
 import com.example.project.auth.presentation.component.AuthComponent
+import com.example.project.common.util.Url
 import com.example.project.onboarding.presentation.component.OnboardingComponent
 import com.example.project.tabs.presentation.component.TabsComponent
 
@@ -18,6 +19,9 @@ interface RootComponent : BackHandlerOwner {
 
     /** Function to be called when navigation to home should occur */
     fun onNavigateToHome()
+
+    /** Function to handle deeplink URLs */
+    fun handleDeepLink(deepLinkUrl: Url)
 
     sealed interface Child {
         /** @param component Child component for the auth screen */

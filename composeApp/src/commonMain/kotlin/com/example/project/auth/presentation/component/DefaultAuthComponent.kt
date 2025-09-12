@@ -20,7 +20,7 @@ import org.koin.core.component.inject
  * This class provides the concrete implementation of the AuthComponent interface, managing the
  * authentication store and handling component lifecycle using MVIKotlin.
  *
- * Deeplink URL: "example://template/auth"
+ * Deeplink URL: "example://app/auth"
  */
 class DefaultAuthComponent(componentContext: ComponentContext) :
     AuthComponent, ComponentContext by componentContext, KoinComponent {

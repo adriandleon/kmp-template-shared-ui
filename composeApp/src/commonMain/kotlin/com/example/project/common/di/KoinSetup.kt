@@ -10,8 +10,19 @@ import com.example.project.root.RootComponent
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
+/**
+ * Create a RootComponent with proper dependency injection
+ * This function is exposed to Swift/iOS to avoid issues with Kotlin object access
+ */
+fun createRootComponent(
+    componentContext: ComponentContext,
+    deepLinkUrl: Url? = null,
+): RootComponent {
+    return KoinSetup.createRootComponent(componentContext, deepLinkUrl)
+}
+
 /** Koin setup utilities for creating components with dependency injection */
-object KoinSetup : KoinComponent {
+private object KoinSetup : KoinComponent {
 
     /** Create a RootComponent with proper dependency injection */
     fun createRootComponent(

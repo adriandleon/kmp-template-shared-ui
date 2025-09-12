@@ -73,6 +73,16 @@ internal class DefaultRootComponent(
         }
     }
 
+    override fun handleDeepLink(deepLinkUrl: Url) {
+        val (path, childUrl) = deepLinkUrl.consumePathSegment()
+        when (path) {
+            pathSegmentOf<Auth>() -> navigation.activate(Auth)
+            pathSegmentOf<Onboarding>() -> navigation.activate(Onboarding)
+            pathSegmentOf<Tabs>() -> navigation.activate(Tabs(deepLinkUrl = childUrl))
+            else -> navigation.activate(Tabs(deepLinkUrl = deepLinkUrl))
+        }
+    }
+
     private suspend fun navigateBasedOnAuthState(isAuthenticated: Boolean) {
         when {
             !isAuthenticated -> {

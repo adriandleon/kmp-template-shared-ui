@@ -9,8 +9,8 @@ import org.koin.core.component.inject
  * Default implementation of [HomeComponent]
  *
  * Deeplink URL:
- * - "example://template/tabs"
- * - "example://template/tabs/home"
+ * - "example://app/tabs"
+ * - "example://app/tabs/home"
  *
  * @param componentContext Context of the component
  * @see HomeComponent

@@ -10,7 +10,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.handleDeepLink
 import com.arkivanov.decompose.retainedComponent
-import com.example.project.common.di.KoinSetup
+import com.example.project.common.di.createRootComponent
 import com.example.project.common.util.Url
 import com.example.project.root.RootContent
 
@@ -25,7 +25,7 @@ class MainActivity : ComponentActivity() {
             handleDeepLink { uri ->
                 val deppLinkUrl = Url(uri.toString())
                 retainedComponent(discardSavedState = uri != null) {
-                    KoinSetup.createRootComponent(it, deppLinkUrl)
+                    createRootComponent(it, deppLinkUrl)
                 }
             } ?: return
         setContent { RootContent(component = root, modifier = Modifier.fillMaxSize()) }
