@@ -1,4 +1,4 @@
-package com.example.project.root
+package com.example.project.root.view
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
@@ -12,7 +12,8 @@ import com.example.project.auth.presentation.view.AuthScreen
 import com.example.project.common.util.ExternalUriHandler
 import com.example.project.common.util.Url
 import com.example.project.onboarding.presentation.view.OnboardingView
-import com.example.project.root.RootComponent.Child
+import com.example.project.root.component.RootComponent
+import com.example.project.root.component.RootComponent.Child
 import com.example.project.tabs.presentation.view.TabsView
 
 /** Root content composable that displays the root component with navigation */

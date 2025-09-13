@@ -29,9 +29,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import com.example.project.auth.domain.entity.AuthError.*
+import com.example.project.auth.domain.entity.AuthError.EmailAlreadyExists
+import com.example.project.auth.domain.entity.AuthError.EmailNotVerified
+import com.example.project.auth.domain.entity.AuthError.GenericError
+import com.example.project.auth.domain.entity.AuthError.InvalidCredentials
+import com.example.project.auth.domain.entity.AuthError.InvalidEmail
+import com.example.project.auth.domain.entity.AuthError.InvalidOtp
+import com.example.project.auth.domain.entity.AuthError.InvalidPhone
+import com.example.project.auth.domain.entity.AuthError.NetworkError
+import com.example.project.auth.domain.entity.AuthError.OtpExpired
+import com.example.project.auth.domain.entity.AuthError.PhoneAlreadyExists
+import com.example.project.auth.domain.entity.AuthError.PhoneNotVerified
+import com.example.project.auth.domain.entity.AuthError.TooManyAttempts
+import com.example.project.auth.domain.entity.AuthError.UnknownError
+import com.example.project.auth.domain.entity.AuthError.UserDisabled
+import com.example.project.auth.domain.entity.AuthError.UserNotFound
+import com.example.project.auth.domain.entity.AuthError.WeakPassword
 import com.example.project.auth.presentation.component.AuthComponent
+import com.example.project.auth.presentation.component.PreviewAuthComponent
 import com.example.project.auth.presentation.store.AuthStore
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 /**
  * Authentication screen for login and signup functionality.
@@ -42,7 +59,7 @@ import com.example.project.auth.presentation.store.AuthStore
 @Composable
 fun AuthScreen(component: AuthComponent, modifier: Modifier = Modifier) {
     val state by component.state.collectAsState()
-    val snackbarHostState = remember { SnackbarHostState() }
+    val snackBarHostState = remember { SnackbarHostState() }
 
     // Handle authentication state changes
     LaunchedEffect(state.isAuthenticated) {
@@ -54,7 +71,7 @@ fun AuthScreen(component: AuthComponent, modifier: Modifier = Modifier) {
     // Handle errors
     LaunchedEffect(state.error) {
         state.error?.let { error ->
-            snackbarHostState.showSnackbar(
+            snackBarHostState.showSnackbar(
                 message =
                     when (error) {
                         is NetworkError -> "Network error: ${error.message}"
@@ -79,7 +96,7 @@ fun AuthScreen(component: AuthComponent, modifier: Modifier = Modifier) {
         }
     }
 
-    Scaffold(modifier = modifier, snackbarHost = { SnackbarHost(snackbarHostState) }) {
+    Scaffold(modifier = modifier, snackbarHost = { SnackbarHost(snackBarHostState) }) {
         paddingValues ->
         AuthContent(
             state = state,
@@ -183,4 +200,10 @@ private fun AuthContent(
             TextButton(onClick = { onResetPassword(email) }) { Text("Forgot Password?") }
         }
     }
+}
+
+@Preview
+@Composable
+fun AuthScreenPreview() {
+    MaterialTheme { AuthScreen(component = PreviewAuthComponent()) }
 }

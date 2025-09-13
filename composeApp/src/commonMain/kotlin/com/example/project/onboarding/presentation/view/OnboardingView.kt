@@ -29,6 +29,8 @@ import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.example.project.onboarding.domain.entity.SlideEntity
 import com.example.project.onboarding.presentation.component.OnboardingComponent
+import com.example.project.onboarding.presentation.component.PreviewOnboardingComponent
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 /** Content composable for the onboarding screen */
 @Composable
@@ -131,4 +133,10 @@ private fun PageIndicator(pagerState: PagerState, modifier: Modifier = Modifier)
             Box(modifier = Modifier.padding(2.dp).clip(CircleShape).background(color).size(16.dp))
         }
     }
+}
+
+@Preview
+@Composable
+private fun OnboardingViewPreview() {
+    MaterialTheme { OnboardingView(PreviewOnboardingComponent()) }
 }

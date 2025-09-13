@@ -18,6 +18,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.project.home.presentation.component.HomeComponent
+import com.example.project.home.presentation.component.PreviewHomeComponent
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 /** Home content composable that displays the home screen */
@@ -67,12 +68,5 @@ fun HomeView(component: HomeComponent, modifier: Modifier = Modifier) {
 @Preview
 @Composable
 private fun HomeContentPreview() {
-    MaterialTheme {
-        HomeView(
-            component =
-                object : HomeComponent {
-                    override val title: String = "Home Screen"
-                }
-        )
-    }
+    MaterialTheme { HomeView(component = PreviewHomeComponent()) }
 }

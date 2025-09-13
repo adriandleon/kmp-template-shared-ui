@@ -33,7 +33,8 @@ internal class DefaultOnboardingComponent(
 ) : OnboardingComponent, ComponentContext by componentContext, KoinComponent {
 
     private val dispatcher = get<DispatcherProvider>()
-    private val store = instanceKeeper.getStore { OnboardingStoreFactory(initialPage, get()).create() }
+    private val store =
+        instanceKeeper.getStore { OnboardingStoreFactory(initialPage, get()).create() }
 
     override val state: Value<OnboardingState> = store.asValue().map(stateToModel)
 

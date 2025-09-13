@@ -7,7 +7,7 @@ import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
 import com.example.project.common.di.createRootComponent
 import com.example.project.common.di.initKoin
-import com.example.project.root.RootContent
+import com.example.project.root.view.RootContent
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.analytics.analytics
 import dev.gitlive.firebase.crashlytics.crashlytics

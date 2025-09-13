@@ -6,7 +6,9 @@ import com.example.project.common.util.DispatcherProvider
 import com.example.project.common.util.assertActiveSlotInstance
 import com.example.project.common.util.createComponentForTest
 import com.example.project.onboarding.domain.OnboardingRepository
-import com.example.project.root.RootComponent.Child
+import com.example.project.root.component.DefaultRootComponent
+import com.example.project.root.component.RootComponent
+import com.example.project.root.component.RootComponent.Child
 import dev.mokkery.answering.returns
 import dev.mokkery.everySuspend
 import dev.mokkery.mock

@@ -1,4 +1,4 @@
-package com.example.project.root
+package com.example.project.root.component
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.slot.ChildSlot
@@ -18,10 +18,6 @@ import com.example.project.common.util.pathSegmentOf
 import com.example.project.onboarding.domain.OnboardingRepository
 import com.example.project.onboarding.presentation.component.DefaultOnboardingComponent
 import com.example.project.onboarding.presentation.component.OnboardingComponent
-import com.example.project.root.DefaultRootComponent.Configuration.Auth
-import com.example.project.root.DefaultRootComponent.Configuration.Onboarding
-import com.example.project.root.DefaultRootComponent.Configuration.Tabs
-import com.example.project.root.RootComponent.Child
 import com.example.project.tabs.presentation.component.DefaultTabsComponent
 import com.example.project.tabs.presentation.component.TabsComponent
 import kotlinx.coroutines.launch
@@ -42,7 +38,7 @@ internal class DefaultRootComponent(
     //    }
     private val navigation = SlotNavigation<Configuration>()
 
-    override val slot: Value<ChildSlot<*, Child>> =
+    override val slot: Value<ChildSlot<*, RootComponent.Child>> =
         childSlot(
             source = navigation,
             serializer = Configuration.serializer(),
@@ -77,11 +73,14 @@ internal class DefaultRootComponent(
     override fun handleDeepLink(deepLinkUrl: Url) {
         val (path, childUrl) = deepLinkUrl.consumePathSegment()
         when (path) {
-            pathSegmentOf<Auth>() -> navigation.activate(Auth)
-            pathSegmentOf<Onboarding>() ->
-                navigation.activate(Onboarding(initialPage = deepLinkUrl.extractPageInt()))
-            pathSegmentOf<Tabs>() -> navigation.activate(Tabs(deepLinkUrl = childUrl))
-            else -> navigation.activate(Tabs(deepLinkUrl = deepLinkUrl))
+            pathSegmentOf<Configuration.Auth>() -> navigation.activate(Configuration.Auth)
+            pathSegmentOf<Configuration.Onboarding>() ->
+                navigation.activate(
+                    Configuration.Onboarding(initialPage = deepLinkUrl.extractPageInt())
+                )
+            pathSegmentOf<Configuration.Tabs>() ->
+                navigation.activate(Configuration.Tabs(deepLinkUrl = childUrl))
+            else -> navigation.activate(Configuration.Tabs(deepLinkUrl = deepLinkUrl))
         }
     }
 
@@ -89,29 +88,34 @@ internal class DefaultRootComponent(
         when {
             !isAuthenticated -> {
                 // User is not logged in, navigate to Auth
-                navigation.activate(Auth)
+                navigation.activate(Configuration.Auth)
             }
             onboardingRepository.hasSeenOnboarding() -> {
                 // User is authenticated and has seen onboarding, navigate to Tabs
-                navigation.activate(Tabs())
+                navigation.activate(Configuration.Tabs())
             }
             else -> {
                 // User is authenticated but hasn't seen onboarding, navigate to Onboarding
-                navigation.activate(Onboarding(initialPage = 0))
+                navigation.activate(Configuration.Onboarding(initialPage = 0))
             }
         }
     }
 
-    private fun createChild(configuration: Configuration, context: ComponentContext): Child =
+    private fun createChild(
+        configuration: Configuration,
+        context: ComponentContext,
+    ): RootComponent.Child =
         when (configuration) {
-            is Auth -> {
-                Child.Auth(authComponent(context))
+            is Configuration.Auth -> {
+                RootComponent.Child.Auth(authComponent(context))
             }
-            is Onboarding -> {
-                Child.Onboarding(onboardingComponent(context, configuration.initialPage))
+            is Configuration.Onboarding -> {
+                RootComponent.Child.Onboarding(
+                    onboardingComponent(context, configuration.initialPage)
+                )
             }
-            is Tabs -> {
-                Child.Tabs(tabsComponent(context, configuration.deepLinkUrl))
+            is Configuration.Tabs -> {
+                RootComponent.Child.Tabs(tabsComponent(context, configuration.deepLinkUrl))
             }
         }
 
@@ -135,14 +139,16 @@ internal class DefaultRootComponent(
         DefaultTabsComponent(componentContext = componentContext, deepLinkUrl = deepLinkUrl)
 
     private fun getInitialStack(deepLinkUrl: Url?): List<Configuration> {
-        val (path, childUrl) = deepLinkUrl?.consumePathSegment() ?: return listOf(Tabs())
+        val (path, childUrl) =
+            deepLinkUrl?.consumePathSegment() ?: return listOf(Configuration.Tabs())
 
         return when (path) {
-            pathSegmentOf<Auth>() -> listOf(Auth)
-            pathSegmentOf<Onboarding>() ->
-                listOf(Onboarding(initialPage = deepLinkUrl.extractPageInt()))
-            pathSegmentOf<Tabs>() -> listOf(Tabs(deepLinkUrl = childUrl))
-            else -> listOf(Tabs(deepLinkUrl = childUrl))
+            pathSegmentOf<Configuration.Auth>() -> listOf(Configuration.Auth)
+            pathSegmentOf<Configuration.Onboarding>() ->
+                listOf(Configuration.Onboarding(initialPage = deepLinkUrl.extractPageInt()))
+            pathSegmentOf<Configuration.Tabs>() ->
+                listOf(Configuration.Tabs(deepLinkUrl = childUrl))
+            else -> listOf(Configuration.Tabs(deepLinkUrl = childUrl))
         }
     }
 

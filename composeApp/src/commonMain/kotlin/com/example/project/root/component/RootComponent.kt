@@ -1,4 +1,4 @@
-package com.example.project.root
+package com.example.project.root.component
 
 import com.arkivanov.decompose.router.slot.ChildSlot
 import com.arkivanov.decompose.value.Value

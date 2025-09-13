@@ -1,20 +1,14 @@
 package com.example.project.tabs.presentation.component
 
 import com.arkivanov.decompose.ComponentContext
-import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
-import com.arkivanov.essenty.lifecycle.LifecycleRegistry
-import com.arkivanov.essenty.lifecycle.resume
+import com.example.project.common.util.PreviewComponentContext
 import com.example.project.home.presentation.component.PreviewHomeComponent
 
 /** Preview component for tabs */
-class PreviewTabsComponent :
-    TabsComponent,
-    ComponentContext by DefaultComponentContext(
-        lifecycle = LifecycleRegistry().apply { resume() }
-    ) {
+class PreviewTabsComponent : TabsComponent, ComponentContext by PreviewComponentContext {
 
     override val stack: Value<ChildStack<*, TabsComponent.Child>> =
         MutableValue(

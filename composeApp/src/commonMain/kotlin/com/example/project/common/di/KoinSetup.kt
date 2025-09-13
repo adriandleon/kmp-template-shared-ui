@@ -5,14 +5,14 @@ import com.example.project.auth.domain.repository.AuthRepository
 import com.example.project.common.util.DispatcherProvider
 import com.example.project.common.util.Url
 import com.example.project.onboarding.domain.OnboardingRepository
-import com.example.project.root.DefaultRootComponent
-import com.example.project.root.RootComponent
+import com.example.project.root.component.DefaultRootComponent
+import com.example.project.root.component.RootComponent
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 /**
- * Create a RootComponent with proper dependency injection
- * This function is exposed to Swift/iOS to avoid issues with Kotlin object access
+ * Create a RootComponent with proper dependency injection This function is exposed to Swift/iOS to
+ * avoid issues with Kotlin object access
  */
 fun createRootComponent(
     componentContext: ComponentContext,

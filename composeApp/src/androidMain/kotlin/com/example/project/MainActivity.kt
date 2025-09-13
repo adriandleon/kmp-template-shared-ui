@@ -12,7 +12,7 @@ import com.arkivanov.decompose.handleDeepLink
 import com.arkivanov.decompose.retainedComponent
 import com.example.project.common.di.createRootComponent
 import com.example.project.common.util.Url
-import com.example.project.root.RootContent
+import com.example.project.root.view.RootContent
 
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalDecomposeApi::class)
