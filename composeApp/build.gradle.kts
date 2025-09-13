@@ -1,8 +1,13 @@
+@file:OptIn(ExperimentalComposeLibrary::class)
+
 import com.adarshr.gradle.testlogger.theme.ThemeType
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.BOOLEAN
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
+import org.jetbrains.compose.ExperimentalComposeLibrary
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
 
 plugins {
     alias(libs.plugins.android.application)
@@ -23,7 +28,12 @@ plugins {
 }
 
 kotlin {
-    androidTarget { compilerOptions.jvmTarget.set(JvmTarget.JVM_17) }
+    androidTarget {
+        compilerOptions.jvmTarget.set(JvmTarget.JVM_17)
+
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+        instrumentedTestVariant.sourceSetTree.set(KotlinSourceSetTree.test)
+    }
 
     listOf(iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
         iosTarget.binaries.framework {
@@ -94,6 +104,8 @@ kotlin {
             implementation(libs.kotest.property)
             implementation(libs.kotlinx.coroutines.test)
             implementation(libs.ktor.client.mock)
+            implementation(kotlin("test"))
+            implementation(compose.uiTest)
         }
     }
 }
@@ -108,6 +120,7 @@ android {
         targetSdk = libs.versions.android.target.sdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     packaging.resources {
@@ -150,8 +163,10 @@ android {
 
 dependencies {
     implementation(platform(libs.firebase.bom))
-    debugImplementation(compose.uiTooling)
+    implementation(libs.ui.test.junit4.android)
     detektPlugins(libs.detekt.compose)
+    debugImplementation(compose.uiTooling)
+    debugImplementation(libs.ui.test.manifest)
 }
 
 ktfmt {

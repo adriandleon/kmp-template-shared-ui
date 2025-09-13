@@ -27,7 +27,7 @@ kotlinx-coroutines = "1.10.2"
 kotlinx-datetime = "0.7.1"
 kotlinx-serialization = "1.9.0"
 kover = "0.9.1"
-ktor = "3.2.3"
+ktor = "3.3.0"
 ksp = "2.2.20-2.0.2"
 ktfmt-gradle = "0.23.0"
 lumo-ui = "1.2.5"
@@ -37,6 +37,7 @@ slf4j = "2.0.17"
 splashscreen = "1.2.0-rc01"
 supabase = "3.2.2"
 test-logger = "4.0.0"
+ui-test-junit4-android = "1.9.1"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
@@ -86,6 +87,8 @@ slf4j-nop = { module = "org.slf4j:slf4j-nop", version.ref = "slf4j" }
 splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "splashscreen" }
 supabase-auth = { group = "io.github.jan-tennert.supabase", name = "auth-kt", version.ref = "supabase" }
 supabase-postgrest = { group = "io.github.jan-tennert.supabase", name = "postgrest-kt", version.ref = "supabase" }
+ui-test-junit4-android = { module = "androidx.compose.ui:ui-test-junit4-android", version.ref = "ui-test-junit4-android" }
+ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "ui-test-junit4-android" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

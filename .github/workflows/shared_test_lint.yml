@@ -1,0 +1,172 @@
+name: Shared Tests & Lint
+
+# =============================================================================
+# CONFIGURABLE VARIABLES - Customize these for your project
+# =============================================================================
+env:
+  # Project Configuration
+  PROJECT_NAME: Template
+  ANDROID_APP_MODULE: composeApp
+  IOS_APP_MODULE: iosApp
+  SHARED_MODULE: shared
+
+  # Android Configuration
+  ANDROID_PACKAGE_NAME: com.adriandeleon.template
+  ANDROID_GOOGLE_SERVICES_FILE: google-services.json
+
+  # iOS Configuration
+  IOS_BUNDLE_ID: com.adriandeleon.Template
+  IOS_GOOGLE_SERVICES_FILE: GoogleService-Info.plist
+  IOS_APP_FOLDER: Template
+
+  # Build Configuration
+  JAVA_VERSION: '17'
+  GRADLE_WRAPPER: ./gradlew
+
+  # Code Quality Tools
+  DANGERFILE_PATH: config/Dangerfile.df.kts
+  SWIFTFORMAT_CONFIG: config/.swiftformat
+  SWIFTLINT_CONFIG: config/.swiftlint.yml
+
+  # Test Configuration
+  KONSIST_TEST_TASK: konsistTest:test
+  KOVER_VERIFY_TASK: koverVerify
+  KOVER_REPORT_TASK: koverXmlReport
+
+  # Environment Variables (from secrets)
+  SUPABASE_URL_DEV_AND: ${{ secrets.SUPABASE_URL_PROD }}
+  SUPABASE_URL_DEV_IOS: ${{ secrets.SUPABASE_URL_PROD }}
+  SUPABASE_KEY_DEV: ${{ secrets.SUPABASE_KEY_PROD }}
+  SUPABASE_URL_PROD: ${{ secrets.SUPABASE_URL_PROD }}
+  SUPABASE_KEY_PROD: ${{ secrets.SUPABASE_KEY_PROD }}
+  CONFIGCAT_AND_TEST_KEY: ${{ secrets.CONFIGCAT_AND_TEST_KEY }}
+  CONFIGCAT_AND_LIVE_KEY: ${{ secrets.CONFIGCAT_AND_LIVE_KEY }}
+  CONFIGCAT_IOS_TEST_KEY: ${{ secrets.CONFIGCAT_IOS_TEST_KEY }}
+  CONFIGCAT_IOS_LIVE_KEY: ${{ secrets.CONFIGCAT_IOS_LIVE_KEY }}
+  GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+  GOOGLE_SERVICES_PLIST: ${{ secrets.GOOGLE_SERVICES_PLIST }}
+
+on: pull_request
+
+jobs:
+  danger:
+    name: Danger Checks
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Run Danger
+      uses: danger/kotlin@1.3.2
+      with:
+        dangerfile: ${{ env.DANGERFILE_PATH }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  kotlin-check:
+    name: Kotlin Static Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Gradle Cache
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: ${{ runner.os }}-gradle-
+
+    - name: Set Up SDK ${{ env.JAVA_VERSION }}
+      uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: ${{ env.JAVA_VERSION }}
+        cache: gradle
+
+    - name: Load Google Service JSON file
+      run: echo $GOOGLE_SERVICES_JSON | base64 -di > ${{ env.ANDROID_APP_MODULE }}/${{ env.ANDROID_GOOGLE_SERVICES_FILE }}
+
+    - name: Check Kotlin Formatting
+      run: ${{ env.GRADLE_WRAPPER }} ktfmtCheck
+
+    - name: Detekt Checks
+      run: ${{ env.GRADLE_WRAPPER }} detektAll
+
+  swift-check:
+    name: Swift Static Analysis
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: SPM Cache
+      uses: actions/cache@v4
+      with:
+        path: .build
+        key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+        restore-keys: |
+          ${{ runner.os }}-spm-
+
+    - name: Load Google Service PLIST file
+      run: echo $GOOGLE_SERVICES_PLIST | base64 -d > ${{ env.IOS_APP_MODULE }}/${{ env.IOS_APP_FOLDER }}/${{ env.IOS_GOOGLE_SERVICES_FILE }}
+
+    - name: Install SwiftLint
+      run: brew install swiftlint
+
+    - name: Swift Format Check
+      run: swiftformat --lint ${{ env.IOS_APP_MODULE }}/ --config ${{ env.SWIFTFORMAT_CONFIG }} --reporter github-actions-log
+
+    - name: Swift Lint
+      run: swiftlint ${{ env.IOS_APP_MODULE }}/ --strict --config ${{ env.SWIFTLINT_CONFIG }}
+
+  tests:
+    name: Kotlin Unit Tests
+    needs: kotlin-check
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Gradle Cache
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: ${{ runner.os }}-gradle-
+
+    - name: Set Up SDK ${{ env.JAVA_VERSION }}
+      uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: ${{ env.JAVA_VERSION }}
+        cache: gradle
+
+    # - name: Load Google Service JSON file
+    #   run: echo $GOOGLE_SERVICES_JSON | base64 -di > ${{ env.ANDROID_APP_MODULE }}/${{ env.ANDROID_GOOGLE_SERVICES_FILE }}
+
+    # - name: Konsist Tests
+    #   run: ${{ env.GRADLE_WRAPPER }} ${{ env.KONSIST_TEST_TASK }} --rerun-tasks
+
+    # Unit tests run when the gradle task koverVerify run.
+    - name: Run Unit Tests
+      run: ./gradlew :shared:cleanTestDebugUnitTest :shared:testDebugUnitTest --tests '${{ env.ANDROID_PACKAGE_NAME }}.*'
+
+    # - name: Check coverage metrics
+    #   run: ${{ env.GRADLE_WRAPPER }} ${{ env.KOVER_VERIFY_TASK }} ${{ env.KOVER_REPORT_TASK }}
+
+    # - name: Upload coverage reports
+    #   uses: codecov/codecov-action@v5
+    #   with:
+    #     token: ${{ secrets.CODECOV_TOKEN }}
+    #     files: ${{ env.SHARED_MODULE }}/build/reports/kover/report.xml
+    #     disable_search: true
+    #     fail_ci_if_error: true
