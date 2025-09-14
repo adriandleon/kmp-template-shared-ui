@@ -169,6 +169,8 @@ dependencies {
     debugImplementation(libs.ui.test.manifest)
 }
 
+compose.resources { packageOfResClass = "com.example.project.resources" }
+
 ktfmt {
     kotlinLangStyle()
     removeUnusedImports = true

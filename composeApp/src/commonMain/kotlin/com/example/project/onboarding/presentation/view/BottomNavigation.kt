@@ -23,10 +23,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import apptemplate.composeapp.generated.resources.Res
-import apptemplate.composeapp.generated.resources.get_started
-import apptemplate.composeapp.generated.resources.next
-import apptemplate.composeapp.generated.resources.previous
+import com.example.project.resources.Res
+import com.example.project.resources.get_started
+import com.example.project.resources.next
+import com.example.project.resources.previous
 import org.jetbrains.compose.resources.stringResource
 
 @Composable

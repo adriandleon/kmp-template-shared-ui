@@ -238,7 +238,7 @@ update_deeplink_schemas() {
         # Update HTTPS deeplink host
         sed -i.tmp "s|android:host=\"www\.example\.com\"|android:host=\"www.$new_domain\"|g" "composeApp/src/androidMain/AndroidManifest.xml"
         # Update custom scheme (lowercase project name)
-        local old_scheme=$(echo "$old_project_name" | tr '[:upper:]' '[:lower:]')
+        local old_scheme="example"
         local new_scheme=$(echo "$new_project_name" | tr '[:upper:]' '[:lower:]')
         sed -i.tmp "s|android:scheme=\"$old_scheme\"|android:scheme=\"$new_scheme\"|g" "composeApp/src/androidMain/AndroidManifest.xml"
         rm -f "composeApp/src/androidMain/AndroidManifest.xml.tmp"
@@ -248,7 +248,7 @@ update_deeplink_schemas() {
     # Update iOS Info.plist deeplink schemas
     if [ -f "iosApp/$new_project_name/Info.plist" ]; then
         # Update custom scheme (lowercase project name)
-        local old_scheme=$(echo "$old_project_name" | tr '[:upper:]' '[:lower:]')
+        local old_scheme="example"
         local new_scheme=$(echo "$new_project_name" | tr '[:upper:]' '[:lower:]')
         sed -i.tmp "s|<string>$old_scheme</string>|<string>$new_scheme</string>|g" "iosApp/$new_project_name/Info.plist"
         # Update bundle identifier in URL name
@@ -258,6 +258,79 @@ update_deeplink_schemas() {
     fi
     
     print_success "Updated deeplink schemas"
+}
+
+# Function to update deeplink route comments in Kotlin files
+update_deeplink_comments() {
+    local old_project_name="$1"
+    local new_project_name="$2"
+    
+    print_step "Updating deeplink route comments in Kotlin files..."
+    
+    # Convert project name to lowercase for deeplink scheme
+    local old_scheme="example"
+    local new_scheme=$(echo "$new_project_name" | tr '[:upper:]' '[:lower:]')
+    
+    # Find and update all Kotlin files with deeplink comments
+    find . -name "*.kt" -type f | while read -r file; do
+        if grep -q "Deeplink URL.*example://" "$file"; then
+            # Update deeplink URL comments
+            sed -i.tmp "s|Deeplink URL: \"example://|Deeplink URL: \"$new_scheme://|g" "$file"
+            rm -f "$file.tmp"
+            print_success "Updated deeplink comments in: $file"
+        fi
+    done
+    
+    print_success "Updated deeplink route comments"
+}
+
+# Function to update import statements with new package name
+update_import_statements() {
+    local old_package="$1"
+    local new_package="$2"
+    
+    print_step "Updating import statements with new package name..."
+    
+    # Convert package name to lowercase for import statements
+    local old_import_package="apptemplate"  # Current template import package
+    local new_import_package=$(echo "$new_package" | tr '[:upper:]' '[:lower:]' | tr -d '.')
+    
+    # Validate that new_import_package is not empty
+    if [ -z "$new_import_package" ]; then
+        print_error "New import package name is empty. Cannot update import statements."
+        return 1
+    fi
+    
+    print_info "Converting package '$new_package' to import package '$new_import_package'"
+    
+    # Find and update all Kotlin files with import statements
+    find . -name "*.kt" -type f | while read -r file; do
+        if grep -q "import $old_import_package\.composeapp\.generated\.resources" "$file"; then
+            # Update import statements
+            sed -i.tmp "s|import $old_import_package\.composeapp\.generated\.resources|import $new_import_package\.composeapp\.generated\.resources|g" "$file"
+            rm -f "$file.tmp"
+            print_success "Updated import statements in: $file"
+        fi
+    done
+    
+    print_success "Updated import statements"
+}
+
+# Function to update app name in strings.xml
+update_app_name_strings() {
+    local old_project_name="$1"
+    local new_project_name="$2"
+    
+    print_step "Updating app name in strings.xml..."
+    
+    # Update Android strings.xml
+    if [ -f "composeApp/src/androidMain/res/values/strings.xml" ]; then
+        sed -i.tmp "s|<string name=\"app_name\">$old_project_name</string>|<string name=\"app_name\">$new_project_name</string>|g" "composeApp/src/androidMain/res/values/strings.xml"
+        rm -f "composeApp/src/androidMain/res/values/strings.xml.tmp"
+        print_success "Updated app name in strings.xml"
+    fi
+    
+    print_success "Updated app name in strings.xml"
 }
 
 # Function to update all source files
@@ -702,7 +775,8 @@ show_final_instructions() {
     echo "   - Replace iosApp/$new_project_name/GoogleService-Info.plist with your actual Firebase config"
     echo "   - Update local.properties with your actual API keys (placeholders were added)"
     echo "   - Note: Template files were created with correct package names and bundle IDs"
-    echo "   - Note: Deeplink schemas were updated with your app name and domain"
+    echo "   - Note: Deeplink schemas and route comments were updated with your app name and domain"
+    echo "   - Note: Import statements and app name in strings.xml were updated"
     echo ""
     echo -e "${YELLOW}3. Update GitHub repository:${NC}"
     echo "   - Update repository secrets in GitHub Settings"
@@ -815,6 +889,15 @@ main() {
     
     # Update deeplink schemas
     update_deeplink_schemas "$OLD_PROJECT_NAME" "$NEW_PROJECT_NAME" "$OLD_DOMAIN" "$NEW_DOMAIN" "$NEW_BUNDLE_ID"
+    
+    # Update deeplink route comments in Kotlin files
+    update_deeplink_comments "$OLD_PROJECT_NAME" "$NEW_PROJECT_NAME"
+    
+    # Update import statements with new package name
+    update_import_statements "$OLD_PACKAGE" "$NEW_PACKAGE"
+    
+    # Update app name in strings.xml
+    update_app_name_strings "$OLD_PROJECT_NAME" "$NEW_PROJECT_NAME"
     
     # Create Firebase configuration files
     create_firebase_configs "$NEW_PACKAGE" "$NEW_PROJECT_NAME" "$NEW_BUNDLE_ID"

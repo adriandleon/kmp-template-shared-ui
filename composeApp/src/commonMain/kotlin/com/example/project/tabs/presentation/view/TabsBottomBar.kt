@@ -10,11 +10,11 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import apptemplate.composeapp.generated.resources.Res
-import apptemplate.composeapp.generated.resources.about_label
-import apptemplate.composeapp.generated.resources.contact_label
-import apptemplate.composeapp.generated.resources.home_label
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
+import com.example.project.resources.Res
+import com.example.project.resources.about_label
+import com.example.project.resources.contact_label
+import com.example.project.resources.home_label
 import com.example.project.tabs.presentation.component.TabsComponent
 import org.jetbrains.compose.resources.stringResource
 

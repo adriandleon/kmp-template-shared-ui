@@ -121,6 +121,11 @@ The script updates the following types of files:
 #### **Deeplink Schema Files**
 - `composeApp/src/androidMain/AndroidManifest.xml` - Android deeplink schemas
 - `iosApp/YourApp/Info.plist` - iOS deeplink schemas
+- All Kotlin files with deeplink route comments
+
+#### **Resource and Import Files**
+- `composeApp/src/androidMain/res/values/strings.xml` - Android app name
+- All Kotlin files with generated resource imports
 
 ### 3. Deeplink Schema Updates
 
@@ -128,25 +133,49 @@ The script automatically updates deeplink schemas based on your app name and dom
 
 #### **Android Deeplink Updates**
 - **HTTPS deeplinks**: Updates `android:host` from `www.example.com` to `www.yourdomain.com`
-- **Custom scheme deeplinks**: Updates `android:scheme` from `apptemplate` to `yourappname` (lowercase)
+- **Custom scheme deeplinks**: Updates `android:scheme` from `example` to `yourappname` (lowercase)
 
 #### **iOS Deeplink Updates**
-- **Custom scheme deeplinks**: Updates scheme from `apptemplate` to `yourappname` (lowercase)
+- **Custom scheme deeplinks**: Updates scheme from `example` to `yourappname` (lowercase)
 - **Bundle identifier**: Updates URL name from `com.example.project` to your actual bundle ID
 
-### 4. Package Name Updates
+#### **Kotlin Deeplink Comment Updates**
+- **Route comments**: Updates all `Deeplink URL: "example://..."` comments to use your app name
+- **Automatic detection**: Finds and updates all Kotlin files containing deeplink route comments
+- **Consistent scheme**: Uses the same lowercase app name for all deeplink references
+
+### 4. Import Statement Updates
+
+The script automatically updates generated resource import statements:
+
+#### **Generated Resource Imports**
+- **Old pattern**: `import apptemplate.composeapp.generated.resources.*`
+- **New pattern**: `import yourpackage.composeapp.generated.resources.*`
+- **Automatic detection**: Finds and updates all Kotlin files with generated resource imports
+- **Package conversion**: Converts package name to lowercase and removes dots for import statements
+
+### 5. App Name Updates
+
+The script automatically updates the app name in Android resources:
+
+#### **Android App Name**
+- **strings.xml**: Updates `<string name="app_name">AppTemplate</string>` to `<string name="app_name">YourAppName</string>`
+- **Consistent naming**: Uses the same app name throughout the project
+- **Resource references**: Ensures Android resource references use the correct app name
+
+### 6. Package Name Updates
 
 The script replaces all occurrences of:
 - `com.example.project` → `com.yourcompany.yourapp`
 - `AppTemplate` → `MyAwesomeApp`
 - `project.example.com` → `yourcompany.com`
 
-### 5. Bundle Identifier Updates
+### 7. Bundle Identifier Updates
 
 Updates iOS bundle identifiers:
 - `com.example.project.AppTemplate` → `com.yourcompany.yourapp.MyAwesomeApp`
 
-### 6. Firebase Configuration Creation
+### 8. Firebase Configuration Creation
 
 The script automatically creates template Firebase configuration files with the correct identifiers:
 - **google-services.json**: Created with the correct Android package name
@@ -155,7 +184,7 @@ The script automatically creates template Firebase configuration files with the 
 - **Template values**: All other values are placeholders that need to be replaced with real Firebase project data
 - **Ready to use**: Files are created in the correct locations and can be replaced with actual Firebase configs
 
-### 7. API Key Configuration Creation
+### 9. API Key Configuration Creation
 
 The script automatically creates or updates `local.properties` with API key placeholders:
 - **Supabase credentials**: Development and production URLs and keys
@@ -163,7 +192,7 @@ The script automatically creates or updates `local.properties` with API key plac
 - **Safe appending**: Adds placeholders to existing file without overwriting existing content
 - **Duplicate prevention**: Checks if placeholders already exist before adding them
 
-### 8. Directory Cleanup
+### 10. Directory Cleanup
 
 The script performs comprehensive cleanup to remove all old directory structures:
 - **Removes old package directories**: Deletes the entire old package structure
@@ -221,6 +250,9 @@ Updated Files:
 - iOS bundle identifier: org.example.project (same as Android package)
 - Domain: project.example.org (reversed from package name)
 - Deeplink schemas updated with app name and domain
+- Deeplink route comments updated in Kotlin files
+- Import statements updated with new package name
+- App name updated in strings.xml
 - Firebase configs created with correct package names and bundle IDs
 - local.properties created with API key placeholders for Supabase and ConfigCat
 ```
@@ -358,8 +390,20 @@ chmod +x setup_new_project.sh
 - **Schemas updated automatically**: The script updates both Android and iOS deeplink schemas
 - **Android deeplinks**: Check `composeApp/src/androidMain/AndroidManifest.xml` for updated schemes and hosts
 - **iOS deeplinks**: Check `iosApp/YourApp/Info.plist` for updated schemes and bundle identifiers
+- **Kotlin deeplink comments**: Check Kotlin files for updated `Deeplink URL` comments
 - **Custom schemes**: App name is converted to lowercase for custom scheme deeplinks
 - **HTTPS deeplinks**: Domain is automatically updated from `www.example.com` to `www.yourdomain.com`
+- **Comment updates**: All `Deeplink URL: "example://..."` comments are updated to use your app name
+
+#### Import Statement Issues
+- **Generated resources**: Check that import statements are updated from `apptemplate.composeapp.generated.resources` to your package name
+- **Package conversion**: Package name is converted to lowercase and dots are removed for import statements
+- **Compilation errors**: If you see import errors, ensure the script ran successfully and check the generated resource imports
+
+#### App Name Issues
+- **strings.xml**: Check that `composeApp/src/androidMain/res/values/strings.xml` has the correct app name
+- **Resource references**: Ensure all Android resource references use the updated app name
+- **Display name**: The app name in the Android launcher will reflect the updated value
 
 #### API Key Configuration Issues
 - **Placeholders added**: The script automatically adds API key placeholders to `local.properties`
