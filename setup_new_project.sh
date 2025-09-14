@@ -6,42 +6,94 @@
 # This script transforms the Compose Multiplatform template project into a new 
 # project with custom names, package identifiers, folder structure, and deeplink schemas.
 #
-# Usage: ./setup_new_project.sh
+# Usage: ./setup_new_project.sh [--dry-run] [--verbose] [--help]
 # =============================================================================
 
-set -e  # Exit on any error
+set -euo pipefail  # Exit on error, undefined vars, pipe failures
+
+# Script configuration
+readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+readonly SCRIPT_NAME="$(basename "$0")"
+readonly LOG_FILE="${SCRIPT_DIR}/setup_script.log"
+readonly BACKUP_DIR="${SCRIPT_DIR}/.backup_$(date +%Y%m%d_%H%M%S)"
+
+# Global variables
+DRY_RUN=false
+VERBOSE=false
+OLD_PACKAGE="com.example.project"
+OLD_PROJECT_NAME="AppTemplate"
+OLD_BUNDLE_ID="com.example.project.AppTemplate"
+OLD_DOMAIN="project.example.com"
 
 # Colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-PURPLE='\033[0;35m'
-CYAN='\033[0;36m'
-NC='\033[0m' # No Color
+readonly RED='\033[0;31m'
+readonly GREEN='\033[0;32m'
+readonly YELLOW='\033[1;33m'
+readonly BLUE='\033[0;34m'
+readonly PURPLE='\033[0;35m'
+readonly CYAN='\033[0;36m'
+readonly NC='\033[0m' # No Color
 
-# Function to print colored output
+# Logging functions
+log() {
+    local level="$1"
+    shift
+    local message="$*"
+    local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+    echo "[$timestamp] [$level] $message" >> "$LOG_FILE"
+    
+    if [[ "$VERBOSE" == "true" ]]; then
+        echo "[$timestamp] [$level] $message" >&2
+    fi
+}
+
+log_info() { log "INFO" "$@"; }
+log_warn() { log "WARN" "$@"; }
+log_error() { log "ERROR" "$@"; }
+
+# Enhanced output functions
 print_step() {
     echo -e "${BLUE}==>${NC} $1"
+    log_info "STEP: $1"
 }
 
 print_success() {
     echo -e "${GREEN}✓${NC} $1"
+    log_info "SUCCESS: $1"
 }
 
 print_warning() {
     echo -e "${YELLOW}⚠${NC} $1"
+    log_warn "$1"
 }
 
 print_error() {
     echo -e "${RED}✗${NC} $1"
+    log_error "$1"
 }
 
 print_info() {
     echo -e "${CYAN}ℹ${NC} $1"
+    log_info "INFO: $1"
 }
 
-# Function to validate input
+# Error handling
+handle_error() {
+    local line_number="$1"
+    local error_code="$2"
+    print_error "Error on line $line_number with exit code $error_code"
+    log_error "Script failed on line $line_number with exit code $error_code"
+    
+    if [[ -d "$BACKUP_DIR" ]]; then
+        print_info "Backup directory created at: $BACKUP_DIR"
+    fi
+    
+    exit "$error_code"
+}
+
+trap 'handle_error ${LINENO} $?' ERR
+
+# Utility functions
 validate_input() {
     local input="$1"
     local pattern="$2"
@@ -54,176 +106,195 @@ validate_input() {
     return 0
 }
 
-# Function to convert string to valid package name
 to_package_name() {
     echo "$1" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9.]//g' | sed 's/\.\.*/\./g' | sed 's/^\.\|\.$//g'
 }
 
-# Function to convert string to valid project name
 to_project_name() {
     echo "$1" | sed 's/[^a-zA-Z0-9]//g' | sed 's/^[0-9]*//g'
 }
 
-# Function to convert string to valid bundle identifier
 to_bundle_id() {
     echo "$1" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9.]//g' | sed 's/\.\.*/\./g' | sed 's/^\.\|\.$//g'
 }
 
-# Function to get domain from package name (reversed domain)
-# Converts: org.example.project -> project.example.org
 get_domain() {
     echo "$1" | tr '.' '\n' | tail -r | tr '\n' '.' | sed 's/\.$//'
 }
 
-# Function to get app name from package name
 get_app_name() {
     echo "$1" | rev | cut -d'.' -f1 | rev
 }
 
-# Function to create directory structure
+# File operations with better error handling
+safe_file_operation() {
+    local operation="$1"
+    local file="$2"
+    shift 2
+    local args=("$@")
+    
+    if [[ ! -f "$file" ]]; then
+        print_warning "File not found: $file"
+        return 1
+    fi
+    
+    if [[ "$DRY_RUN" == "true" ]]; then
+        print_info "DRY RUN: Would $operation $file"
+        return 0
+    fi
+    
+    # Create backup
+    if [[ "$operation" == "update" ]]; then
+        cp "$file" "$file.backup" 2>/dev/null || true
+    fi
+    
+    # Perform operation
+    case "$operation" in
+        "update")
+            sed -i.tmp "${args[@]}" "$file" && rm -f "$file.tmp"
+            ;;
+        "copy")
+            cp "${args[@]}" "$file"
+            ;;
+        "move")
+            mv "${args[@]}" "$file"
+            ;;
+        *)
+            print_error "Unknown operation: $operation"
+            return 1
+            ;;
+    esac
+}
+
+# Optimized directory operations
 create_directory_structure() {
     local old_package="$1"
     local new_package="$2"
-    local old_path=$(echo "$old_package" | tr '.' '/')
-    local new_path=$(echo "$new_package" | tr '.' '/')
+    local old_path="${old_package//.//}"
+    local new_path="${new_package//.//}"
     
     print_step "Creating new directory structure..."
     
-    # Create new directory structure for composeApp module - all source sets
-    local composeapp_source_sets=("commonMain" "androidMain" "iosMain" "commonTest" "androidUnitTest")
+    # Use arrays for better performance
+    local -a composeapp_source_sets=("commonMain" "androidMain" "iosMain" "commonTest" "androidUnitTest")
+    
     for source_set in "${composeapp_source_sets[@]}"; do
-        if [ -d "composeApp/src/$source_set/kotlin/$old_path" ]; then
-            mkdir -p "composeApp/src/$source_set/kotlin/$new_path"
-            cp -r "composeApp/src/$source_set/kotlin/$old_path"/* "composeApp/src/$source_set/kotlin/$new_path/" 2>/dev/null || true
-            print_success "Created composeApp/$source_set directory structure: $new_path"
+        local source_dir="composeApp/src/$source_set/kotlin/$old_path"
+        local target_dir="composeApp/src/$source_set/kotlin/$new_path"
+        
+        if [[ -d "$source_dir" ]]; then
+            if [[ "$DRY_RUN" == "true" ]]; then
+                print_info "DRY RUN: Would create $target_dir"
+            else
+                mkdir -p "$target_dir"
+                cp -r "$source_dir"/* "$target_dir/" 2>/dev/null || true
+                print_success "Created composeApp/$source_set directory structure: $new_path"
+            fi
         fi
     done
 }
 
-# Function to remove old directory structure
 remove_old_directories() {
     local old_package="$1"
-    local old_path=$(echo "$old_package" | tr '.' '/')
+    local old_path="${old_package//.//}"
     
     print_step "Removing old directory structure..."
     
-    # Remove old directories from composeApp module - all source sets
-    local composeapp_source_sets=("commonMain" "androidMain" "iosMain" "commonTest" "androidUnitTest")
+    local -a composeapp_source_sets=("commonMain" "androidMain" "iosMain" "commonTest" "androidUnitTest")
+    
     for source_set in "${composeapp_source_sets[@]}"; do
-        rm -rf "composeApp/src/$source_set/kotlin/$old_path" 2>/dev/null || true
+        local dir_to_remove="composeApp/src/$source_set/kotlin/$old_path"
+        if [[ -d "$dir_to_remove" ]]; then
+            if [[ "$DRY_RUN" == "true" ]]; then
+                print_info "DRY RUN: Would remove $dir_to_remove"
+            else
+                rm -rf "$dir_to_remove"
+            fi
+        fi
     done
     
-    # Clean up empty parent directories
-    for source_set in "${composeapp_source_sets[@]}"; do
-        cleanup_empty_directories "composeApp/src/$source_set/kotlin"
-    done
-    
+    # Clean up empty directories
+    cleanup_empty_directories
     print_success "Removed old directory structure: $old_path"
 }
 
-# Function to clean up empty directories recursively
 cleanup_empty_directories() {
-    local base_path="$1"
+    local base_path="${1:-.}"
     
-    if [ -d "$base_path" ]; then
-        # Find and remove empty directories, starting from the deepest level
+    if [[ ! -d "$base_path" ]]; then
+        return 0
+    fi
+    
+    # More efficient empty directory cleanup
+    find "$base_path" -type d -empty -delete 2>/dev/null || true
+    
+    # Additional cleanup for nested empty directories
+    local empty_count
+    while true; do
+        empty_count=$(find "$base_path" -type d -empty 2>/dev/null | wc -l)
+        if [[ "$empty_count" -eq 0 ]]; then
+            break
+        fi
         find "$base_path" -type d -empty -delete 2>/dev/null || true
-        
-        # Also check for directories that only contain empty subdirectories
-        # This handles cases where intermediate directories might be left empty
-        while true; do
-            local empty_dirs=$(find "$base_path" -type d -empty 2>/dev/null | wc -l)
-            if [ "$empty_dirs" -eq 0 ]; then
-                break
-            fi
-            find "$base_path" -type d -empty -delete 2>/dev/null || true
-        done
-    fi
-}
-
-# Function to update file contents
-update_file_contents() {
-    local file="$1"
-    local old_package="$2"
-    local new_package="$3"
-    local old_project_name="$4"
-    local new_project_name="$5"
-    local old_bundle_id="$6"
-    local new_bundle_id="$7"
-    local old_domain="$8"
-    local new_domain="$9"
-    
-    if [ -f "$file" ]; then
-        # Create backup
-        cp "$file" "$file.backup"
-        
-        # Replace package names
-        sed -i.tmp "s|$old_package|$new_package|g" "$file"
-        
-        # Replace project names
-        sed -i.tmp "s|$old_project_name|$new_project_name|g" "$file"
-        
-        # Replace bundle identifiers
-        sed -i.tmp "s|$old_bundle_id|$new_bundle_id|g" "$file"
-        
-        # Replace domain names
-        sed -i.tmp "s|$old_domain|$new_domain|g" "$file"
-        
-        # Clean up temporary files
-        rm -f "$file.tmp"
-        
-        print_success "Updated: $file"
-    fi
-}
-
-# Function to update Xcode project
-update_xcode_project() {
-    local old_project_name="$1"
-    local new_project_name="$2"
-    local old_bundle_id="$3"
-    local new_bundle_id="$4"
-    
-    print_step "Updating Xcode project..."
-    
-    # Update project.pbxproj
-    if [ -f "iosApp/$old_project_name.xcodeproj/project.pbxproj" ]; then
-        update_file_contents "iosApp/$old_project_name.xcodeproj/project.pbxproj" \
-            "com.adriandeleon.template" "$new_bundle_id" \
-            "$old_project_name" "$new_project_name" \
-            "com.adriandeleon.template.Template" "$new_bundle_id.$new_project_name" \
-            "adriandeleon" "$(echo $new_bundle_id | cut -d'.' -f1)"
-        
-        # Rename Xcode project directory
-        mv "iosApp/$old_project_name.xcodeproj" "iosApp/$new_project_name.xcodeproj"
-        print_success "Renamed Xcode project directory"
-    fi
-    
-    # Update Config.xcconfig
-    if [ -f "iosApp/Configuration/Config.xcconfig" ]; then
-        update_file_contents "iosApp/Configuration/Config.xcconfig" \
-            "com.adriandeleon.template" "$new_bundle_id" \
-            "$old_project_name" "$new_project_name" \
-            "com.adriandeleon.template.Template" "$new_bundle_id.$new_project_name" \
-            "adriandeleon" "$(echo $new_bundle_id | cut -d'.' -f1)"
-    fi
-    
-    # Rename iOS app folder
-    if [ -d "iosApp/$old_project_name" ]; then
-        mv "iosApp/$old_project_name" "iosApp/$new_project_name"
-        print_success "Renamed iOS app folder"
-    fi
-    
-    # Update Swift files in the new folder
-    find "iosApp/$new_project_name" -name "*.swift" -type f | while read -r file; do
-        update_file_contents "$file" \
-            "com.adriandeleon.template" "$new_bundle_id" \
-            "$old_project_name" "$new_project_name" \
-            "com.adriandeleon.template.Template" "$new_bundle_id.$new_project_name" \
-            "adriandeleon" "$(echo $new_bundle_id | cut -d'.' -f1)"
     done
 }
 
-# Function to update deeplink schemas
+# Optimized file content updates
+update_file_contents() {
+    local file="$1"
+    shift
+    local replacements=("$@")
+    
+    if [[ ! -f "$file" ]]; then
+        print_warning "File not found: $file"
+        return 1
+    fi
+    
+    if [[ "$DRY_RUN" == "true" ]]; then
+        print_info "DRY RUN: Would update $file"
+        return 0
+    fi
+    
+    # Create backup
+    cp "$file" "$file.backup"
+    
+    # Apply all replacements in one sed command for better performance
+    local sed_commands=()
+    for replacement in "${replacements[@]}"; do
+        sed_commands+=("-e" "$replacement")
+    done
+    
+    sed -i.tmp "${sed_commands[@]}" "$file"
+    rm -f "$file.tmp"
+    
+    print_success "Updated: $file"
+}
+
+# Batch file operations for better performance
+update_files_batch() {
+    local pattern="$1"
+    local replacements=("${@:2}")
+    
+    print_step "Updating files matching pattern: $pattern"
+    
+    local -a files_to_update
+    while IFS= read -r -d '' file; do
+        files_to_update+=("$file")
+    done < <(find . -name "$pattern" -type f -print0)
+    
+    if [[ ${#files_to_update[@]} -eq 0 ]]; then
+        print_info "No files found matching pattern: $pattern"
+        return 0
+    fi
+    
+    print_info "Found ${#files_to_update[@]} files to update"
+    
+    for file in "${files_to_update[@]}"; do
+        update_file_contents "$file" "${replacements[@]}"
+    done
+}
+
+# Optimized deeplink schema updates
 update_deeplink_schemas() {
     local old_project_name="$1"
     local new_project_name="$2"
@@ -233,107 +304,163 @@ update_deeplink_schemas() {
     
     print_step "Updating deeplink schemas..."
     
-    # Update AndroidManifest.xml deeplink schemas
-    if [ -f "composeApp/src/androidMain/AndroidManifest.xml" ]; then
-        # Update HTTPS deeplink host
-        sed -i.tmp "s|android:host=\"www\.example\.com\"|android:host=\"www.$new_domain\"|g" "composeApp/src/androidMain/AndroidManifest.xml"
-        # Update custom scheme (lowercase project name)
+    # Android deeplink updates
+    local android_manifest="composeApp/src/androidMain/AndroidManifest.xml"
+    if [[ -f "$android_manifest" ]]; then
         local old_scheme="example"
-        local new_scheme=$(echo "$new_project_name" | tr '[:upper:]' '[:lower:]')
-        sed -i.tmp "s|android:scheme=\"$old_scheme\"|android:scheme=\"$new_scheme\"|g" "composeApp/src/androidMain/AndroidManifest.xml"
-        rm -f "composeApp/src/androidMain/AndroidManifest.xml.tmp"
-        print_success "Updated AndroidManifest.xml deeplink schemas"
+        local new_scheme="$(echo "$new_project_name" | tr '[:upper:]' '[:lower:]')"  # Convert to lowercase
+        
+        update_file_contents "$android_manifest" \
+            "s|android:host=\"www\.example\.com\"|android:host=\"www.$new_domain\"|g" \
+            "s|android:scheme=\"$old_scheme\"|android:scheme=\"$new_scheme\"|g"
     fi
     
-    # Update iOS Info.plist deeplink schemas
-    if [ -f "iosApp/$new_project_name/Info.plist" ]; then
-        # Update custom scheme (lowercase project name)
+    # iOS deeplink updates
+    local ios_plist="iosApp/$new_project_name/Info.plist"
+    if [[ -f "$ios_plist" ]]; then
         local old_scheme="example"
-        local new_scheme=$(echo "$new_project_name" | tr '[:upper:]' '[:lower:]')
-        sed -i.tmp "s|<string>$old_scheme</string>|<string>$new_scheme</string>|g" "iosApp/$new_project_name/Info.plist"
-        # Update bundle identifier in URL name
-        sed -i.tmp "s|<string>com\.example\.project</string>|<string>$new_bundle_id</string>|g" "iosApp/$new_project_name/Info.plist"
-        rm -f "iosApp/$new_project_name/Info.plist.tmp"
-        print_success "Updated Info.plist deeplink schemas"
+        local new_scheme="$(echo "$new_project_name" | tr '[:upper:]' '[:lower:]')"  # Convert to lowercase
+        
+        update_file_contents "$ios_plist" \
+            "s|<string>$old_scheme</string>|<string>$new_scheme</string>|g" \
+            "s|<string>com\.example\.project</string>|<string>$new_bundle_id</string>|g"
     fi
     
     print_success "Updated deeplink schemas"
 }
 
-# Function to update deeplink route comments in Kotlin files
-update_deeplink_comments() {
-    local old_project_name="$1"
-    local new_project_name="$2"
-    
-    print_step "Updating deeplink route comments in Kotlin files..."
-    
-    # Convert project name to lowercase for deeplink scheme
-    local old_scheme="example"
-    local new_scheme=$(echo "$new_project_name" | tr '[:upper:]' '[:lower:]')
-    
-    # Find and update all Kotlin files with deeplink comments
-    find . -name "*.kt" -type f | while read -r file; do
-        if grep -q "Deeplink URL.*example://" "$file"; then
-            # Update deeplink URL comments
-            sed -i.tmp "s|Deeplink URL: \"example://|Deeplink URL: \"$new_scheme://|g" "$file"
-            rm -f "$file.tmp"
-            print_success "Updated deeplink comments in: $file"
-        fi
-    done
-    
-    print_success "Updated deeplink route comments"
-}
-
-# Function to update import statements with new package name
+# Optimized import statement updates
 update_import_statements() {
     local old_package="$1"
     local new_package="$2"
     
     print_step "Updating import statements with new package name..."
     
-    # Convert package name to lowercase for import statements
-    local old_import_package="apptemplate"  # Current template import package
-    local new_import_package=$(echo "$new_package" | tr '[:upper:]' '[:lower:]' | tr -d '.')
+    local old_import_package="apptemplate"
+    local new_import_package="$(echo "$new_package" | tr '[:upper:]' '[:lower:]')"  # Convert to lowercase
+    new_import_package="${new_import_package//./}"  # Remove dots
     
-    # Validate that new_import_package is not empty
-    if [ -z "$new_import_package" ]; then
+    if [[ -z "$new_import_package" ]]; then
         print_error "New import package name is empty. Cannot update import statements."
         return 1
     fi
     
     print_info "Converting package '$new_package' to import package '$new_import_package'"
     
-    # Find and update all Kotlin files with import statements
-    find . -name "*.kt" -type f | while read -r file; do
-        if grep -q "import $old_import_package\.composeapp\.generated\.resources" "$file"; then
-            # Update import statements
-            sed -i.tmp "s|import $old_import_package\.composeapp\.generated\.resources|import $new_import_package\.composeapp\.generated\.resources|g" "$file"
-            rm -f "$file.tmp"
-            print_success "Updated import statements in: $file"
-        fi
-    done
+    # Use batch file operations for better performance
+    update_files_batch "*.kt" \
+        "s|import $old_import_package\.composeapp\.generated\.resources|import $new_import_package\.composeapp\.generated\.resources|g"
     
     print_success "Updated import statements"
 }
 
-# Function to update app name in strings.xml
+# Optimized deeplink comment updates
+update_deeplink_comments() {
+    local old_project_name="$1"
+    local new_project_name="$2"
+    
+    print_step "Updating deeplink route comments in Kotlin files..."
+    
+    local old_scheme="example"
+    local new_scheme="$(echo "$new_project_name" | tr '[:upper:]' '[:lower:]')"  # Convert to lowercase
+    
+    # Use batch file operations
+    update_files_batch "*.kt" \
+        "s|Deeplink URL: \"$old_scheme://|Deeplink URL: \"$new_scheme://|g"
+    
+    print_success "Updated deeplink route comments"
+}
+
+# Optimized app name updates
 update_app_name_strings() {
     local old_project_name="$1"
     local new_project_name="$2"
     
     print_step "Updating app name in strings.xml..."
     
-    # Update Android strings.xml
-    if [ -f "composeApp/src/androidMain/res/values/strings.xml" ]; then
-        sed -i.tmp "s|<string name=\"app_name\">$old_project_name</string>|<string name=\"app_name\">$new_project_name</string>|g" "composeApp/src/androidMain/res/values/strings.xml"
-        rm -f "composeApp/src/androidMain/res/values/strings.xml.tmp"
-        print_success "Updated app name in strings.xml"
+    local strings_file="composeApp/src/androidMain/res/values/strings.xml"
+    if [[ -f "$strings_file" ]]; then
+        update_file_contents "$strings_file" \
+            "s|<string name=\"app_name\">$old_project_name</string>|<string name=\"app_name\">$new_project_name</string>|g"
     fi
     
     print_success "Updated app name in strings.xml"
 }
 
-# Function to update all source files
+# Optimized Xcode project updates
+update_xcode_project() {
+    local old_project_name="$1"
+    local new_project_name="$2"
+    local old_bundle_id="$3"
+    local new_bundle_id="$4"
+    
+    print_step "Updating Xcode project..."
+    
+    # Update project.pbxproj
+    local project_file="iosApp/$old_project_name.xcodeproj/project.pbxproj"
+    if [[ -f "$project_file" ]]; then
+        update_file_contents "$project_file" \
+            "s|com.adriandeleon.template|$new_bundle_id|g" \
+            "s|$old_project_name|$new_project_name|g" \
+            "s|com.adriandeleon.template.Template|$new_bundle_id.$new_project_name|g" \
+            "s|adriandeleon|$(echo $new_bundle_id | cut -d'.' -f1)|g"
+        
+        # Rename Xcode project directory
+        if [[ "$DRY_RUN" == "true" ]]; then
+            print_info "DRY RUN: Would rename iosApp/$old_project_name.xcodeproj to iosApp/$new_project_name.xcodeproj"
+        else
+            mv "iosApp/$old_project_name.xcodeproj" "iosApp/$new_project_name.xcodeproj"
+            print_success "Renamed Xcode project directory"
+        fi
+    fi
+    
+    # Update other iOS files
+    local -a ios_files=(
+        "iosApp/Configuration/Config.xcconfig"
+        "iosApp/$new_project_name/Info.plist"
+    )
+    
+    for file in "${ios_files[@]}"; do
+        if [[ -f "$file" ]]; then
+            update_file_contents "$file" \
+                "s|com.adriandeleon.template|$new_bundle_id|g" \
+                "s|$old_project_name|$new_project_name|g" \
+                "s|com.adriandeleon.template.Template|$new_bundle_id.$new_project_name|g" \
+                "s|adriandeleon|$(echo $new_bundle_id | cut -d'.' -f1)|g"
+        fi
+    done
+    
+    # Update Config.xcconfig PRODUCT_BUNDLE_IDENTIFIER specifically
+    local config_file="iosApp/Configuration/Config.xcconfig"
+    if [[ -f "$config_file" ]]; then
+        update_file_contents "$config_file" \
+            "s|PRODUCT_BUNDLE_IDENTIFIER=.*|PRODUCT_BUNDLE_IDENTIFIER=$new_bundle_id.$new_project_name\$(TEAM_ID)|g"
+    fi
+    
+    # Rename iOS app folder
+    if [[ -d "iosApp/$old_project_name" ]]; then
+        if [[ "$DRY_RUN" == "true" ]]; then
+            print_info "DRY RUN: Would rename iosApp/$old_project_name to iosApp/$new_project_name"
+        else
+            mv "iosApp/$old_project_name" "iosApp/$new_project_name"
+            print_success "Renamed iOS app folder"
+        fi
+    fi
+    
+    # Rename Swift file
+    local old_swift_file="iosApp/$new_project_name/$old_project_name.swift"
+    local new_swift_file="iosApp/$new_project_name/$new_project_name.swift"
+    if [[ -f "$old_swift_file" ]]; then
+        if [[ "$DRY_RUN" == "true" ]]; then
+            print_info "DRY RUN: Would rename $old_swift_file to $new_swift_file"
+        else
+            mv "$old_swift_file" "$new_swift_file"
+            print_success "Renamed Swift file: $old_project_name.swift -> $new_project_name.swift"
+        fi
+    fi
+}
+
+# Optimized source file updates
 update_source_files() {
     local old_package="$1"
     local new_package="$2"
@@ -346,28 +473,24 @@ update_source_files() {
     
     print_step "Updating source files..."
     
-    # Update Kotlin files
-    find . -name "*.kt" -type f | while read -r file; do
-        update_file_contents "$file" \
-            "$old_package" "$new_package" \
-            "$old_project_name" "$new_project_name" \
-            "$old_bundle_id" "$new_bundle_id" \
-            "$old_domain" "$new_domain"
-    done
+    # Batch update Kotlin files
+    update_files_batch "*.kt" \
+        "s|$old_package|$new_package|g" \
+        "s|$old_project_name|$new_project_name|g" \
+        "s|$old_bundle_id|$new_bundle_id|g" \
+        "s|$old_domain|$new_domain|g"
     
-    # Update Swift files
-    find . -name "*.swift" -type f | while read -r file; do
-        update_file_contents "$file" \
-            "$old_package" "$new_package" \
-            "$old_project_name" "$new_project_name" \
-            "$old_bundle_id" "$new_bundle_id" \
-            "$old_domain" "$new_domain"
-    done
+    # Batch update Swift files
+    update_files_batch "*.swift" \
+        "s|$old_package|$new_package|g" \
+        "s|$old_project_name|$new_project_name|g" \
+        "s|$old_bundle_id|$new_bundle_id|g" \
+        "s|$old_domain|$new_domain|g"
     
     print_success "Updated all source files"
 }
 
-# Function to update configuration files
+# Optimized configuration file updates
 update_config_files() {
     local old_package="$1"
     local new_package="$2"
@@ -380,53 +503,37 @@ update_config_files() {
     
     print_step "Updating configuration files..."
     
-    # Update Gradle files
-    update_file_contents "build.gradle.kts" \
-        "$old_package" "$new_package" \
-        "$old_project_name" "$new_project_name" \
-        "$old_bundle_id" "$new_bundle_id" \
-        "$old_domain" "$new_domain"
+    # Batch update Gradle files
+    local -a gradle_files=(
+        "build.gradle.kts"
+        "settings.gradle.kts"
+        "composeApp/build.gradle.kts"
+    )
     
-    update_file_contents "settings.gradle.kts" \
-        "$old_package" "$new_package" \
-        "$old_project_name" "$new_project_name" \
-        "$old_bundle_id" "$new_bundle_id" \
-        "$old_domain" "$new_domain"
-    
-    update_file_contents "composeApp/build.gradle.kts" \
-        "$old_package" "$new_package" \
-        "$old_project_name" "$new_project_name" \
-        "$old_bundle_id" "$new_bundle_id" \
-        "$old_domain" "$new_domain"
-    
-    update_file_contents "shared/build.gradle.kts" \
-        "$old_package" "$new_package" \
-        "$old_project_name" "$new_project_name" \
-        "$old_bundle_id" "$new_bundle_id" \
-        "$old_domain" "$new_domain"
+    for file in "${gradle_files[@]}"; do
+        if [[ -f "$file" ]]; then
+            update_file_contents "$file" \
+                "s|$old_package|$new_package|g" \
+                "s|$old_project_name|$new_project_name|g" \
+                "s|$old_bundle_id|$new_bundle_id|g" \
+                "s|$old_domain|$new_domain|g"
+        fi
+    done
     
     # Update Android manifest
-    if [ -f "composeApp/src/androidMain/AndroidManifest.xml" ]; then
-        update_file_contents "composeApp/src/androidMain/AndroidManifest.xml" \
-            "$old_package" "$new_package" \
-            "$old_project_name" "$new_project_name" \
-            "$old_bundle_id" "$new_bundle_id" \
-            "$old_domain" "$new_domain"
-    fi
-    
-    # Update iOS Info.plist
-    if [ -f "iosApp/$new_project_name/Info.plist" ]; then
-        update_file_contents "iosApp/$new_project_name/Info.plist" \
-            "$old_package" "$new_package" \
-            "$old_project_name" "$new_project_name" \
-            "$old_bundle_id" "$new_bundle_id" \
-            "$old_domain" "$new_domain"
+    local android_manifest="composeApp/src/androidMain/AndroidManifest.xml"
+    if [[ -f "$android_manifest" ]]; then
+        update_file_contents "$android_manifest" \
+            "s|$old_package|$new_package|g" \
+            "s|$old_project_name|$new_project_name|g" \
+            "s|$old_bundle_id|$new_bundle_id|g" \
+            "s|$old_domain|$new_domain|g"
     fi
     
     print_success "Updated configuration files"
 }
 
-# Function to update documentation files
+# Optimized documentation updates
 update_documentation() {
     local old_package="$1"
     local new_package="$2"
@@ -439,26 +546,17 @@ update_documentation() {
     
     print_step "Updating documentation files..."
     
-    # Update README.md
-    update_file_contents "README.md" \
-        "$old_package" "$new_package" \
-        "$old_project_name" "$new_project_name" \
-        "$old_bundle_id" "$new_bundle_id" \
-        "$old_domain" "$new_domain"
-    
-    # Update all documentation files
-    find "docs" -name "*.md" -type f | while read -r file; do
-        update_file_contents "$file" \
-            "$old_package" "$new_package" \
-            "$old_project_name" "$new_project_name" \
-            "$old_bundle_id" "$new_bundle_id" \
-            "$old_domain" "$new_domain"
-    done
+    # Batch update markdown files
+    update_files_batch "*.md" \
+        "s|$old_package|$new_package|g" \
+        "s|$old_project_name|$new_project_name|g" \
+        "s|$old_bundle_id|$new_bundle_id|g" \
+        "s|$old_domain|$new_domain|g"
     
     print_success "Updated documentation files"
 }
 
-# Function to update CI/CD workflows
+# Optimized workflow updates
 update_workflows() {
     local old_package="$1"
     local new_package="$2"
@@ -472,27 +570,28 @@ update_workflows() {
     print_step "Updating CI/CD workflows..."
     
     # Update GitHub Actions workflows
-    find ".github/workflows" -name "*.yml" -type f | while read -r file; do
-        update_file_contents "$file" \
-            "$old_package" "$new_package" \
-            "$old_project_name" "$new_project_name" \
-            "$old_bundle_id" "$new_bundle_id" \
-            "$old_domain" "$new_domain"
-    done
+    if [[ -d ".github/workflows" ]]; then
+        update_files_batch "*.yml" \
+            "s|$old_package|$new_package|g" \
+            "s|$old_project_name|$new_project_name|g" \
+            "s|$old_bundle_id|$new_bundle_id|g" \
+            "s|$old_domain|$new_domain|g"
+    fi
     
     # Update Dangerfile
-    if [ -f "config/Dangerfile.df.kts" ]; then
-        update_file_contents "config/Dangerfile.df.kts" \
-            "$old_package" "$new_package" \
-            "$old_project_name" "$new_project_name" \
-            "$old_bundle_id" "$new_bundle_id" \
-            "$old_domain" "$new_domain"
+    local dangerfile="config/Dangerfile.df.kts"
+    if [[ -f "$dangerfile" ]]; then
+        update_file_contents "$dangerfile" \
+            "s|$old_package|$new_package|g" \
+            "s|$old_project_name|$new_project_name|g" \
+            "s|$old_bundle_id|$new_bundle_id|g" \
+            "s|$old_domain|$new_domain|g"
     fi
     
     print_success "Updated CI/CD workflows"
 }
 
-# Function to update other configuration files
+# Optimized other config updates
 update_other_configs() {
     local old_package="$1"
     local new_package="$2"
@@ -505,37 +604,27 @@ update_other_configs() {
     
     print_step "Updating other configuration files..."
     
-    # Update buildServer.json
-    if [ -f "buildServer.json" ]; then
-        update_file_contents "buildServer.json" \
-            "$old_package" "$new_package" \
-            "$old_project_name" "$new_project_name" \
-            "$old_bundle_id" "$new_bundle_id" \
-            "$old_domain" "$new_domain"
-    fi
+    # Batch update configuration files
+    local -a config_files=(
+        "buildServer.json"
+        "gradle.properties"
+        "local.properties"
+    )
     
-    # Update gradle.properties
-    if [ -f "gradle.properties" ]; then
-        update_file_contents "gradle.properties" \
-            "$old_package" "$new_package" \
-            "$old_project_name" "$new_project_name" \
-            "$old_bundle_id" "$new_bundle_id" \
-            "$old_domain" "$new_domain"
-    fi
-    
-    # Update local.properties
-    if [ -f "local.properties" ]; then
-        update_file_contents "local.properties" \
-            "$old_package" "$new_package" \
-            "$old_project_name" "$new_project_name" \
-            "$old_bundle_id" "$new_bundle_id" \
-            "$old_domain" "$new_domain"
-    fi
+    for file in "${config_files[@]}"; do
+        if [[ -f "$file" ]]; then
+            update_file_contents "$file" \
+                "s|$old_package|$new_package|g" \
+                "s|$old_project_name|$new_project_name|g" \
+                "s|$old_bundle_id|$new_bundle_id|g" \
+                "s|$old_domain|$new_domain|g"
+        fi
+    done
     
     print_success "Updated other configuration files"
 }
 
-# Function to create Firebase configuration files
+# Firebase configuration functions (unchanged for compatibility)
 create_firebase_configs() {
     local new_package="$1"
     local new_project_name="$2"
@@ -552,63 +641,6 @@ create_firebase_configs() {
     print_success "Created Firebase configuration files"
 }
 
-# Function to create local.properties with API key placeholders
-create_local_properties() {
-    print_step "Creating local.properties with API key placeholders..."
-    
-    # Check if local.properties already exists
-    if [ -f "local.properties" ]; then
-        # Check if the placeholders are already added
-        if ! grep -q "SUPABASE_URL_DEV_AND" "local.properties"; then
-            # Append the placeholders to existing file
-            cat >> "local.properties" << 'EOF'
-
-###############################
-
-# Supabase Development Credentials
-SUPABASE_URL_DEV_AND=supabase-url-placeholder
-SUPABASE_URL_DEV_IOS=supabase-url-placeholder
-SUPABASE_KEY_DEV=supabase-key-placeholder
-
-# Supabase Production Credentials
-SUPABASE_URL_PROD=supabase-url-placeholder
-SUPABASE_KEY_PROD=supabse-key-placeholder
-
-# ConfigCat SDK Keys
-CONFIGCAT_IOS_LIVE_KEY=configcat-key-placeholder
-CONFIGCAT_IOS_TEST_KEY=configcat-key-placeholder
-CONFIGCAT_AND_LIVE_KEY=configcat-key-placeholder
-CONFIGCAT_AND_TEST_KEY=configcat-key-placeholder
-EOF
-            print_success "Added API key placeholders to existing local.properties"
-        else
-            print_success "API key placeholders already exist in local.properties"
-        fi
-    else
-        # Create new local.properties file with placeholders
-        cat > "local.properties" << 'EOF'
-###############################
-
-# Supabase Development Credentials
-SUPABASE_URL_DEV_AND=supabase-url-placeholder
-SUPABASE_URL_DEV_IOS=supabase-url-placeholder
-SUPABASE_KEY_DEV=supabase-key-placeholder
-
-# Supabase Production Credentials
-SUPABASE_URL_PROD=supabase-url-placeholder
-SUPABASE_KEY_PROD=supabse-key-placeholder
-
-# ConfigCat SDK Keys
-CONFIGCAT_IOS_LIVE_KEY=configcat-key-placeholder
-CONFIGCAT_IOS_TEST_KEY=configcat-key-placeholder
-CONFIGCAT_AND_LIVE_KEY=configcat-key-placeholder
-CONFIGCAT_AND_TEST_KEY=configcat-key-placeholder
-EOF
-        print_success "Created local.properties with API key placeholders"
-    fi
-}
-
-# Function to create google-services.json template
 create_google_services_json() {
     local package_name="$1"
     
@@ -655,11 +687,14 @@ create_google_services_json() {
   "configuration_version": "1"
 }'
     
-    echo "$google_services_content" > "composeApp/google-services.json"
-    print_success "Created google-services.json with package name: $package_name"
+    if [[ "$DRY_RUN" == "true" ]]; then
+        print_info "DRY RUN: Would create google-services.json with package name: $package_name"
+    else
+        echo "$google_services_content" > "composeApp/google-services.json"
+        print_success "Created google-services.json with package name: $package_name"
+    fi
 }
 
-# Function to create GoogleService-Info.plist template
 create_google_service_info_plist() {
     local bundle_id="$1"
     local project_name="$2"
@@ -695,20 +730,68 @@ create_google_service_info_plist() {
 </dict>
 </plist>'
     
-    echo "$plist_content" > "iosApp/$project_name/GoogleService-Info.plist"
-    print_success "Created GoogleService-Info.plist with bundle ID: $bundle_id.$project_name"
+    if [[ "$DRY_RUN" == "true" ]]; then
+        print_info "DRY RUN: Would create GoogleService-Info.plist with bundle ID: $bundle_id.$project_name"
+    else
+        echo "$plist_content" > "iosApp/$project_name/GoogleService-Info.plist"
+        print_success "Created GoogleService-Info.plist with bundle ID: $bundle_id.$project_name"
+    fi
 }
 
-# Function to clean up backup files
+create_local_properties() {
+    print_step "Creating local.properties with API key placeholders..."
+    
+    local local_props_content='###############################
+
+# Supabase Development Credentials
+SUPABASE_URL_DEV_AND=supabase-url-placeholder
+SUPABASE_URL_DEV_IOS=supabase-url-placeholder
+SUPABASE_KEY_DEV=supabase-key-placeholder
+
+# Supabase Production Credentials
+SUPABASE_URL_PROD=supabase-url-placeholder
+SUPABASE_KEY_PROD=supabse-key-placeholder
+
+# ConfigCat SDK Keys
+CONFIGCAT_IOS_LIVE_KEY=configcat-key-placeholder
+CONFIGCAT_IOS_TEST_KEY=configcat-key-placeholder
+CONFIGCAT_AND_LIVE_KEY=configcat-key-placeholder
+CONFIGCAT_AND_TEST_KEY=configcat-key-placeholder'
+    
+    if [[ -f "local.properties" ]]; then
+        if ! grep -q "SUPABASE_URL_DEV_AND" "local.properties"; then
+            if [[ "$DRY_RUN" == "true" ]]; then
+                print_info "DRY RUN: Would append API key placeholders to existing local.properties"
+            else
+                echo "$local_props_content" >> "local.properties"
+                print_success "Added API key placeholders to existing local.properties"
+            fi
+        else
+            print_success "API key placeholders already exist in local.properties"
+        fi
+    else
+        if [[ "$DRY_RUN" == "true" ]]; then
+            print_info "DRY RUN: Would create local.properties with API key placeholders"
+        else
+            echo "$local_props_content" > "local.properties"
+            print_success "Created local.properties with API key placeholders"
+        fi
+    fi
+}
+
+# Optimized cleanup
 cleanup_backups() {
     print_step "Cleaning up backup files..."
     
-    find . -name "*.backup" -type f -delete 2>/dev/null || true
-    
-    print_success "Cleaned up backup files"
+    if [[ "$DRY_RUN" == "true" ]]; then
+        print_info "DRY RUN: Would clean up backup files"
+    else
+        find . -name "*.backup" -type f -delete 2>/dev/null || true
+        print_success "Cleaned up backup files"
+    fi
 }
 
-# Function to validate the transformation
+# Enhanced validation
 validate_transformation() {
     local new_package="$1"
     local new_project_name="$2"
@@ -716,14 +799,14 @@ validate_transformation() {
     
     print_step "Validating transformation..."
     
-    # Check if new directories exist
-    local new_path=$(echo "$new_package" | tr '.' '/')
-    local composeapp_source_sets=("commonMain" "androidMain" "iosMain" "commonTest" "androidUnitTest")
+    local new_path="${new_package//.//}"
+    local -a composeapp_source_sets=("commonMain" "androidMain" "iosMain" "commonTest" "androidUnitTest")
     local all_dirs_exist=true
     
     # Check composeApp module directories
     for source_set in "${composeapp_source_sets[@]}"; do
-        if [ -d "composeApp/src/$source_set/kotlin/$new_path" ]; then
+        local dir="composeApp/src/$source_set/kotlin/$new_path"
+        if [[ -d "$dir" ]]; then
             print_success "New composeApp/$source_set directory structure created successfully"
         else
             print_error "New composeApp/$source_set directory structure not found"
@@ -731,12 +814,12 @@ validate_transformation() {
         fi
     done
     
-    if [ "$all_dirs_exist" = false ]; then
+    if [[ "$all_dirs_exist" == "false" ]]; then
         return 1
     fi
     
     # Check if Xcode project was renamed
-    if [ -d "iosApp/$new_project_name.xcodeproj" ]; then
+    if [[ -d "iosApp/$new_project_name.xcodeproj" ]]; then
         print_success "Xcode project renamed successfully"
     else
         print_error "Xcode project not renamed"
@@ -744,7 +827,7 @@ validate_transformation() {
     fi
     
     # Check if iOS app folder was renamed
-    if [ -d "iosApp/$new_project_name" ]; then
+    if [[ -d "iosApp/$new_project_name" ]]; then
         print_success "iOS app folder renamed successfully"
     else
         print_error "iOS app folder not renamed"
@@ -754,7 +837,7 @@ validate_transformation() {
     print_success "Transformation validation completed"
 }
 
-# Function to show final instructions
+# Enhanced final instructions
 show_final_instructions() {
     local new_package="$1"
     local new_project_name="$2"
@@ -796,18 +879,70 @@ show_final_instructions() {
     echo -e "${GREEN}Happy coding! 🚀${NC}"
 }
 
+# Help function
+show_help() {
+    cat << EOF
+Usage: $SCRIPT_NAME [OPTIONS]
+
+Transform a Compose Multiplatform template project into a new project with custom names,
+package identifiers, folder structure, and deeplink schemas.
+
+OPTIONS:
+    --dry-run       Show what would be done without making changes
+    --verbose       Enable verbose logging
+    --help          Show this help message
+
+EXAMPLES:
+    $SCRIPT_NAME                    # Run with interactive prompts
+    $SCRIPT_NAME --dry-run          # Preview changes without applying them
+    $SCRIPT_NAME --verbose          # Run with detailed logging
+
+For more information, see the documentation in SETUP_SCRIPT_README.md
+EOF
+}
+
+# Parse command line arguments
+parse_arguments() {
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            --dry-run)
+                DRY_RUN=true
+                shift
+                ;;
+            --verbose)
+                VERBOSE=true
+                shift
+                ;;
+            --help)
+                show_help
+                exit 0
+                ;;
+            *)
+                print_error "Unknown option: $1"
+                show_help
+                exit 1
+                ;;
+        esac
+    done
+}
+
 # Main function
 main() {
-    echo -e "${PURPLE}=============================================================================${NC}"
-    echo -e "${PURPLE}    Compose Multiplatform Template Project Setup Script${NC}"
-    echo -e "${PURPLE}=============================================================================${NC}"
+    # Initialize logging
+    echo "Starting setup script at $(date)" > "$LOG_FILE"
+    
+    # Parse arguments
+    parse_arguments "$@"
+    
+    echo -e "${PURPLE}==================================================================${NC}"
+    echo -e "${PURPLE}    Compose Multiplatform Template Project Setup Script ${NC}"
+    echo -e "${PURPLE}==================================================================${NC}"
     echo ""
     
-    # Current template values
-    local OLD_PACKAGE="com.example.project"
-    local OLD_PROJECT_NAME="AppTemplate"
-    local OLD_BUNDLE_ID="com.example.project.AppTemplate"
-    local OLD_DOMAIN="project.example.com"
+    if [[ "$DRY_RUN" == "true" ]]; then
+        print_warning "DRY RUN MODE: No changes will be made"
+        echo ""
+    fi
     
     # Get user input
     echo -e "${CYAN}Please provide the following information for your new project:${NC}"
@@ -836,23 +971,6 @@ main() {
     # Use package name as bundle identifier (standard practice)
     NEW_BUNDLE_ID="$NEW_PACKAGE"
     
-    # echo -e "${CYAN}Generated bundle identifier: $NEW_BUNDLE_ID${NC}"
-    # echo -e "${YELLOW}Note: iOS bundle identifier matches Android package name (standard practice)${NC}"
-    # echo ""
-    
-    # Ask if user wants to customize the bundle identifier
-    # read -p "Do you want to customize the bundle identifier? (y/N): " customize_bundle
-    # if [[ $customize_bundle =~ ^[Yy]$ ]]; then
-    #     while true; do
-    #         read -p "Enter your custom bundle identifier (e.g., com.yourcompany.yourapp): " NEW_BUNDLE_ID_RAW
-    #         NEW_BUNDLE_ID=$(to_bundle_id "$NEW_BUNDLE_ID_RAW")
-            
-    #         if validate_input "$NEW_BUNDLE_ID" "^[a-z][a-z0-9]*(\.[a-z][a-z0-9]*)*$" "Invalid bundle identifier. Must be in format: com.yourcompany.yourapp"; then
-    #             break
-    #         fi
-    #     done
-    # fi
-    
     # Extract domain from package name
     NEW_DOMAIN=$(get_domain "$NEW_PACKAGE")
     
@@ -874,10 +992,14 @@ main() {
     echo ""
     print_step "Starting project transformation..."
     
-    # Create new directory structure
-    create_directory_structure "$OLD_PACKAGE" "$NEW_PACKAGE"
+    # Create backup directory
+    if [[ "$DRY_RUN" == "false" ]]; then
+        mkdir -p "$BACKUP_DIR"
+        print_info "Backup directory created: $BACKUP_DIR"
+    fi
     
-    # Update all files
+    # Execute transformation steps
+    create_directory_structure "$OLD_PACKAGE" "$NEW_PACKAGE"
     update_source_files "$OLD_PACKAGE" "$NEW_PACKAGE" "$OLD_PROJECT_NAME" "$NEW_PROJECT_NAME" "$OLD_BUNDLE_ID" "$NEW_BUNDLE_ID" "$OLD_DOMAIN" "$NEW_DOMAIN"
     update_config_files "$OLD_PACKAGE" "$NEW_PACKAGE" "$OLD_PROJECT_NAME" "$NEW_PROJECT_NAME" "$OLD_BUNDLE_ID" "$NEW_BUNDLE_ID" "$OLD_DOMAIN" "$NEW_DOMAIN"
     update_documentation "$OLD_PACKAGE" "$NEW_PACKAGE" "$OLD_PROJECT_NAME" "$NEW_PROJECT_NAME" "$OLD_BUNDLE_ID" "$NEW_BUNDLE_ID" "$OLD_DOMAIN" "$NEW_DOMAIN"
@@ -914,8 +1036,10 @@ main() {
     # Validate transformation
     if validate_transformation "$NEW_PACKAGE" "$NEW_PROJECT_NAME" "$NEW_BUNDLE_ID"; then
         show_final_instructions "$NEW_PACKAGE" "$NEW_PROJECT_NAME" "$NEW_BUNDLE_ID"
+        log_info "Script completed successfully"
     else
         print_error "Transformation validation failed. Please check the output above for errors."
+        log_error "Transformation validation failed"
         exit 1
     fi
 }
