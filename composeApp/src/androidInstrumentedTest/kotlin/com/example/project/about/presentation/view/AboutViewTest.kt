@@ -11,7 +11,12 @@ class AboutViewTest {
     private val component = PreviewAboutComponent()
 
     @Test
-    fun verifyAboutViewTitleIsDisplayed() {
+    fun verifyTitleViewIsDisplayed() {
         composeTestRule.launchAboutView(component) {} verify { titleViewIsDisplayed() }
+    }
+
+    @Test
+    fun verifyAboutViewTextIsDisplayed() {
+        composeTestRule.launchAboutView(component) {} verify { aboutViewTextIsDisplayed() }
     }
 }

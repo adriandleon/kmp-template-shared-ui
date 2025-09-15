@@ -3,6 +3,7 @@ package com.example.project.about.presentation.view
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
 import com.example.project.about.presentation.component.PreviewAboutComponent
 
 fun ComposeContentTestRule.launchAboutView(
@@ -29,5 +30,9 @@ class AboutViewVerification(
 ) {
     fun titleViewIsDisplayed() {
         rule.onNodeWithTag("title_view_tag").assertIsDisplayed()
+    }
+
+    fun aboutViewTextIsDisplayed() {
+        rule.onNodeWithText(component.title, ignoreCase = true).assertIsDisplayed()
     }
 }

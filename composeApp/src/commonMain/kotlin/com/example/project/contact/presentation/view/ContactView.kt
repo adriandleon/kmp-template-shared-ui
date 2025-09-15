@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -51,6 +52,7 @@ fun ContactView(component: ContactComponent, modifier: Modifier = Modifier) {
                 style = MaterialTheme.typography.bodyLarge,
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.testTag("contact_description_text"),
             )
 
             Spacer(modifier = Modifier.height(32.dp))
