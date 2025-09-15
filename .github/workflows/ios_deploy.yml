@@ -5,20 +5,20 @@ name: iOS App Deploy
 # =============================================================================
 env:
   # Project Configuration
-  PROJECT_NAME: Template
+  PROJECT_NAME: AppTemplate
   ANDROID_APP_MODULE: composeApp
   IOS_APP_MODULE: iosApp
   SHARED_MODULE: shared
 
   # Android Configuration
-  ANDROID_PACKAGE_NAME: com.adriandeleon.template
+  ANDROID_PACKAGE_NAME: com.example.project
   ANDROID_GOOGLE_SERVICES_FILE: google-services.json
 
   # iOS Configuration
-  IOS_BUNDLE_ID: com.adriandeleon.Template
+  IOS_BUNDLE_ID: com.example.project.AppTemplate
   IOS_GOOGLE_SERVICES_FILE: GoogleService-Info.plist
-  IOS_APP_FOLDER: Template
-  IOS_TARGET_NAME: Template
+  IOS_APP_FOLDER: AppTemplate
+  IOS_TARGET_NAME: AppTemplate
 
   # Build Configuration
   JAVA_VERSION: '17'

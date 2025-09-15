@@ -5,14 +5,14 @@ name: Android App Deploy
 # =============================================================================
 env:
   # Project Configuration
-  PROJECT_NAME: Template
+  PROJECT_NAME: AppTemplate
   ANDROID_APP_MODULE: composeApp
   SHARED_MODULE: shared
 
   # Android Configuration
-  ANDROID_PACKAGE_NAME: com.adriandeleon.template
+  ANDROID_PACKAGE_NAME: com.example.project
   ANDROID_GOOGLE_SERVICES_FILE: google-services.json
-  ANDROID_NAMESPACE: com.adriandeleon.template
+  ANDROID_NAMESPACE: com.example.project
 
   # Build Configuration
   JAVA_VERSION: '17'
