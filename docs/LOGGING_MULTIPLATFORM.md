@@ -48,7 +48,7 @@ private fun kermitLogger(): KermitLogger {
         }
 
     KermitLogger.setLogWriters(logWriter)
-    KermitLogger.setTag("MisionVida")
+    KermitLogger.setTag("ComposeApp")
     return KermitLogger
 }
 ```

@@ -5,14 +5,14 @@ meets the minimum standards to be merged.
 
 [danger-kotlin](https://github.com/danger/kotlin) runs on the CI environment every time a PR is pushed
 
-In the workflow file [.github/workflows/shared_test_lint.yml](https://github.com/adriandleon/MisionVida/blob/main/.github/workflows/shared_test_lint.yml) 
+In the workflow file `.github/workflows/shared_test_lint.yml` 
 there is a job `danger` with a step named `Danger Checks` that runs danger-kotlin on every Pull Request and prints its output in the PR itself.
 
 ## Grant permissions for Danger
 
 Grant `read and write` permissions to the GITHUB_TOKEN for workflows in GitHub:
 
-- Go to `Settings -> Code and automation -> Actions -> General`, for this [repository](https://github.com/adriandleon/MisionVida/settings/actions)
+- Go to `Settings -> Code and automation -> Actions -> General` for your repository
 - In the `Workflow permissions` section, select `Read and write permissions` and save.
 
 ## Danger Checks
@@ -83,12 +83,11 @@ if (pullRequest.title.contains("WIP", false) || hasWipLabel) {
 }
 ```
 
-Check if What's New file for release to Android Play Store has been modified. This file located in 
-`composeApp/release/whatsNew/whatsnew-en-US` for English version, in `composeApp/release/whatsNew/whatsnew-es-419`
-for Spanish version, and `composeApp/release/whatsNew/whatsnew-pt-BR` for Portuguese version
+Check if What's New file for release to Android Play Store has been modified. This file should be located in 
+`composeApp/release/whatsNew/` directory for different language versions.
 
 ```kotlin
 if ((sharedModified || androidModified) && !whatsNewEnglish) {
-    message("🚀 Please add whats new information for release.\nYou can find it at [whatsnew-en-US](https://github.com/adriandleon/MisionVida/blob/main/composeApp/release/whatsNew/whatsnew-en-US) for english 🇺🇸")
+    message("🚀 Please add whats new information for release.\nYou can find it at composeApp/release/whatsNew/ for your language version")
 }
 ```

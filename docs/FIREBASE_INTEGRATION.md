@@ -17,7 +17,7 @@ Table of Contents
 
 [Firebase](https://firebase.google.com/) is a cloud backend-as-a-service platform that offers a suite of tools and services. The following are the services used in this project: 
 
-- [Crashlytics](https://firebase.google.com/docs/crashlytics) is used for crash reporting in Android, iOS and Shared module 
+- [Crashlytics](https://firebase.google.com/docs/crashlytics) is used for crash reporting in Android, iOS and ComposeApp module 
 - [Test Lab](https://firebase.google.com/docs/test-lab) is used for running Android App UI and integration tests before release
 
 ## Installing Firebase
@@ -37,7 +37,7 @@ Now, add the configuration parameters for your Android app.
 1) After clicking on the Android icon, you'll be taken to a registration screen for your app. Ensure that you provide the correct package name and then click `Register`.
 2) As a naming convention, add the suffix `Android` to your project nickname for clarity. This helps distinguish between different projects
 3) On the next step, make sure to download the generated `google-services.json` file.
-4) Proceed to add it to your `:composeApp` module. Eg: `composeApp/google-services.json`.
+4) Proceed to add it to your `composeApp` module. Eg: `composeApp/google-services.json`.
 5) Make sure to not commit the `google-services.json` file to git.
 
 ### Add configuration for iOS
@@ -46,33 +46,37 @@ Now, add the configuration parameters for your Android app.
 2) As a naming convention, add the suffix `iOS` to your project nickname for clarity. This helps distinguish between different projects
 3) Ensure that your `BUNDLE_ID`, which can be found in your `iosApp/Configuration/Config.xconfig`, is correctly added in the configuration file.
 4) In the next step, download the generated `GoogleService-Info.plist` file.
-5) Copy the `GoogleService-Info.plist` to the iosApp folder. Eg: `iosApp/MisionVida/GoogleService-Info.plist`.
+5) Copy the `GoogleService-Info.plist` to the iosApp folder. Eg: `iosApp/AppTemplate/GoogleService-Info.plist`.
 6) Make sure to not commit the `GoogleService-Info.plist` file to git.
 7) In Xcode, navigate to File > Add package dependencies.
 8) Make sure to add the Firebase SPM dependency from [https://github.com/firebase/firebase-ios-sdk](https://github.com/firebase/firebase-ios-sdk)
 9) Choose the Firebase components you want to use from the repository. In this example, we'll use analytics and crashlytics. Then, click `Add Packages`
 10) Due to an [issue](https://github.com/JetBrains/compose-multiplatform/issues/4026) where the Frameworks, Libraries, and Embedded Content section is missing when creating a KMP project, you may need to add it manually from the Build phases tab in Xcode and restart Xcode a few times.
-11) Go to `Targets > MisionVida > Build Phases` tab and ensure to add all necessary components from Firebase that you'll be using in your project in the `Link Binary With Libraries` section.
+11) Go to `Targets > AppTemplate > Build Phases` tab and ensure to add all necessary components from Firebase that you'll be using in your project in the `Link Binary With Libraries` section.
 
 ### Setting up the Firebase SDK
 
-In the `libs.versions.toml` project file catalog, add the following gradle dependencies:
+The Firebase dependencies are already configured in the project. The current versions are defined in `gradle/libs.versions.toml`:
 
 ```toml
 [versions]
-firebase-gitlive-sdk = "2.1.0"
-gradlePlugins-crashlytics = "3.0.3"
-gradlePlugins-google-services = "4.4.2"
+firebase-gitlive = "2.3.0"
+firebase-bom = "34.2.0"
+gradle-crashlytics = "3.0.6"
+gradle-google-services = "4.4.3"
 
 [libraries]
-gitlive-firebase-crashlytics = { module = "dev.gitlive:firebase-crashlytics", version.ref = "firebase-gitlive-sdk" }
+firebase-analytics = { group = "dev.gitlive", name = "firebase-analytics", version.ref = "firebase-gitlive" }
+firebase-common = { group = "dev.gitlive", name = "firebase-common", version.ref = "firebase-gitlive" }
+firebase-config = { group = "dev.gitlive", name = "firebase-config", version.ref = "firebase-gitlive" }
+firebase-crashlytics = { group = "dev.gitlive", name = "firebase-crashlytics", version.ref = "firebase-gitlive" }
 
 [plugins]
-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "gradlePlugins-crashlytics" }
-google-services = { id = "com.google.gms.google-services", version.ref = "gradlePlugins-google-services" }
+crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "gradle-crashlytics" }
+google-services = { id = "com.google.gms.google-services", version.ref = "gradle-google-services" }
 ```
 
-In your project's root `build.gradle.kts`, include the following plugins:
+The Firebase plugins are already configured in the project. In the root `build.gradle.kts`:
 
 ```kotlin
 plugins {
@@ -81,7 +85,7 @@ plugins {
 }
 ```
 
-In your `:composeApp` or Android app entry point, be sure to include the following plugins:
+In the `composeApp` module's `build.gradle.kts`:
 
 ```kotlin
 plugins { 
@@ -90,11 +94,14 @@ plugins {
 }
 ```
 
-Ensure to add the dependencies in the `commonMain` source set of the `:shared` module's `build.gradle.kts` file:
+The Firebase dependencies are already included in the `commonMain` source set of the `composeApp` module's `build.gradle.kts` file:
 
 ```kotlin
 commonMain.dependencies {
-    implementation(libs.gitlive.firebase.crashlytics)
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.common)
+    implementation(libs.firebase.config)
+    implementation(libs.firebase.crashlytics)
 }
 ```
 
@@ -171,7 +178,7 @@ jobs:
 - Encode the content of the file `GoogleService-Info.plist` to base64 running the following command in the terminal:
 
 ```shell
-base64 -i iosApp/MisionVida/GoogleService-Info.plist
+base64 -i iosApp/AppTemplate/GoogleService-Info.plist
 ```
 
 - Log in to the GitHub repository of the project and [create secrets](https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository) for Github Actions.
@@ -186,5 +193,5 @@ jobs:
   build-android-app:
     steps:
       - name: Load Google Service PLIST file
-        run: echo $GOOGLE_SERVICES_PLIST | base64 -d > iosApp/MisionVida/GoogleService-Info.plist
+        run: echo $GOOGLE_SERVICES_PLIST | base64 -d > iosApp/AppTemplate/GoogleService-Info.plist
 ```

@@ -30,47 +30,43 @@ for postgres database, storage, authentication, realtime database and edge funct
 
 [supabase-kt](https://github.com/supabase-community/supabase-kt) is a client for Kotlin Multiplatform
 
-Add the latest versions of supabase, and the dependencies for all required modules for the project in `libs.versions.toml` file catalog:
+Supabase dependencies are already configured in the project. The current versions are defined in `gradle/libs.versions.toml`:
 
 ```toml
 [versions]
-supabase = "3.0.3"
+supabase = "3.2.2"
+
 [libraries]
 supabase-auth = { group = "io.github.jan-tennert.supabase", name = "auth-kt", version.ref = "supabase" }
 supabase-postgrest = { group = "io.github.jan-tennert.supabase", name = "postgrest-kt", version.ref = "supabase" }
-supabase-functions = { group = "io.github.jan-tennert.supabase", name = "functions-kt", version.ref = "supabase" }
-supabase-storage = { group = "io.github.jan-tennert.supabase", name = "storage-kt", version.ref = "supabase" }
-supabase-realtime = { group = "io.github.jan-tennert.supabase", name = "realtime-kt", version.ref = "supabase" }
 ```
 
-And add the dependencies in the `commonMain` source set in the shared module `build.gradle.kts` file:
+The dependencies are already included in the `commonMain` source set in the `composeApp` module's `build.gradle.kts` file:
 
 ```kotlin
-commonTest.dependencies {
+commonMain.dependencies {
     implementation(libs.supabase.auth)
     implementation(libs.supabase.postgrest)
-    implementation(libs.supabase.functions)
-    implementation(libs.supabase.storage)
-    implementation(libs.supabase.realtime)
 }
 ```
 
 ### Adding Ktor Client Engine
 
-Also, a [Ktor Client](https://ktor.io/docs/client-engines.html) engine is required for supabase to work. Add a ktor client for each kotlin target 
-present in the project:
-
-> Note: It is recommended to use the same Ktor version as supabase-kt
+Ktor Client engines are already configured for Supabase. The current Ktor version is defined in `gradle/libs.versions.toml`:
 
 ```toml
 [versions]
-ktor = "3.0.3"
+ktor = "3.3.0"
+
 [libraries]
-ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
-ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
 ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ```
+
+The Ktor clients are already configured in the `composeApp` module's `build.gradle.kts`:
 
 ```kotlin
 sourceSets {
@@ -80,10 +76,6 @@ sourceSets {
 
     iosMain.dependencies {
         implementation(libs.ktor.client.darwin)
-    }
-
-    jvmMain.dependencies {
-        implementation(libs.ktor.client.cio)
     }
 
     commonTest.dependencies {
@@ -114,7 +106,7 @@ plugins {
 }
 ```
 
-Include the plugin in the shared module `build.gradle.kts` file:
+Include the plugin in the composeApp module `build.gradle.kts` file:
 
 ```kotlin
 plugins {
@@ -125,7 +117,7 @@ plugins {
 To get the secret keys, first we look in `local.properties` variables, if the variable if not present 
 then we look in the system environment variables.
 
-Add this function at the end of the shared module `build.gradle.kts` file:
+Add this function at the end of the composeApp module `build.gradle.kts` file:
 
 ```kotlin
 fun getSecret(key: String): String {

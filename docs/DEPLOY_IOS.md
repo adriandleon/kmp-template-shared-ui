@@ -2,7 +2,7 @@
 
 # iOS TestFlight Release Process
 
-This document outlines the process for releasing the MisionVida app to TestFlight.
+This document outlines the process for releasing the Compose Multiplatform app to TestFlight.
 
 Table of Contents
 -----------------
@@ -179,10 +179,7 @@ The build number is automatically incremented during the release process. The ve
 
 ### 2. Update Changelog
 
-Before releasing, ensure the changelog is up to date. The changelog is read from:
-```
-composeApp/release/whatsNew/whatsnew-es-419
-```
+Before releasing, ensure the changelog is up to date. The changelog should be updated in the appropriate release notes files for your app.
 
 ### 3. Run Tests and Linting
 
@@ -211,7 +208,7 @@ This command will:
 
 After uploading:
 1. Log in to [App Store Connect](https://appstoreconnect.apple.com)
-2. Navigate to the MisionVida app
+2. Navigate to your app
 3. Go to TestFlight tab
 4. Wait for the build to process (usually takes 15-30 minutes)
 5. Once processed, you can distribute the build to testers
@@ -250,5 +247,5 @@ If the build fails:
 
 - The release process uses fastlane match for code signing
 - Certificates are stored in a private repository
-- The app identifier is `uy.jorgemarquez.MisionVida`
-- The Apple Developer account email is `invjapsystem@gmail.com`
+- Update the app identifier in your Xcode project settings
+- Ensure you have access to the Apple Developer account

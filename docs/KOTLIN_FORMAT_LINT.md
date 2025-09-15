@@ -76,7 +76,7 @@ Make sure to install the [pre-commit hooks](#pre-commit-hooks). This will instal
 
 - Runs on CI on every Pull Request
 
-In the workflow file [.github/workflows/shared_test_lint.yml](https://github.com/adriandleon/MisionVida/blob/main/.github/workflows/shared_test_lint.yml) there is a job `swift-check` with a step named `Check Kotlin Formatting` that runs ktfmtCheck on every Pull Request.
+In the workflow file `.github/workflows/shared_test_lint.yml` there is a job `kotlin-check` with a step named `Check Kotlin Formatting` that runs ktfmtCheck on every Pull Request.
 
 ```yaml
 - name: Check Kotlin Formatting
@@ -182,7 +182,7 @@ Make sure to install the [pre-commit hooks](#pre-commit-hooks). This will instal
 
 - Runs on CI on every Pull Request
 
-In the workflow file [.github/workflows/shared_test_lint.yml](https://github.com/adriandleon/MisionVida/blob/main/.github/workflows/shared_test_lint.yml) there is a job `kotlin-check` with a step named `Detekt Checks` that runs detektAll on every Pull Request.
+In the workflow file `.github/workflows/shared_test_lint.yml` there is a job `kotlin-check` with a step named `Detekt Checks` that runs detektAll on every Pull Request.
 
 ```yaml
 - name: Detekt Checks

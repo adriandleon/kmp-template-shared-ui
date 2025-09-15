@@ -1,4 +1,4 @@
-# Unit Tests in Shared module
+# Unit Tests in Compose Multiplatform Module
 
 Table of Contents
 -----------------
@@ -16,7 +16,7 @@ Table of Contents
 
 ## Tools
 
-This are the tools used for testing the multiplatform `Shared` module:
+This are the tools used for testing the multiplatform `composeApp` module:
 
 - Kotest
 - Kosist
@@ -24,28 +24,28 @@ This are the tools used for testing the multiplatform `Shared` module:
 
 ## Kotest Framework
 
-[Kotest Framework](https://kotest.io/) is used for unit tests in the multiplatform shared module,
+[Kotest Framework](https://kotest.io/) is used for unit tests in the multiplatform composeApp module,
 it's also used with the Assertions Library, the Property Testing library, and Data Driven Testing module
 
 ### Installing Kotest Dependencies
 
-Add the latest versions, the library dependencies for all used modules, and the multiplatform plugin for kotest in the `libs.versions.toml` file catalog:
+Kotest dependencies are already configured in the project. The current versions are defined in `gradle/libs.versions.toml`:
 
 ```toml
 [versions]
-kotest = "6.0.0.M1"
-kotest-koin = "1.3.0"
+kotest = "6.0.3"
+
 [libraries]
-kotest-assertions = { group = "io.kotest", name = "kotest-assertions-core", version.ref = "kotest" }
-kotest-engine = { group = "io.kotest", name = "kotest-framework-engine", version.ref = "kotest" }
-kotest-extensions-koin = { module = "io.kotest.extensions:kotest-extensions-koin", version.ref = "kotest-koin" }
-kotest-property = { group = "io.kotest", name = "kotest-property", version.ref="kotest" }
-kotest-runner-junit5 = { module = 'io.kotest:kotest-runner-junit5', version.ref = "kotest" }
+kotest-assertions-core = { group = "io.kotest", name = "kotest-assertions-core", version.ref = "kotest" }
+kotest-extensions-koin = { group = "io.kotest", name = "kotest-extensions-koin", version.ref = "kotest" }
+kotest-framework-engine = { group = "io.kotest", name = "kotest-framework-engine", version.ref = "kotest" }
+kotest-property = { group = "io.kotest", name = "kotest-property", version.ref = "kotest" }
+
 [plugins]
-kotest = { id = "io.kotest.multiplatform", version.ref = "kotest" }
+kotest = { id = "io.kotest", version.ref = "kotest" }
 ```
 
-Include the multiplatform plugin in the shared module `build.gradle.kts` file:
+The Kotest plugin is already included in the `composeApp` module's `build.gradle.kts` file:
 
 ```kotlin
 plugins {
@@ -53,28 +53,26 @@ plugins {
 }
 ```
 
-And add the kotest dependencies in the `commonTest` source set, and the Junit5 runner in the `androidUnitTest` source set:
+The Kotest dependencies are already configured in the `commonTest` source set:
 
 ```kotlin
 commonTest.dependencies {
-    implementation(libs.kotest.engine)
-    implementation(libs.kotest.assertions)
-    implementation(libs.kotest.property)
+    implementation(libs.kotest.assertions.core)
     implementation(libs.kotest.extensions.koin)
-}
-
-androidUnitTest.dependencies {
-    implementation(libs.kotest.runner.junit5)
+    implementation(libs.kotest.framework.engine)
+    implementation(libs.kotest.property)
+    implementation(libs.kotlinx.coroutines.test)
+    implementation(libs.ktor.client.mock)
+    implementation(kotlin("test"))
+    implementation(compose.uiTest)
 }
 ```
 
-Finally enable JUnit to run the test in the android platform:
+JUnit is already enabled for Android tests in the `composeApp` module's `build.gradle.kts`:
 
 ```kotlin
 android {
-    testOptions.unitTests.all {
-        it.useJUnitPlatform()
-    }
+    testOptions.unitTests.all { it.useJUnitPlatform() }
 }
 ```
 
@@ -138,7 +136,7 @@ test-logger = "4.0.0"
 testLogger = { id = "com.adarshr.test-logger", version.ref = "test-logger" }
 ```
 
-Add the plugin in the shared module `build.gradle.kts` file:
+Add the plugin in the composeApp module `build.gradle.kts` file:
 
 ```kotlin
 plugins {
@@ -165,8 +163,8 @@ testlogger {
 
 There are some defined gradle run configurations stored in the folder `config/.run`. These are:
 
-- `config/.run/unit_tests_shared.run.xml`: Runs all unit tests in Shared module
-- `config/.run/unit_tests_all.run.xml`: Runs all unit tests in Shared module + all Konsist tests in konsistTest module
+- `config/.run/unit_tests_shared.run.xml`: Runs all unit tests in composeApp module
+- `config/.run/unit_tests_all.run.xml`: Runs all unit tests in composeApp module + all Konsist tests in konsistTest module
 
 > Open these files and edit the package name with your project package name:
 
@@ -176,7 +174,7 @@ There are some defined gradle run configurations stored in the folder `config/.r
 
 ## Running Tests on CI
 
-The unit tests in the multiplatform `Shared` module runs on CI on every Pull Request push, these 
+The unit tests in the multiplatform `composeApp` module runs on CI on every Pull Request push, these 
 are define as two jobs in the workflow `.github/workflows/shared_test_lint.yml`
 
 The first step runs the Konsist tests located in the konsistTest module:
@@ -186,9 +184,9 @@ The first step runs the Konsist tests located in the konsistTest module:
   run: ./gradlew konsistTest:test --rerun-tasks
 ```
 
-The second step runs all the unit tests inside the `Shared` module:
+The second step runs all the unit tests inside the `composeApp` module:
 
 ```yaml
 - name: Run Unit Tests
-  run: ./gradlew :shared:cleanTestDebugUnitTest :shared:testDebugUnitTest --tests 'your.project.package.*'
+  run: ./gradlew :composeApp:cleanTestDebugUnitTest :composeApp:testDebugUnitTest --tests 'your.project.package.*'
 ```

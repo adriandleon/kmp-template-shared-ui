@@ -24,11 +24,21 @@ The analytics system provides a flexible way to track events across the applicat
 
 ## Installing Firebase Analytics
 
-Add Firebase Analytics dependency to your shared module's build.gradle.kts:
+Firebase Analytics is already included in the project dependencies. The current version is defined in `gradle/libs.versions.toml`:
+
+```toml
+[versions]
+firebase-gitlive = "2.3.0"
+
+[libraries]
+firebase-analytics = { group = "dev.gitlive", name = "firebase-analytics", version.ref = "firebase-gitlive" }
+```
+
+The dependency is automatically included in the `composeApp` module's `build.gradle.kts`:
 
 ```kotlin
-dependencies {
-    implementation("dev.gitlive:firebase-analytics:1.11.1")
+commonMain.dependencies {
+    implementation(libs.firebase.analytics)
 }
 ```
 
