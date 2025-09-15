@@ -10,6 +10,10 @@ import com.example.project.home.presentation.component.PreviewHomeComponent
 /** Preview component for tabs */
 class PreviewTabsComponent : TabsComponent, ComponentContext by PreviewComponentContext {
 
+    var homeTabWasCalled: Boolean = false
+    var aboutTabWasCalled: Boolean = false
+    var contactTabWasCalled: Boolean = false
+
     override val stack: Value<ChildStack<*, TabsComponent.Child>> =
         MutableValue(
             ChildStack(
@@ -19,14 +23,14 @@ class PreviewTabsComponent : TabsComponent, ComponentContext by PreviewComponent
         )
 
     override fun selectHomeTab() {
-        // No-op for preview
+        homeTabWasCalled = true
     }
 
     override fun selectAboutTab() {
-        // No-op for preview
+        aboutTabWasCalled = true
     }
 
     override fun selectContactTab() {
-        // No-op for preview
+        contactTabWasCalled = true
     }
 }

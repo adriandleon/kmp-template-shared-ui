@@ -10,6 +10,8 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.example.project.resources.Res
 import com.example.project.resources.about_label
@@ -30,6 +32,7 @@ fun TabsBottomBar(component: TabsComponent) {
             label = { Text(stringResource(Res.string.home_label)) },
             selected = activeComponent is TabsComponent.Child.Home,
             onClick = component::selectHomeTab,
+            modifier = Modifier.testTag("tag_home_navigation_bar_item"),
         )
 
         NavigationBarItem(
@@ -37,6 +40,7 @@ fun TabsBottomBar(component: TabsComponent) {
             label = { Text(stringResource(Res.string.about_label)) },
             selected = activeComponent is TabsComponent.Child.About,
             onClick = component::selectAboutTab,
+            modifier = Modifier.testTag("tag_about_navigation_bar_item"),
         )
 
         NavigationBarItem(
@@ -44,6 +48,7 @@ fun TabsBottomBar(component: TabsComponent) {
             label = { Text(stringResource(Res.string.contact_label)) },
             selected = activeComponent is TabsComponent.Child.Contact,
             onClick = component::selectContactTab,
+            modifier = Modifier.testTag("tag_contact_navigation_bar_item"),
         )
     }
 }

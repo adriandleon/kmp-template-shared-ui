@@ -43,7 +43,7 @@ fun AboutView(component: AboutComponent, modifier: Modifier = Modifier) {
                 style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier.testTag("title_view_tag")
+                modifier = Modifier.testTag("title_view_tag"),
             )
 
             Spacer(modifier = Modifier.height(16.dp))
