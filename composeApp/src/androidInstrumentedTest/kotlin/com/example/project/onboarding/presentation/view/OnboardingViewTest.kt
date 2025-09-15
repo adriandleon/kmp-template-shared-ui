@@ -13,6 +13,9 @@ class OnboardingViewTest {
 
     @Test
     fun testOnboardingView() {
-        composeTestRule.setContent { OnboardingView(component) }
+        composeTestRule.launchOnboardingView(component) { clickOnSkipOnboarding() } verify
+            {
+                skipOnboardingWasClicked()
+            }
     }
 }

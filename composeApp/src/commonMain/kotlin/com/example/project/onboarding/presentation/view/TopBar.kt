@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.example.project.resources.Res
 import com.example.project.resources.skip
@@ -30,6 +31,7 @@ fun TopBar(onSkip: () -> Unit, modifier: Modifier = Modifier) {
                 ButtonDefaults.filledTonalButtonColors(
                     containerColor = MaterialTheme.colorScheme.onSurfaceVariant
                 ),
+            modifier = Modifier.testTag("skip_onboarding_button"),
         ) {
             Text(
                 text = stringResource(Res.string.skip),

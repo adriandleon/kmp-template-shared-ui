@@ -9,6 +9,8 @@ import com.arkivanov.decompose.value.Value
  */
 class PreviewOnboardingComponent : OnboardingComponent {
 
+    var skipOnboardingWasCalled = false
+
     override val state: Value<OnboardingComponent.OnboardingState> =
         MutableValue(OnboardingComponent.OnboardingState())
 
@@ -21,7 +23,7 @@ class PreviewOnboardingComponent : OnboardingComponent {
     }
 
     override fun skipOnboarding() {
-        // No-op for preview
+        skipOnboardingWasCalled = true
     }
 
     override fun completeOnboarding() {
