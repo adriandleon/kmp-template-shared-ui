@@ -176,7 +176,7 @@ create_directory_structure() {
     print_step "Creating new directory structure..."
     
     # Use arrays for better performance
-    local -a composeapp_source_sets=("commonMain" "androidMain" "iosMain" "commonTest" "androidUnitTest")
+    local -a composeapp_source_sets=("commonMain" "androidMain" "iosMain" "commonTest")
     
     for source_set in "${composeapp_source_sets[@]}"; do
         local source_dir="composeApp/src/$source_set/kotlin/$old_path"
@@ -200,7 +200,7 @@ remove_old_directories() {
     
     print_step "Removing old directory structure..."
     
-    local -a composeapp_source_sets=("commonMain" "androidMain" "iosMain" "commonTest" "androidUnitTest")
+    local -a composeapp_source_sets=("commonMain" "androidMain" "iosMain" "commonTest")
     
     for source_set in "${composeapp_source_sets[@]}"; do
         local dir_to_remove="composeApp/src/$source_set/kotlin/$old_path"
@@ -800,7 +800,7 @@ validate_transformation() {
     print_step "Validating transformation..."
     
     local new_path="${new_package//.//}"
-    local -a composeapp_source_sets=("commonMain" "androidMain" "iosMain" "commonTest" "androidUnitTest")
+    local -a composeapp_source_sets=("commonMain" "androidMain" "iosMain" "commonTest")
     local all_dirs_exist=true
     
     # Check composeApp module directories
