@@ -753,10 +753,8 @@ SUPABASE_URL_PROD=supabase-url-placeholder
 SUPABASE_KEY_PROD=supabse-key-placeholder
 
 # ConfigCat SDK Keys
-CONFIGCAT_IOS_LIVE_KEY=configcat-key-placeholder
-CONFIGCAT_IOS_TEST_KEY=configcat-key-placeholder
-CONFIGCAT_AND_LIVE_KEY=configcat-key-placeholder
-CONFIGCAT_AND_TEST_KEY=configcat-key-placeholder'
+CONFIGCAT_LIVE_KEY=configcat-key-placeholder
+CONFIGCAT_TEST_KEY=configcat-key-placeholder
     
     if [[ -f "local.properties" ]]; then
         if ! grep -q "SUPABASE_URL_DEV_AND" "local.properties"; then
