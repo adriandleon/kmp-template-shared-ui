@@ -750,11 +750,11 @@ SUPABASE_KEY_DEV=supabase-key-placeholder
 
 # Supabase Production Credentials
 SUPABASE_URL_PROD=supabase-url-placeholder
-SUPABASE_KEY_PROD=supabse-key-placeholder
+SUPABASE_KEY_PROD=supabase-key-placeholder
 
 # ConfigCat SDK Keys
 CONFIGCAT_LIVE_KEY=configcat-key-placeholder
-CONFIGCAT_TEST_KEY=configcat-key-placeholder
+CONFIGCAT_TEST_KEY=configcat-key-placeholder'
     
     if [[ -f "local.properties" ]]; then
         if ! grep -q "SUPABASE_URL_DEV_AND" "local.properties"; then
