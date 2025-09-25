@@ -4,6 +4,7 @@ import com.adarshr.gradle.testlogger.theme.ThemeType
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.BOOLEAN
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
+import com.ncorti.ktfmt.gradle.TrailingCommaManagementStrategy.COMPLETE
 import org.jetbrains.compose.ExperimentalComposeLibrary
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -174,7 +175,7 @@ compose.resources { packageOfResClass = "com.example.project.resources" }
 ktfmt {
     kotlinLangStyle()
     removeUnusedImports = true
-    manageTrailingCommas = true
+    trailingCommaManagementStrategy = COMPLETE
 }
 
 detekt {

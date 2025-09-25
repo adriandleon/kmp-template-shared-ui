@@ -28,8 +28,8 @@ env:
   BUNDLE_RELEASE_PATH: composeApp/build/outputs/bundle/release
 
   # Firebase Test Lab Configuration
-  FIREBASE_DEVICE_MODEL: shiba
-  FIREBASE_DEVICE_VERSION: '34'
+  FIREBASE_DEVICE_MODEL: tokay
+  FIREBASE_DEVICE_VERSION: '35'
   FIREBASE_LOCALE: es
   FIREBASE_ORIENTATION: portrait
   FIREBASE_TIMEOUT: 15m
@@ -88,7 +88,7 @@ jobs:
     - name: Upload App APK
       uses: actions/upload-artifact@v4
       with:
-        name: app-debug
+        name: ${{ env.APK_DEBUG_NAME }}
         path: ${{ env.APK_DEBUG_PATH }}/${{ env.APK_DEBUG_NAME }}
 
     - name: Assemble App Instrumentation Tests
@@ -97,7 +97,7 @@ jobs:
     - name: Upload App Tests APK
       uses: actions/upload-artifact@v4
       with:
-        name: app-debug-androidTest
+        name: ${{ env.APK_TEST_NAME }}
         path: ${{ env.APK_TEST_PATH }}/${{ env.APK_TEST_NAME }}
 
   firebase:
@@ -119,27 +119,28 @@ jobs:
         restore-keys: ${{ runner.os }}-gradle-
 
     - name: Download App APK
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v5
       with:
-        name: app-debug
+        name: ${{ env.APK_DEBUG_NAME }}
+        path: ./artifacts
 
     - name: Download App Tests APK
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v5
       with:
-        name: app-debug-androidTest
+        name: ${{ env.APK_TEST_NAME }}
+        path: ./artifacts
 
-    - id: auth
-      name: Authenticate with Google Cloud
+    - name: Authenticate with Google Cloud
       uses: google-github-actions/auth@v2
       with:
         project_id: ${{ secrets.GOOGLE_PROJECT_ID }}
         credentials_json: ${{ secrets.GOOGLE_SERVICE_ACCOUNT }}
 
     - name: Set up Google Cloud SDK
-      uses: google-github-actions/setup-gcloud@v2
+      uses: google-github-actions/setup-gcloud@v3
 
     - name: Run instrumentations tests in Firebase Test Lab
-      run: gcloud firebase test android run --type instrumentation --app ${{ env.APK_DEBUG_NAME }} --test ${{ env.APK_TEST_NAME }} --device model=${{ env.FIREBASE_DEVICE_MODEL }},version=${{ env.FIREBASE_DEVICE_VERSION }},locale=${{ env.FIREBASE_LOCALE }},orientation=${{ env.FIREBASE_ORIENTATION }} --timeout ${{ env.FIREBASE_TIMEOUT }}
+      run: gcloud firebase test android run --type instrumentation --app ./artifacts/${{ env.APK_DEBUG_NAME }} --test ./artifacts/${{ env.APK_TEST_NAME }} --device model=${{ env.FIREBASE_DEVICE_MODEL }},version=${{ env.FIREBASE_DEVICE_VERSION }},locale=${{ env.FIREBASE_LOCALE }},orientation=${{ env.FIREBASE_ORIENTATION }} --timeout ${{ env.FIREBASE_TIMEOUT }}
 
   coverage_report:
     name: Update Code Coverage Report
