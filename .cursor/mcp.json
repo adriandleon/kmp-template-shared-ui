@@ -1,15 +1,5 @@
 {
   "mcpServers": {
-    "github": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-github"
-      ],
-      "env": {
-        "GITHUB_TOKEN": "${env.PERSONAL_GITHUB_API_KEY}"
-      }
-    },
     "context7": {
       "url": "https://mcp.context7.com/mcp",
       "headers": {
