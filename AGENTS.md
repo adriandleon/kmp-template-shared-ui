@@ -75,10 +75,29 @@ open iosApp/AppTemplate.xcodeproj
 - **Naming**: Follow Apple's Swift API Design Guidelines
 
 ### Compose UI
-- **Components**: Use Material3 components and theming
-- **State Management**: Unidirectional data flow with StateFlow
-- **Preview**: Every composable MUST have `@Preview` annotation
+- **Composable Functions**: Use PascalCase, descriptive names
+- **State Management**: Use `remember`, `mutableStateOf`, `StateFlow`
+- **State Hoisting**: Move state as high as possible in the tree
+- **Unidirectional Data Flow**: Data flows down, events flow up
+- **Material3**: Use Material3 components and theming
+- **Preview Annotations**: Every composable MUST have `@Preview`
 - **Testing**: Use `Modifier.testTag()` for UI testing
+
+### Code Organization
+- **Package Structure**: Organize by feature, not by layer
+- **Naming Conventions**:
+  - Entities: `*Entity.kt`
+  - Repositories: `*Repository.kt`
+  - Use Cases: `*UseCase.kt`
+  - Components: `*Component.kt`
+  - Stores: `*Store.kt`
+  - Composables: `*Screen.kt`, `*Component.kt`
+
+### Platform Abstraction
+- **Expect/Actual**: Use for platform-specific implementations
+- **Common Interfaces**: Define in `commonMain`
+- **Platform Implementations**: Implement in `androidMain`/`iosMain`
+- **Dependencies**: Use KMP-compatible libraries only
 
 ## Testing Instructions
 
@@ -110,6 +129,12 @@ open iosApp/AppTemplate.xcodeproj
 - Use page object pattern for UI tests
 - Mock dependencies with Mokkery
 - Test both success and error scenarios
+
+### Internationalization
+- **Languages**: English (default), Spanish (es-r419), Portuguese (pt-rBR)
+- **String Resources**: Extract all text to `strings.xml`
+- **Content Description**: Provide accessibility descriptions
+- **Preview Locales**: Test UI in all supported languages
 
 ## Build Configuration
 
@@ -164,6 +189,25 @@ data/            # Data layer
 - **Component Integration**: Use `@KoinComponent` for dependency injection
 - **Factory Dependencies**: Use `factoryOf(::Constructor)`
 - **Singleton Dependencies**: Use `singleOf(::Constructor)`
+
+### Data Management
+
+#### Supabase Integration
+- **Client**: Use PostgREST client for database operations
+- **Authentication**: Handle auth with Supabase Auth
+- **Real-time**: Use Supabase real-time subscriptions
+- **Error Handling**: Implement proper error handling
+
+#### DataStore Preferences
+- **Preferences**: Use for app settings and user preferences
+- **Type Safety**: Use typed preferences with DataStore
+- **Migration**: Handle preference migration from SharedPreferences
+
+#### Ktor Networking
+- **Client**: Configure with platform-specific engines (OkHttp/Darwin)
+- **Serialization**: Use Kotlinx Serialization for JSON
+- **Interceptors**: Add logging and error handling interceptors
+- **SSL Pinning**: Implement certificate pinning for security
 
 ## Platform-Specific Guidelines
 
@@ -283,6 +327,14 @@ data/            # Data layer
 5. Create pull request with detailed description
 6. Address review feedback
 7. Merge after approval and CI passes
+
+## Common Patterns
+
+- **Repository Pattern**: Abstract data access
+- **Use Case Pattern**: Encapsulate business logic
+- **Observer Pattern**: Use StateFlow/SharedFlow for reactive streams
+- **Factory Pattern**: Use for object creation
+- **Builder Pattern**: Use for complex object construction
 
 ## Additional Resources
 
