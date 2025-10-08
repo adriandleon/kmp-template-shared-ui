@@ -37,7 +37,7 @@ cp local.properties.example local.properties
 
 ### Development Commands
 ```bash
-# Clean and build
+# Clean and build (slower - builds everything)
 ./gradlew clean build
 
 # Run all tests
@@ -304,11 +304,27 @@ data/            # Data layer
 
 ## Performance Optimization
 
+### Build Performance
+- **Gradle Workers**: Configured for optimal parallel processing
+- **Build Cache**: Local and remote build caching enabled
+- **Configuration Cache**: Gradle configuration cache enabled
+- **Incremental Compilation**: Experimental klib incremental compilation enabled
+- **CrashKiOS Constraint**: Native caching disabled due to CrashKiOS requirements (see [CrashKiOS docs](https://crashkios.touchlab.co/docs/crashlytics))
+
+### Runtime Performance
 - **Compose Performance**: Use `remember`, `derivedStateOf`, `LazyColumn`
 - **Memory Management**: Implement proper lifecycle management
 - **Image Loading**: Use Coil for efficient image loading
 - **Database Queries**: Optimize Supabase queries and use indices
-- **Build Performance**: Use Gradle build cache and configuration cache
+
+### Build Time Optimization Tips
+1. **Use specific tasks**: Instead of `./gradlew build`, use specific tasks like `./gradlew :composeApp:assembleDebug`
+2. **Build only what you need**: For development, build only your target platform
+3. **Preserve Gradle caches**: Don't clean Gradle build cache between builds
+4. **Avoid release builds**: Use debug builds during development
+5. **Use Gradle daemon**: Keep daemon running for faster subsequent builds
+6. **Incremental compilation**: Experimental klib incremental compilation is enabled for faster rebuilds
+7. **CrashKiOS limitation**: Native caching is disabled due to CrashKiOS requirements
 
 ## Contributing
 
