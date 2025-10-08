@@ -8,7 +8,7 @@ import com.example.project.logger.domain.Logger
 /**
  * Represents a component for the Contact screen. Default implementation of [ContactComponent]
  *
- * Deeplink URL: "example://app/tabs/contact"
+ * Deeplink URL: "cmptemplate://app/tabs/contact"
  */
 internal class DefaultContactComponent(
     componentContext: ComponentContext,

@@ -57,7 +57,7 @@ cp local.properties.example local.properties
 ./gradlew :composeApp:assembleRelease
 
 # iOS specific (from Xcode)
-open iosApp/AppTemplate.xcodeproj
+open iosApp/CMP-Template.xcodeproj
 ```
 
 ## Code Style
@@ -220,7 +220,7 @@ data/            # Data layer
 
 ### iOS
 - **Target**: iOS 13+
-- **Xcode Project**: `iosApp/AppTemplate.xcodeproj`
+- **Xcode Project**: `iosApp/CMP-Template.xcodeproj`
 - **Bundle ID**: Configure in `iosApp/Configuration/Config.xcconfig`
 - **Certificates**: Configure in Xcode
 

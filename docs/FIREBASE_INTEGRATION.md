@@ -46,13 +46,13 @@ Now, add the configuration parameters for your Android app.
 2) As a naming convention, add the suffix `iOS` to your project nickname for clarity. This helps distinguish between different projects
 3) Ensure that your `BUNDLE_ID`, which can be found in your `iosApp/Configuration/Config.xconfig`, is correctly added in the configuration file.
 4) In the next step, download the generated `GoogleService-Info.plist` file.
-5) Copy the `GoogleService-Info.plist` to the iosApp folder. Eg: `iosApp/AppTemplate/GoogleService-Info.plist`.
+5) Copy the `GoogleService-Info.plist` to the iosApp folder. Eg: `iosApp/CMP-Template/GoogleService-Info.plist`.
 6) Make sure to not commit the `GoogleService-Info.plist` file to git.
 7) In Xcode, navigate to File > Add package dependencies.
 8) Make sure to add the Firebase SPM dependency from [https://github.com/firebase/firebase-ios-sdk](https://github.com/firebase/firebase-ios-sdk)
 9) Choose the Firebase components you want to use from the repository. In this example, we'll use analytics and crashlytics. Then, click `Add Packages`
 10) Due to an [issue](https://github.com/JetBrains/compose-multiplatform/issues/4026) where the Frameworks, Libraries, and Embedded Content section is missing when creating a KMP project, you may need to add it manually from the Build phases tab in Xcode and restart Xcode a few times.
-11) Go to `Targets > AppTemplate > Build Phases` tab and ensure to add all necessary components from Firebase that you'll be using in your project in the `Link Binary With Libraries` section.
+11) Go to `Targets > CMP-Template > Build Phases` tab and ensure to add all necessary components from Firebase that you'll be using in your project in the `Link Binary With Libraries` section.
 
 ### Setting up the Firebase SDK
 
@@ -178,7 +178,7 @@ jobs:
 - Encode the content of the file `GoogleService-Info.plist` to base64 running the following command in the terminal:
 
 ```shell
-base64 -i iosApp/AppTemplate/GoogleService-Info.plist
+base64 -i iosApp/CMP-Template/GoogleService-Info.plist
 ```
 
 - Log in to the GitHub repository of the project and [create secrets](https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository) for Github Actions.
@@ -193,5 +193,5 @@ jobs:
   build-android-app:
     steps:
       - name: Load Google Service PLIST file
-        run: echo $GOOGLE_SERVICES_PLIST | base64 -d > iosApp/AppTemplate/GoogleService-Info.plist
+        run: echo $GOOGLE_SERVICES_PLIST | base64 -d > iosApp/CMP-Template/GoogleService-Info.plist
 ```

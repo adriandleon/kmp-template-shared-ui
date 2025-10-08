@@ -1,9 +1,9 @@
 //
 //  ContentView.swift
-//  AppTemplate
+//  CMP-Template
 //
 //  Created by Adrian De León on 5/9/25.
-//  Copyright © 2025 AppTemplate. All rights reserved.
+//  Copyright © 2025 CMP-Template. All rights reserved.
 //
 
 import UIKit

@@ -8,7 +8,7 @@ import com.example.project.logger.domain.Logger
 /**
  * This component is responsible for the "About" screen.
  *
- * Deeplink URL: "example://app/tabs/about"
+ * Deeplink URL: "cmptemplate://app/tabs/about"
  */
 internal class DefaultAboutComponent(
     componentContext: ComponentContext,

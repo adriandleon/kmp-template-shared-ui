@@ -13,16 +13,16 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		A7BBD09E9892671047F08C35 /* AppTemplate.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AppTemplate.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A7BBD09E9892671047F08C35 /* CMP-Template.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CMP-Template.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		32ED2804C28451E069057975 /* Exceptions for "AppTemplate" folder in "AppTemplate" target */ = {
+		32ED2804C28451E069057975 /* Exceptions for "CMP-Template" folder in "CMP-Template" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = 267BACF292EF8E7ECEECB700 /* AppTemplate */;
+			target = 267BACF292EF8E7ECEECB700 /* CMP-Template */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -32,12 +32,12 @@
 			path = Configuration;
 			sourceTree = "<group>";
 		};
-		B2B344593573B463B24C7F14 /* AppTemplate */ = {
+		B2B344593573B463B24C7F14 /* CMP-Template */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				32ED2804C28451E069057975 /* Exceptions for "AppTemplate" folder in "AppTemplate" target */,
+				32ED2804C28451E069057975 /* Exceptions for "CMP-Template" folder in "CMP-Template" target */,
 			);
-			path = AppTemplate;
+			path = CMP-Template;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -60,7 +60,7 @@
 			isa = PBXGroup;
 			children = (
 				41D4128BC2CDB55AF19F55E7 /* Configuration */,
-				B2B344593573B463B24C7F14 /* AppTemplate */,
+				B2B344593573B463B24C7F14 /* CMP-Template */,
 				E0C3ED6D926FECFF66EF8E42 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -68,7 +68,7 @@
 		E0C3ED6D926FECFF66EF8E42 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A7BBD09E9892671047F08C35 /* AppTemplate.app */,
+				A7BBD09E9892671047F08C35 /* CMP-Template.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -76,9 +76,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		267BACF292EF8E7ECEECB700 /* AppTemplate */ = {
+		267BACF292EF8E7ECEECB700 /* CMP-Template */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 5009A79B758FDDE17347C697 /* Build configuration list for PBXNativeTarget "AppTemplate" */;
+			buildConfigurationList = 5009A79B758FDDE17347C697 /* Build configuration list for PBXNativeTarget "CMP-Template" */;
 			buildPhases = (
 				95D8033540F5B6EE616BA100 /* Compile Kotlin Framework */,
 				0708F613382C84DB8AEC613C /* Sources */,
@@ -90,16 +90,16 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				B2B344593573B463B24C7F14 /* AppTemplate */,
+				B2B344593573B463B24C7F14 /* CMP-Template */,
 			);
-			name = AppTemplate;
+			name = CMP-Template;
 			packageProductDependencies = (
 				EFA047C92E6A938600080AEA /* FirebaseAnalytics */,
 				EFA047CB2E6A938600080AEA /* FirebaseCrashlytics */,
 				EFA047CD2E6A938600080AEA /* FirebaseRemoteConfig */,
 			);
-			productName = AppTemplate;
-			productReference = A7BBD09E9892671047F08C35 /* AppTemplate.app */;
+			productName = CMP-Template;
+			productReference = A7BBD09E9892671047F08C35 /* CMP-Template.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -117,7 +117,7 @@
 					};
 				};
 			};
-			buildConfigurationList = B3807E30570236412CC76CA8 /* Build configuration list for PBXProject "AppTemplate" */;
+			buildConfigurationList = B3807E30570236412CC76CA8 /* Build configuration list for PBXProject "CMP-Template" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -134,7 +134,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				267BACF292EF8E7ECEECB700 /* AppTemplate */,
+				267BACF292EF8E7ECEECB700 /* CMP-Template */,
 			);
 		};
 /* End PBXProject section */
@@ -190,11 +190,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_ASSET_PATHS = "\"AppTemplate/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"CMP-Template/Preview Content\"";
 				DEVELOPMENT_TEAM = "${TEAM_ID}";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = AppTemplate/Info.plist;
+				INFOPLIST_FILE = CMP-Template/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -219,11 +219,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_ASSET_PATHS = "\"AppTemplate/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"CMP-Template/Preview Content\"";
 				DEVELOPMENT_TEAM = "${TEAM_ID}";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = AppTemplate/Info.plist;
+				INFOPLIST_FILE = CMP-Template/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -366,7 +366,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		5009A79B758FDDE17347C697 /* Build configuration list for PBXNativeTarget "AppTemplate" */ = {
+		5009A79B758FDDE17347C697 /* Build configuration list for PBXNativeTarget "CMP-Template" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1D31E3220FD705128219B787 /* Debug */,
@@ -375,7 +375,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3807E30570236412CC76CA8 /* Build configuration list for PBXProject "AppTemplate" */ = {
+		B3807E30570236412CC76CA8 /* Build configuration list for PBXProject "CMP-Template" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5396DA05F39E09D499665D6F /* Debug */,

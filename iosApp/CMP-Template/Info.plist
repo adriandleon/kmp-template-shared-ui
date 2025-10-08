@@ -13,7 +13,7 @@
 			<string>com.example.project</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>example</string>
+				<string>cmptemplate</string>
 			</array>
 		</dict>
 		<dict>

@@ -39,8 +39,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <!-- Accepts URIs that begin with "example://app/tabs” -->
-                <data android:scheme="example" />
+                <!-- Accepts URIs that begin with "cmptemplate://app/tabs" -->
+                <data android:scheme="cmptemplate" />
                 <data android:host="app" />
             </intent-filter>
         </activity>

@@ -48,8 +48,8 @@ kmp-template-shared-ui/
 │   │   └── androidInstrumentedTest/ # Android UI tests
 │   └── build.gradle.kts
 ├── iosApp/                       # iOS app wrapper
-│   ├── AppTemplate/              # iOS app target
-│   └── AppTemplate.xcodeproj/    # Xcode project
+│   ├── CMP-Template/              # iOS app target
+│   └── CMP-Template.xcodeproj/    # Xcode project
 ├── docs/                         # Comprehensive documentation
 ├── gradle/                       # Gradle configuration
 │   └── libs.versions.toml        # Dependency versions
@@ -101,7 +101,7 @@ kmp-template-shared-ui/
    ./gradlew :composeApp:assembleDebug
    
    # iOS (from Xcode)
-   open iosApp/AppTemplate.xcodeproj
+   open iosApp/CMP-Template.xcodeproj
    ```
 
 ## 🏗️ Architecture

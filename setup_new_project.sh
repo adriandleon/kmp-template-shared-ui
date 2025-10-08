@@ -21,8 +21,8 @@ readonly BACKUP_DIR="${SCRIPT_DIR}/.backup_$(date +%Y%m%d_%H%M%S)"
 DRY_RUN=false
 VERBOSE=false
 OLD_PACKAGE="com.example.project"
-OLD_PROJECT_NAME="AppTemplate"
-OLD_BUNDLE_ID="com.example.project.AppTemplate"
+OLD_PROJECT_NAME="CMP-Template"
+OLD_BUNDLE_ID="com.example.project.CMP-Template"
 OLD_DOMAIN="project.example.com"
 
 # Colors for output
@@ -336,7 +336,7 @@ update_import_statements() {
     
     print_step "Updating import statements with new package name..."
     
-    local old_import_package="apptemplate"
+    local old_import_package="cmptemplate"
     local new_import_package="$(echo "$new_package" | tr '[:upper:]' '[:lower:]')"  # Convert to lowercase
     new_import_package="${new_import_package//./}"  # Remove dots
     

@@ -90,7 +90,7 @@ Add URL schemes to your `Info.plist`:
         <key>CFBundleURLSchemes</key>
         <array>
             <string>example</string>
-            <string>apptemplate</string>
+            <string>cmptemplate</string>
         </array>
         <key>CFBundleURLName</key>
         <string>template</string>
@@ -106,7 +106,7 @@ Add URL schemes to your `Info.plist`:
 </array>
 ```
 
-#### 2. AppTemplate.swift
+#### 2. CMP-Template.swift
 Use SwiftUI's `onOpenURL` to capture deeplinks:
 
 ```swift
@@ -216,7 +216,7 @@ adb shell am start -W -a android.intent.action.VIEW -d "https://yourapp.com/tabs
 ```bash
 # Custom URL schemes
 xcrun simctl openurl booted "example://tabs/home?itemId=123"
-xcrun simctl openurl booted "apptemplate://auth"
+xcrun simctl openurl booted "cmptemplate://auth"
 
 # Universal Links
 xcrun simctl openurl booted "https://yourapp.com/tabs/home?itemId=123"

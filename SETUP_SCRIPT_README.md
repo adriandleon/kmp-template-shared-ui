@@ -57,8 +57,8 @@ composeApp/src/androidMain/kotlin/com/example/project/
 composeApp/src/iosMain/kotlin/com/example/project/
 composeApp/src/commonTest/kotlin/com/example/project/
 composeApp/src/androidUnitTest/kotlin/com/example/project/
-iosApp/AppTemplate/
-iosApp/AppTemplate.xcodeproj/
+iosApp/CMP-Template/
+iosApp/CMP-Template.xcodeproj/
 ```
 
 **After** (Your Project):
@@ -149,7 +149,7 @@ The script automatically updates deeplink schemas based on your app name and dom
 The script automatically updates generated resource import statements:
 
 #### **Generated Resource Imports**
-- **Old pattern**: `import apptemplate.composeapp.generated.resources.*`
+- **Old pattern**: `import cmptemplate.composeapp.generated.resources.*`
 - **New pattern**: `import yourpackage.composeapp.generated.resources.*`
 - **Automatic detection**: Finds and updates all Kotlin files with generated resource imports
 - **Package conversion**: Converts package name to lowercase and removes dots for import statements
@@ -159,7 +159,7 @@ The script automatically updates generated resource import statements:
 The script automatically updates the app name in Android resources:
 
 #### **Android App Name**
-- **strings.xml**: Updates `<string name="app_name">AppTemplate</string>` to `<string name="app_name">YourAppName</string>`
+- **strings.xml**: Updates `<string name="app_name">CMP-Template</string>` to `<string name="app_name">YourAppName</string>`
 - **Consistent naming**: Uses the same app name throughout the project
 - **Resource references**: Ensures Android resource references use the correct app name
 
@@ -167,13 +167,13 @@ The script automatically updates the app name in Android resources:
 
 The script replaces all occurrences of:
 - `com.example.project` → `com.yourcompany.yourapp`
-- `AppTemplate` → `MyAwesomeApp`
+- `CMP-Template` → `MyAwesomeApp`
 - `project.example.com` → `yourcompany.com`
 
 ### 7. Bundle Identifier Updates
 
 Updates iOS bundle identifiers:
-- `com.example.project.AppTemplate` → `com.yourcompany.yourapp.MyAwesomeApp`
+- `com.example.project.CMP-Template` → `com.yourcompany.yourapp.MyAwesomeApp`
 
 ### 8. Firebase Configuration Creation
 
@@ -396,7 +396,7 @@ chmod +x setup_new_project.sh
 - **Comment updates**: All `Deeplink URL: "example://..."` comments are updated to use your app name
 
 #### Import Statement Issues
-- **Generated resources**: Check that import statements are updated from `apptemplate.composeapp.generated.resources` to your package name
+- **Generated resources**: Check that import statements are updated from `cmptemplate.composeapp.generated.resources` to your package name
 - **Package conversion**: Package name is converted to lowercase and dots are removed for import statements
 - **Compilation errors**: If you see import errors, ensure the script ran successfully and check the generated resource imports
 

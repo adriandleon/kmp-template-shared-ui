@@ -1,4 +1,4 @@
-rootProject.name = "AppTemplate"
+rootProject.name = "CMP-Template"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
