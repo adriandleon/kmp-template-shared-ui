@@ -34,7 +34,7 @@ Supabase dependencies are already configured in the project. The current version
 
 ```toml
 [versions]
-supabase = "3.2.2"
+supabase = "3.2.6"
 
 [libraries]
 supabase-auth = { group = "io.github.jan-tennert.supabase", name = "auth-kt", version.ref = "supabase" }
@@ -56,7 +56,7 @@ Ktor Client engines are already configured for Supabase. The current Ktor versio
 
 ```toml
 [versions]
-ktor = "3.3.0"
+ktor = "3.3.2"
 
 [libraries]
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
@@ -93,7 +93,7 @@ Add the latest version of BuildKonfig plugin in the version catalog file:
 
 ```toml
 [versions]
-buildkonfig = "0.15.2"
+buildkonfig = "0.17.1"
 [plugins]
 buildkonfig = { id = "com.codingfeline.buildkonfig", version.ref = "buildkonfig" }
 ```

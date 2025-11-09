@@ -15,11 +15,11 @@ This is a production-ready Compose Multiplatform template featuring:
 ## Setup Commands
 
 ### Prerequisites
-- **Android Studio** (latest stable version)
-- **Xcode** 14+ (for iOS development)
+- **Android Studio** or **IntelliJ IDEA** (latest stable version)
+- **Xcode** 16+ (for iOS development)
 - **JDK 17+**
-- **Kotlin** 2.2.20+
-- **Gradle** 8.13.0+
+- **Kotlin** 2.2.21+
+- **Gradle** 8.14.3
 
 ### Initial Setup
 ```bash

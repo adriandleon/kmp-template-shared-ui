@@ -33,7 +33,7 @@ Kotest dependencies are already configured in the project. The current versions 
 
 ```toml
 [versions]
-kotest = "6.0.3"
+kotest = "6.0.4"
 
 [libraries]
 kotest-assertions-core = { group = "io.kotest", name = "kotest-assertions-core", version.ref = "kotest" }

@@ -28,7 +28,7 @@ Firebase Analytics is already included in the project dependencies. The current 
 
 ```toml
 [versions]
-firebase-gitlive = "2.3.0"
+firebase-gitlive = "2.4.0"
 
 [libraries]
 firebase-analytics = { group = "dev.gitlive", name = "firebase-analytics", version.ref = "firebase-gitlive" }
