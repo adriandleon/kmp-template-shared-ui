@@ -3,41 +3,42 @@ agp = "8.12.3"
 android-compile-sdk = "36"
 android-min-sdk = "26"
 android-target-sdk = "36"
-androidx-activity = "1.11.0"
-androidx-datastore = "1.1.7"
+androidx-activity = "1.12.0"
+androidx-datastore = "1.2.0"
 androidx-lifecycle = "2.9.6"
 buildkonfig = "0.17.1"
 coil-compose = "3.3.0"
 compose-multiplatform = "1.9.3"
-compose-rules = "0.4.27"
+compose-rules = "0.4.28"
 configcat = "5.1.0"
 crashkios = "0.9.0"
 decompose = "3.4.0"
 detekt = "1.23.8"
 essenty = "2.5.0"
-firebase-bom = "34.5.0"
+firebase-bom = "34.6.0"
 firebase-gitlive = "2.4.0"
 gradle-crashlytics = "3.0.6"
 gradle-google-services = "4.4.4"
 kermit = "2.0.8"
 koin = "4.1.1"
-kotest = "6.0.4"
+kotest = "6.0.5"
+kotest-extensions-koin = "6.0.4"
 kotlin = "2.2.21"
 kotlinx-coroutines = "1.10.2"
 kotlinx-datetime = "0.7.1"
 kotlinx-serialization = "1.9.0"
 kover = "0.9.3"
-ktor = "3.3.2"
-ksp = "2.3.0"
+ktor = "3.3.3"
+ksp = "2.3.3"
 ktfmt-gradle = "0.25.0"
 lumo-ui = "1.2.5"
-mokkery = "2.10.2"
+mokkery = "3.0.0"
 mvikotlin = "4.3.0"
 slf4j = "2.0.17"
 splashscreen = "1.2.0"
 supabase = "3.2.6"
 test-logger = "4.0.0"
-ui-test-junit4-android = "1.9.4"
+ui-test-junit4-android = "1.9.5"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
@@ -64,7 +65,7 @@ koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koin-test = { module = "io.insert-koin:koin-test", version.ref = "koin" }
 kotest-assertions-core = { group = "io.kotest", name = "kotest-assertions-core", version.ref = "kotest" }
-kotest-extensions-koin = { group = "io.kotest", name = "kotest-extensions-koin", version.ref = "kotest" }
+kotest-extensions-koin = { group = "io.kotest", name = "kotest-extensions-koin", version.ref = "kotest-extensions-koin" }
 kotest-framework-engine = { group = "io.kotest", name = "kotest-framework-engine", version.ref = "kotest" }
 kotest-property = { group = "io.kotest", name = "kotest-property", version.ref = "kotest" }
 kotlinx-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
