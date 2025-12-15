@@ -61,7 +61,7 @@ The Firebase dependencies are already configured in the project. The current ver
 ```toml
 [versions]
 firebase-gitlive = "2.4.0"
-firebase-bom = "34.2.0"
+firebase-bom = "34.7.0"
 gradle-crashlytics = "3.0.6"
 gradle-google-services = "4.4.4"
 
