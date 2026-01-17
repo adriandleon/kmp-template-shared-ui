@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.project.auth.domain.entity.AuthError.EmailAlreadyExists
 import com.example.project.auth.domain.entity.AuthError.EmailNotVerified
@@ -48,7 +49,6 @@ import com.example.project.auth.domain.entity.AuthError.WeakPassword
 import com.example.project.auth.presentation.component.AuthComponent
 import com.example.project.auth.presentation.component.PreviewAuthComponent
 import com.example.project.auth.presentation.store.AuthStore
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 /**
  * Authentication screen for login and signup functionality.

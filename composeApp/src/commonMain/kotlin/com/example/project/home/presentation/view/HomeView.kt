@@ -15,11 +15,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.project.home.presentation.component.HomeComponent
 import com.example.project.home.presentation.component.PreviewHomeComponent
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 /** Home content composable that displays the home screen */
 @Composable

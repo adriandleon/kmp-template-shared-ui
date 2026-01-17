@@ -5,6 +5,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import com.arkivanov.decompose.extensions.compose.stack.Children
 import com.arkivanov.decompose.extensions.compose.stack.animation.fade
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
@@ -14,7 +15,6 @@ import com.example.project.home.presentation.view.HomeView
 import com.example.project.tabs.presentation.component.PreviewTabsComponent
 import com.example.project.tabs.presentation.component.TabsComponent
 import com.example.project.tabs.presentation.component.TabsComponent.Child
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 /** Tabs content composable that displays the tabs container with bottom navigation */
 @Composable

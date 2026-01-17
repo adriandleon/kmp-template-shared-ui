@@ -1,11 +1,8 @@
-@file:OptIn(ExperimentalComposeLibrary::class)
-
 import com.adarshr.gradle.testlogger.theme.ThemeType
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.BOOLEAN
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import com.ncorti.ktfmt.gradle.TrailingCommaManagementStrategy.COMPLETE
-import org.jetbrains.compose.ExperimentalComposeLibrary
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
@@ -48,13 +45,14 @@ kotlin {
             api(libs.essenty.lifecycle)
             api(libs.koin.core)
             api(libs.decompose)
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material3)
-            implementation(compose.materialIconsExtended)
-            implementation(compose.ui)
-            implementation(compose.components.resources)
-            implementation(compose.components.uiToolingPreview)
+            implementation(libs.compose.runtime)
+            implementation("libs.compose.runtime:juhu:1.0.0")
+            implementation(libs.compose.foundation)
+            implementation(libs.compose.material3)
+            implementation(libs.material.icons.extended)
+            implementation(libs.compose.ui)
+            implementation(libs.compose.components.resources)
+            implementation(libs.ui.tooling.preview)
             implementation(libs.decompose.extensions)
             implementation(libs.coil.compose)
             implementation(libs.coil.network.ktor)
@@ -88,7 +86,7 @@ kotlin {
         }
 
         androidMain.dependencies {
-            implementation(compose.preview)
+            implementation(libs.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.ktor.client.okhttp)
             implementation(libs.splashscreen)
@@ -106,7 +104,7 @@ kotlin {
             implementation(libs.kotlinx.coroutines.test)
             implementation(libs.ktor.client.mock)
             implementation(kotlin("test"))
-            implementation(compose.uiTest)
+            implementation(libs.compose.ui.test)
         }
     }
 }
@@ -165,7 +163,7 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.ui.test.junit4.android)
     detektPlugins(libs.detekt.compose)
-    debugImplementation(compose.uiTooling)
+    debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
 }
 
