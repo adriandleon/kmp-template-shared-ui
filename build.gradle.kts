@@ -20,4 +20,4 @@ plugins {
 
 tasks.register("detektAll") { allprojects { this@register.dependsOn(tasks.withType<Detekt>()) } }
 
-tasks.withType<Detekt>().configureEach { jvmTarget = "17" }
+tasks.withType<Detekt>().configureEach { jvmTarget = "21" }

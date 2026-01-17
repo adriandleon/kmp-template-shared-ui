@@ -27,7 +27,7 @@ plugins {
 
 kotlin {
     androidTarget {
-        compilerOptions.jvmTarget.set(JvmTarget.JVM_17)
+        compilerOptions.jvmTarget.set(JvmTarget.JVM_21)
 
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         instrumentedTestVariant.sourceSetTree.set(KotlinSourceSetTree.test)
@@ -46,7 +46,6 @@ kotlin {
             api(libs.koin.core)
             api(libs.decompose)
             implementation(libs.compose.runtime)
-            implementation("libs.compose.runtime:juhu:1.0.0")
             implementation(libs.compose.foundation)
             implementation(libs.compose.material3)
             implementation(libs.material.icons.extended)
@@ -152,8 +151,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 
     testOptions.unitTests.all { it.useJUnitPlatform() }
