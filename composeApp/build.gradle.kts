@@ -3,18 +3,14 @@ import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.BOOLEAN
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import com.ncorti.ktfmt.gradle.TrailingCommaManagementStrategy.COMPLETE
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
 
 plugins {
-    alias(libs.plugins.android.application)
+    alias(libs.plugins.android.multiplatform.library)
     alias(libs.plugins.buildkonfig)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.compose.multiplatform)
-    alias(libs.plugins.crashlytics)
     alias(libs.plugins.detekt)
-    alias(libs.plugins.google.services)
     alias(libs.plugins.kotest)
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.kotlin.serialization)
@@ -26,13 +22,6 @@ plugins {
 }
 
 kotlin {
-    androidTarget {
-        compilerOptions.jvmTarget.set(JvmTarget.JVM_21)
-
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
-        instrumentedTestVariant.sourceSetTree.set(KotlinSourceSetTree.test)
-    }
-
     listOf(iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
@@ -40,11 +29,15 @@ kotlin {
         }
     }
 
+    jvmToolchain(21)
+
     sourceSets {
         commonMain.dependencies {
             api(libs.essenty.lifecycle)
             api(libs.koin.core)
+            api(libs.koin.compose)
             api(libs.decompose)
+            implementation(project.dependencies.platform(libs.firebase.bom))
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
             implementation(libs.compose.material3)
@@ -55,7 +48,6 @@ kotlin {
             implementation(libs.decompose.extensions)
             implementation(libs.coil.compose)
             implementation(libs.coil.network.ktor)
-            implementation(libs.koin.compose)
             implementation(libs.kotlinx.coroutines)
             implementation(libs.kotlinx.datetime)
             implementation(libs.kotlinx.serialization)
@@ -84,13 +76,6 @@ kotlin {
             implementation(libs.ktor.serialization.kotlinx.json)
         }
 
-        androidMain.dependencies {
-            implementation(libs.ui.tooling.preview)
-            implementation(libs.androidx.activity.compose)
-            implementation(libs.ktor.client.okhttp)
-            implementation(libs.splashscreen)
-        }
-
         iosMain.dependencies { implementation(libs.ktor.client.darwin) }
 
         commonTest.dependencies {
@@ -106,64 +91,31 @@ kotlin {
             implementation(libs.compose.ui.test)
         }
     }
-}
 
-android {
-    namespace = "com.example.project"
-    compileSdk = libs.versions.android.compile.sdk.get().toInt()
+    androidLibrary {
+        namespace = "com.example.project.shared"
+        compileSdk = libs.versions.android.compile.sdk.get().toInt()
 
-    defaultConfig {
-        applicationId = "com.example.project"
-        minSdk = libs.versions.android.min.sdk.get().toInt()
-        targetSdk = libs.versions.android.target.sdk.get().toInt()
-        versionCode = 1
-        versionName = "1.0"
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
+        compilerOptions { jvmTarget.set(JvmTarget.JVM_21) }
 
-    packaging.resources {
-        excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        excludes += "/META-INF/licenses/ASM"
-        excludes += "/META-INF/LICENSE.md"
-        excludes += "/META-INF/LICENSE-notice.md"
-        pickFirsts += "win32-x86-64/attach_hotspot_windows.dll"
-        pickFirsts += "win32-x86/attach_hotspot_windows.dll"
-    }
+        androidResources { enable = true }
 
-    buildTypes {
-        getByName("debug") {
-            isShrinkResources = false
-            isMinifyEnabled = false
-            isDebuggable = true
-            testProguardFiles("proguard-test-rules.pro")
-        }
-
-        getByName("release") {
-            isShrinkResources = true
-            isMinifyEnabled = true
-            isDebuggable = false
-            ndk.debugSymbolLevel = "FULL"
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
-            )
+        packaging.resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "/META-INF/licenses/ASM"
+            excludes += "/META-INF/LICENSE.md"
+            excludes += "/META-INF/LICENSE-notice.md"
+            pickFirsts += "win32-x86-64/attach_hotspot_windows.dll"
+            pickFirsts += "win32-x86/attach_hotspot_windows.dll"
         }
     }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
-    }
-
-    testOptions.unitTests.all { it.useJUnitPlatform() }
 }
 
 dependencies {
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.ui.test.junit4.android)
+    //    implementation(libs.ui.test.junit4.android)
     detektPlugins(libs.detekt.compose)
-    debugImplementation(libs.ui.tooling)
-    debugImplementation(libs.ui.test.manifest)
+    //    debugImplementation(libs.ui.tooling)
+    //    debugImplementation(libs.ui.test.manifest)
 }
 
 compose.resources { packageOfResClass = "com.example.project.resources" }
