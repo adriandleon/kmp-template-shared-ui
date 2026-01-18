@@ -17,9 +17,10 @@ This is a production-ready Compose Multiplatform template featuring:
 ### Prerequisites
 - **Android Studio** or **IntelliJ IDEA** (latest stable version)
 - **Xcode** 16+ (for iOS development)
-- **JDK 17+**
-- **Kotlin** 2.2.21+
-- **Gradle** 8.14.3
+- **JDK 21+**
+- **Kotlin** 2.3.0+
+- **Gradle** 9.3.0+
+- **Android Gradle Plugin (AGP)** 9.0.0+
 
 ### Initial Setup
 ```bash
@@ -53,8 +54,8 @@ cp local.properties.example local.properties
 ./gradlew detektAll
 
 # Android specific
-./gradlew :composeApp:assembleDebug
-./gradlew :composeApp:assembleRelease
+./gradlew :androidApp:assembleDebug
+./gradlew :androidApp:assembleRelease
 
 # iOS specific (from Xcode)
 open iosApp/CMP-Template.xcodeproj
@@ -108,19 +109,19 @@ open iosApp/CMP-Template.xcodeproj
 
 # Specific platform tests
 ./gradlew :composeApp:testDebugUnitTest
-./gradlew :composeApp:testReleaseUnitTest
+./gradlew :androidApp:testDebugUnitTest
 
 # Coverage report
 ./gradlew koverHtmlReport
 # Open: build/reports/kover/html/index.html
 
 # UI tests (Android)
-./gradlew :composeApp:connectedAndroidTest
+./gradlew :androidApp:connectedAndroidTest
 ```
 
 ### Test Structure
-- **Unit Tests**: `commonTest/` and `androidTest/` directories
-- **UI Tests**: `androidInstrumentedTest/` directory
+- **Unit Tests**: `composeApp/src/commonTest/` and `androidApp/src/test/` directories
+- **UI Tests**: `composeApp/src/androidInstrumentedTest/` directory
 - **Coverage**: Minimum 90% code coverage required
 - **Framework**: Kotest for unit tests, ComposeTestRule for UI tests
 
@@ -217,6 +218,8 @@ data/            # Data layer
 - **Build Variants**: Debug and Release
 - **Signing**: Configure in `local.properties`
 - **ProGuard**: Enabled for release builds
+- **Module Structure**: Separate `androidApp` module for Android entry point (AGP 9.0 requirement)
+- **Shared Module**: `composeApp` uses `android.multiplatform.library` plugin (AGP 9.0 compatible)
 
 ### iOS
 - **Target**: iOS 13+
@@ -260,9 +263,9 @@ data/            # Data layer
 ## Deployment
 
 ### Android Deployment
-1. Update version in `composeApp/build.gradle.kts`
+1. Update version in `androidApp/build.gradle.kts`
 2. Configure signing keys in `local.properties`
-3. Run: `./gradlew :composeApp:bundleRelease`
+3. Run: `./gradlew :androidApp:bundleRelease`
 4. Upload to Google Play Console
 
 ### iOS Deployment
@@ -286,9 +289,11 @@ data/            # Data layer
 
 # Check dependencies
 ./gradlew :composeApp:dependencies
+./gradlew :androidApp:dependencies
 
 # Run specific test
 ./gradlew :composeApp:testDebugUnitTest --tests "com.example.project.features.*"
+./gradlew :androidApp:testDebugUnitTest --tests "com.example.project.*"
 
 # Check linting issues
 ./gradlew detektAll --continue
@@ -318,7 +323,7 @@ data/            # Data layer
 - **Database Queries**: Optimize Supabase queries and use indices
 
 ### Build Time Optimization Tips
-1. **Use specific tasks**: Instead of `./gradlew build`, use specific tasks like `./gradlew :composeApp:assembleDebug`
+1. **Use specific tasks**: Instead of `./gradlew build`, use specific tasks like `./gradlew :androidApp:assembleDebug`
 2. **Build only what you need**: For development, build only your target platform
 3. **Preserve Gradle caches**: Don't clean Gradle build cache between builds
 4. **Avoid release builds**: Use debug builds during development

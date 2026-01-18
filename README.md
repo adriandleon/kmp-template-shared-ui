@@ -30,9 +30,20 @@ A modern, production-ready Compose Multiplatform template project targeting Andr
 
 ## 📁 Project Structure
 
+> **Note**: This project uses **AGP 9.0** with the new module structure. The Android entry point is in a separate `androidApp` module, while shared code is in `composeApp` using the `android.multiplatform.library` plugin. See the [AGP 9.0 migration guide](https://kotlinlang.org/docs/multiplatform/multiplatform-project-agp-9-migration.html) for details.
+
 ```
 kmp-template-shared-ui/
-├── composeApp/                    # Main Compose Multiplatform module
+├── androidApp/                   # Android app entry point (AGP 9.0)
+│   ├── src/
+│   │   └── main/                 # Android app code
+│   │       ├── kotlin/com/example/project/
+│   │       │   ├── MainActivity.kt
+│   │       │   └── MainApplication.kt
+│   │       ├── res/              # Android resources
+│   │       └── AndroidManifest.xml
+│   └── build.gradle.kts
+├── composeApp/                   # Shared Compose Multiplatform module
 │   ├── src/
 │   │   ├── commonMain/           # Shared code (UI, business logic, data)
 │   │   │   ├── kotlin/com/example/project/
@@ -41,8 +52,7 @@ kmp-template-shared-ui/
 │   │   │   │   ├── features/     # Feature modules
 │   │   │   │   ├── root/         # Root navigation
 │   │   │   │   └── tabs/         # Tab navigation
-│   │   │   └── resources/        # Shared resources
-│   │   ├── androidMain/          # Android-specific implementations
+│   │   │   └── composeResources/ # Shared resources
 │   │   ├── iosMain/              # iOS-specific implementations
 │   │   ├── commonTest/           # Shared unit tests
 │   │   └── androidInstrumentedTest/ # Android UI tests
@@ -63,9 +73,10 @@ kmp-template-shared-ui/
 ### Prerequisites
 - **Android Studio** or **IntelliJ IDEA** (latest stable version)
 - **Xcode** 16+ (for iOS development)
-- **JDK 17+**
-- **Kotlin** 2.2.21+
-- **Gradle** 8.14.3
+- **JDK 21+**
+- **Kotlin** 2.3.0+
+- **Gradle** 9.3.0+
+- **Android Gradle Plugin (AGP)** 9.0.0+
 
 ### Setup
 
@@ -76,7 +87,7 @@ kmp-template-shared-ui/
    ```
 
 2. **Configure your project**
-   - Update package names in `composeApp/build.gradle.kts`
+   - Update package names in `androidApp/build.gradle.kts` and `composeApp/build.gradle.kts`
    - Update app identifiers in `iosApp/Configuration/Config.xcconfig`
    - Configure your Firebase project (see [Firebase Integration](docs/FIREBASE_INTEGRATION.md))
 
@@ -98,7 +109,7 @@ kmp-template-shared-ui/
 4. **Run the project**
    ```bash
    # Android
-   ./gradlew :composeApp:assembleDebug
+   ./gradlew :androidApp:assembleDebug
    
    # iOS (from Xcode)
    open iosApp/CMP-Template.xcodeproj
@@ -185,14 +196,15 @@ Run tests:
 
 # Specific platform
 ./gradlew :composeApp:testDebugUnitTest
+./gradlew :androidApp:testDebugUnitTest
 ```
 
 ## 🚀 Deployment
 
 ### Android
 1. Configure signing keys in `local.properties`
-2. Update version in `composeApp/build.gradle.kts`
-3. Run: `./gradlew :composeApp:bundleRelease`
+2. Update version in `androidApp/build.gradle.kts`
+3. Run: `./gradlew :androidApp:bundleRelease`
 4. Upload to Google Play Console
 
 ### iOS

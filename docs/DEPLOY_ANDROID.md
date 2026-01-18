@@ -13,7 +13,8 @@ Table of Contents
 
 - Create a new KeyStore with an Alias to sign the App, store the keystore file, keystore password, 
 the alias name and the alias password securely.
-- In Android Studio create a `release` variant signed bundled: `Build > Generate Signed App Bundled`
+- In Android Studio create a `release` variant signed bundle: `Build > Generate Signed App Bundle`
+- Or use Gradle: `./gradlew :androidApp:bundleRelease`
 - Create a txt file with base64 encoded signing key used to sign your app, running this command in the folder where you have your keystore file:
 ```shell
 base64 -i adrian-keystore -o keystore_base64.txt

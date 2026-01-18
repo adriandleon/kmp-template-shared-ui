@@ -52,27 +52,27 @@ The setup script automates the process of customizing the template project by:
 
 **Before** (Template):
 ```
+androidApp/src/main/kotlin/com/example/project/
 composeApp/src/commonMain/kotlin/com/example/project/
-composeApp/src/androidMain/kotlin/com/example/project/
 composeApp/src/iosMain/kotlin/com/example/project/
 composeApp/src/commonTest/kotlin/com/example/project/
-composeApp/src/androidUnitTest/kotlin/com/example/project/
 iosApp/CMP-Template/
 iosApp/CMP-Template.xcodeproj/
 ```
 
 **After** (Your Project):
 ```
+androidApp/src/main/kotlin/com/yourcompany/yourapp/
 composeApp/src/commonMain/kotlin/com/yourcompany/yourapp/
-composeApp/src/androidMain/kotlin/com/yourcompany/yourapp/
 composeApp/src/iosMain/kotlin/com/yourcompany/yourapp/
 composeApp/src/commonTest/kotlin/com/yourcompany/yourapp/
-composeApp/src/androidUnitTest/kotlin/com/yourcompany/yourapp/
 iosApp/MyAwesomeApp/
 iosApp/MyAwesomeApp.xcodeproj/
 ```
 
-**Complete Coverage**: The script handles all source sets (`commonMain`, `androidMain`, `iosMain`, `commonTest`, `androidUnitTest`) ensuring complete package migration.
+**Complete Coverage**: The script handles all source sets (`androidApp/src/main`, `commonMain`, `iosMain`, `commonTest`) ensuring complete package migration.
+
+**Note**: With AGP 9.0, Android entry point is in a separate `androidApp` module, not in `composeApp/src/androidMain`.
 
 **Cleanup**: The script automatically removes all old empty directories, ensuring no leftover folder structure remains from the template.
 
@@ -88,9 +88,10 @@ The script updates the following types of files:
 - `buildServer.json`
 
 #### **Android Files**
-- `composeApp/src/androidMain/AndroidManifest.xml`
-- All Kotlin source files in `composeApp/src/androidMain/kotlin/`
-- All test files in `composeApp/src/androidUnitTest/kotlin/`
+- `androidApp/src/main/AndroidManifest.xml`
+- All Kotlin source files in `androidApp/src/main/kotlin/`
+- All test files in `androidApp/src/test/kotlin/`
+- Android resources in `androidApp/src/main/res/`
 
 #### **iOS Files**
 - `iosApp/Configuration/Config.xcconfig`
@@ -119,12 +120,12 @@ The script updates the following types of files:
 - `local.properties` - API key placeholders for Supabase and ConfigCat services
 
 #### **Deeplink Schema Files**
-- `composeApp/src/androidMain/AndroidManifest.xml` - Android deeplink schemas
+- `androidApp/src/main/AndroidManifest.xml` - Android deeplink schemas
 - `iosApp/YourApp/Info.plist` - iOS deeplink schemas
 - All Kotlin files with deeplink route comments
 
 #### **Resource and Import Files**
-- `composeApp/src/androidMain/res/values/strings.xml` - Android app name
+- `androidApp/src/main/res/values/strings.xml` - Android app name
 - All Kotlin files with generated resource imports
 
 ### 3. Deeplink Schema Updates
@@ -132,7 +133,7 @@ The script updates the following types of files:
 The script automatically updates deeplink schemas based on your app name and domain:
 
 #### **Android Deeplink Updates**
-- **HTTPS deeplinks**: Updates `android:host` from `www.example.com` to `www.yourdomain.com`
+- **HTTPS deeplinks**: Updates `android:host` from `www.example.com` to `www.yourdomain.com` in `androidApp/src/main/AndroidManifest.xml`
 - **Custom scheme deeplinks**: Updates `android:scheme` from `example` to `yourappname` (lowercase)
 
 #### **iOS Deeplink Updates**
@@ -234,11 +235,10 @@ Domain: project.example.org (auto-generated from package name)
 ### Output
 ```
 Directory Structure:
+├── androidApp/src/main/kotlin/org/example/project/
 ├── composeApp/src/commonMain/kotlin/org/example/project/
-├── composeApp/src/androidMain/kotlin/org/example/project/
 ├── composeApp/src/iosMain/kotlin/org/example/project/
 ├── composeApp/src/commonTest/kotlin/org/example/project/
-├── composeApp/src/androidUnitTest/kotlin/org/example/project/
 ├── iosApp/MyApp/
 └── iosApp/MyApp.xcodeproj/
 
@@ -293,10 +293,11 @@ The script provides colored, informative output:
 - **Reduced Input**: No need to manually type the same identifier twice
 
 ### Complete Source Set Coverage
-- **All Source Sets**: Handles `commonMain`, `androidMain`, `iosMain`, and `commonTest`
+- **All Source Sets**: Handles `androidApp/src/main`, `commonMain`, `iosMain`, and `commonTest`
 - **No Missing Files**: Ensures all Kotlin files are properly migrated
 - **Consistent Structure**: Maintains the same package structure across all source sets
 - **Complete Cleanup**: Removes old directories from all source sets
+- **AGP 9.0 Compatible**: Properly handles the new module structure with separate `androidApp` module
 
 ### Firebase Configuration Templates
 - **Automatic Creation**: Creates template Firebase configuration files with correct identifiers
@@ -349,7 +350,7 @@ After running the script, you'll need to:
 ./gradlew test
 
 # Test Android build
-./gradlew :composeApp:assembleDebug
+./gradlew :androidApp:assembleDebug
 
 # Test iOS build in Xcode
 ```
@@ -383,12 +384,12 @@ chmod +x setup_new_project.sh
 - **Package name must match**: Ensure the package name in Firebase Console matches your project's package name
 - **Bundle ID must match**: Ensure the bundle ID in Firebase Console matches your project's bundle ID
 - **File locations**: 
-  - Android: `composeApp/google-services.json`
+  - Android: `androidApp/google-services.json` (AGP 9.0 structure)
   - iOS: `iosApp/YourApp/GoogleService-Info.plist`
 
 #### Deeplink Schema Issues
 - **Schemas updated automatically**: The script updates both Android and iOS deeplink schemas
-- **Android deeplinks**: Check `composeApp/src/androidMain/AndroidManifest.xml` for updated schemes and hosts
+- **Android deeplinks**: Check `androidApp/src/main/AndroidManifest.xml` for updated schemes and hosts
 - **iOS deeplinks**: Check `iosApp/YourApp/Info.plist` for updated schemes and bundle identifiers
 - **Kotlin deeplink comments**: Check Kotlin files for updated `Deeplink URL` comments
 - **Custom schemes**: App name is converted to lowercase for custom scheme deeplinks
@@ -401,7 +402,7 @@ chmod +x setup_new_project.sh
 - **Compilation errors**: If you see import errors, ensure the script ran successfully and check the generated resource imports
 
 #### App Name Issues
-- **strings.xml**: Check that `composeApp/src/androidMain/res/values/strings.xml` has the correct app name
+- **strings.xml**: Check that `androidApp/src/main/res/values/strings.xml` has the correct app name
 - **Resource references**: Ensure all Android resource references use the updated app name
 - **Display name**: The app name in the Android launcher will reflect the updated value
 
