@@ -176,8 +176,10 @@ create_directory_structure() {
     print_step "Creating new directory structure..."
     
     # Use arrays for better performance
-    local -a composeapp_source_sets=("commonMain" "androidMain" "iosMain" "commonTest")
+    # AGP 9.0: androidMain is now in androidApp/src/main, not composeApp/src/androidMain
+    local -a composeapp_source_sets=("commonMain" "iosMain" "commonTest")
     
+    # Handle composeApp source sets
     for source_set in "${composeapp_source_sets[@]}"; do
         local source_dir="composeApp/src/$source_set/kotlin/$old_path"
         local target_dir="composeApp/src/$source_set/kotlin/$new_path"
@@ -192,6 +194,20 @@ create_directory_structure() {
             fi
         fi
     done
+    
+    # Handle androidApp/src/main (AGP 9.0 structure)
+    local android_source_dir="androidApp/src/main/kotlin/$old_path"
+    local android_target_dir="androidApp/src/main/kotlin/$new_path"
+    
+    if [[ -d "$android_source_dir" ]]; then
+        if [[ "$DRY_RUN" == "true" ]]; then
+            print_info "DRY RUN: Would create $android_target_dir"
+        else
+            mkdir -p "$android_target_dir"
+            cp -r "$android_source_dir"/* "$android_target_dir/" 2>/dev/null || true
+            print_success "Created androidApp/src/main directory structure: $new_path"
+        fi
+    fi
 }
 
 remove_old_directories() {
@@ -200,7 +216,8 @@ remove_old_directories() {
     
     print_step "Removing old directory structure..."
     
-    local -a composeapp_source_sets=("commonMain" "androidMain" "iosMain" "commonTest")
+    # AGP 9.0: androidMain is now in androidApp/src/main, not composeApp/src/androidMain
+    local -a composeapp_source_sets=("commonMain" "iosMain" "commonTest")
     
     for source_set in "${composeapp_source_sets[@]}"; do
         local dir_to_remove="composeApp/src/$source_set/kotlin/$old_path"
@@ -212,6 +229,16 @@ remove_old_directories() {
             fi
         fi
     done
+    
+    # Remove androidApp old directory structure
+    local android_dir_to_remove="androidApp/src/main/kotlin/$old_path"
+    if [[ -d "$android_dir_to_remove" ]]; then
+        if [[ "$DRY_RUN" == "true" ]]; then
+            print_info "DRY RUN: Would remove $android_dir_to_remove"
+        else
+            rm -rf "$android_dir_to_remove"
+        fi
+    fi
     
     # Clean up empty directories
     cleanup_empty_directories
@@ -304,8 +331,8 @@ update_deeplink_schemas() {
     
     print_step "Updating deeplink schemas..."
     
-    # Android deeplink updates
-    local android_manifest="composeApp/src/androidMain/AndroidManifest.xml"
+    # Android deeplink updates (AGP 9.0: AndroidManifest is in androidApp/src/main)
+    local android_manifest="androidApp/src/main/AndroidManifest.xml"
     if [[ -f "$android_manifest" ]]; then
         local old_scheme="example"
         local new_scheme="$(echo "$new_project_name" | tr '[:upper:]' '[:lower:]')"  # Convert to lowercase
@@ -378,7 +405,8 @@ update_app_name_strings() {
     
     print_step "Updating app name in strings.xml..."
     
-    local strings_file="composeApp/src/androidMain/res/values/strings.xml"
+    # AGP 9.0: strings.xml is in androidApp/src/main/res/values
+    local strings_file="androidApp/src/main/res/values/strings.xml"
     if [[ -f "$strings_file" ]]; then
         update_file_contents "$strings_file" \
             "s|<string name=\"app_name\">$old_project_name</string>|<string name=\"app_name\">$new_project_name</string>|g"
@@ -690,8 +718,9 @@ create_google_services_json() {
     if [[ "$DRY_RUN" == "true" ]]; then
         print_info "DRY RUN: Would create google-services.json with package name: $package_name"
     else
-        echo "$google_services_content" > "composeApp/google-services.json"
-        print_success "Created google-services.json with package name: $package_name"
+        # AGP 9.0: google-services.json is in androidApp, not composeApp
+        echo "$google_services_content" > "androidApp/google-services.json"
+        print_success "Created google-services.json with package name: $package_name (AGP 9.0 structure)"
     fi
 }
 
@@ -798,7 +827,8 @@ validate_transformation() {
     print_step "Validating transformation..."
     
     local new_path="${new_package//.//}"
-    local -a composeapp_source_sets=("commonMain" "androidMain" "iosMain" "commonTest")
+    # AGP 9.0: androidMain is now in androidApp/src/main, not composeApp/src/androidMain
+    local -a composeapp_source_sets=("commonMain" "iosMain" "commonTest")
     local all_dirs_exist=true
     
     # Check composeApp module directories
@@ -811,6 +841,15 @@ validate_transformation() {
             all_dirs_exist=false
         fi
     done
+    
+    # Check androidApp module directory (AGP 9.0 structure)
+    local android_dir="androidApp/src/main/kotlin/$new_path"
+    if [[ -d "$android_dir" ]]; then
+        print_success "New androidApp/src/main directory structure created successfully"
+    else
+        print_error "New androidApp/src/main directory structure not found"
+        all_dirs_exist=false
+    fi
     
     if [[ "$all_dirs_exist" == "false" ]]; then
         return 1
@@ -852,7 +891,7 @@ show_final_instructions() {
     echo "   - Open the new Xcode project: iosApp/$new_project_name.xcodeproj"
     echo ""
     echo -e "${YELLOW}2. Update configuration files:${NC}"
-    echo "   - Replace composeApp/google-services.json with your actual Firebase config"
+    echo "   - Replace androidApp/google-services.json with your actual Firebase config (AGP 9.0 structure)"
     echo "   - Replace iosApp/$new_project_name/GoogleService-Info.plist with your actual Firebase config"
     echo "   - Update local.properties with your actual API keys (placeholders were added)"
     echo "   - Note: Template files were created with correct package names and bundle IDs"
@@ -866,7 +905,7 @@ show_final_instructions() {
     echo ""
     echo -e "${YELLOW}4. Test your setup:${NC}"
     echo "   - Run: ./gradlew clean build"
-    echo "   - Test Android build: ./gradlew :composeApp:assembleDebug"
+    echo "   - Test Android build: ./gradlew :androidApp:assembleDebug (AGP 9.0 structure)"
     echo "   - Test iOS build in Xcode"
     echo ""
     echo -e "${CYAN}📊 Project Details:${NC}"

@@ -6,8 +6,8 @@ name: Android App Deploy
 env:
   # Project Configuration
   PROJECT_NAME: AppTemplate
-  ANDROID_APP_MODULE: composeApp
-  SHARED_MODULE: shared
+  ANDROID_APP_MODULE: androidApp
+  SHARED_MODULE: composeApp
 
   # Android Configuration
   ANDROID_PACKAGE_NAME: com.example.project
@@ -15,17 +15,17 @@ env:
   ANDROID_NAMESPACE: com.example.project
 
   # Build Configuration
-  JAVA_VERSION: '17'
+  JAVA_VERSION: '21'
   GRADLE_WRAPPER: ./gradlew
-  GRADLE_PATH: composeApp/build.gradle.kts
+  GRADLE_PATH: androidApp/build.gradle.kts
 
   # APK Configuration
-  APK_DEBUG_NAME: composeApp-debug.apk
-  APK_DEBUG_PATH: composeApp/build/outputs/apk/debug
-  APK_TEST_NAME: composeApp-debug-androidTest.apk
-  APK_TEST_PATH: composeApp/build/outputs/apk/androidTest/debug
-  BUNDLE_RELEASE_NAME: composeApp-release.aab
-  BUNDLE_RELEASE_PATH: composeApp/build/outputs/bundle/release
+  APK_DEBUG_NAME: androidApp-debug.apk
+  APK_DEBUG_PATH: androidApp/build/outputs/apk/debug
+  APK_TEST_NAME: androidApp-debug-androidTest.apk
+  APK_TEST_PATH: androidApp/build/outputs/apk/androidTest/debug
+  BUNDLE_RELEASE_NAME: androidApp-release.aab
+  BUNDLE_RELEASE_PATH: androidApp/build/outputs/bundle/release
 
   # Firebase Test Lab Configuration
   FIREBASE_DEVICE_MODEL: tokay
@@ -36,7 +36,7 @@ env:
 
   # Play Store Configuration
   PLAY_STORE_TRACK: internal
-  RELEASE_NOTES_DIR: composeApp/release/whatsNew
+  RELEASE_NOTES_DIR: androidApp/release/whatsNew
 
   # Environment Variables (from secrets)
   SUPABASE_URL_DEV_AND: ${{ secrets.SUPABASE_URL_PROD }}

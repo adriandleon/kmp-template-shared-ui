@@ -6,9 +6,9 @@ name: iOS App Deploy
 env:
   # Project Configuration
   PROJECT_NAME: AppTemplate
-  ANDROID_APP_MODULE: composeApp
+  ANDROID_APP_MODULE: androidApp
   IOS_APP_MODULE: iosApp
-  SHARED_MODULE: shared
+  SHARED_MODULE: composeApp
 
   # Android Configuration
   ANDROID_PACKAGE_NAME: com.example.project
@@ -21,7 +21,7 @@ env:
   IOS_TARGET_NAME: AppTemplate
 
   # Build Configuration
-  JAVA_VERSION: '17'
+  JAVA_VERSION: '21'
   RUBY_VERSION: '3.3'
   GRADLE_WRAPPER: ./gradlew
   XCODE_VERSION: latest-stable

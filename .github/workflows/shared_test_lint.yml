@@ -6,9 +6,9 @@ name: Shared Tests & Lint
 env:
   # Project Configuration
   PROJECT_NAME: AppTemplate
-  ANDROID_APP_MODULE: composeApp
+  ANDROID_APP_MODULE: androidApp
   IOS_APP_MODULE: iosApp
-  SHARED_MODULE: shared
+  SHARED_MODULE: composeApp
 
   # Android Configuration
   ANDROID_PACKAGE_NAME: com.example.project
@@ -20,7 +20,7 @@ env:
   IOS_APP_FOLDER: AppTemplate
 
   # Build Configuration
-  JAVA_VERSION: '17'
+  JAVA_VERSION: '21'
   GRADLE_WRAPPER: ./gradlew
 
   # Code Quality Tools
@@ -158,7 +158,7 @@ jobs:
 
     # Unit tests run when the gradle task koverVerify run.
     - name: Run Unit Tests
-      run: ./gradlew :shared:cleanTestDebugUnitTest :shared:testDebugUnitTest --tests '${{ env.ANDROID_PACKAGE_NAME }}.*'
+      run: ./gradlew :composeApp:cleanTestDebugUnitTest :composeApp:testDebugUnitTest --tests '${{ env.ANDROID_PACKAGE_NAME }}.*'
 
     # - name: Check coverage metrics
     #   run: ${{ env.GRADLE_WRAPPER }} ${{ env.KOVER_VERIFY_TASK }} ${{ env.KOVER_REPORT_TASK }}
