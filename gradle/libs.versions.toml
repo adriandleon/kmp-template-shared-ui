@@ -33,7 +33,6 @@ kover = "0.9.4"
 ktor = "3.3.3"
 ksp = "2.3.3"
 ktfmt-gradle = "0.25.0"
-lumo-ui = "1.2.5"
 material-icons-extended = "1.7.3"
 material3 = "1.11.0-alpha01"
 mokkery = "3.1.1"
@@ -99,7 +98,6 @@ slf4j-nop = { module = "org.slf4j:slf4j-nop", version.ref = "slf4j" }
 splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "splashscreen" }
 supabase-auth = { group = "io.github.jan-tennert.supabase", name = "auth-kt", version.ref = "supabase" }
 supabase-postgrest = { group = "io.github.jan-tennert.supabase", name = "postgrest-kt", version.ref = "supabase" }
-ui-test-junit4-android = { module = "androidx.compose.ui:ui-test-junit4-android", version.ref = "ui-test-junit4-android" }
 ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "ui-test-junit4-android" }
 ui-tooling = { module = "org.jetbrains.compose.ui:ui-tooling", version.ref = "compose-multiplatform" }
 ui-tooling-preview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "compose-multiplatform" }
@@ -114,13 +112,11 @@ crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "gradle-cr
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 google-services = { id = "com.google.gms.google-services", version.ref = "gradle-google-services" }
 kotest = { id = "io.kotest", version.ref = "kotest" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 android-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 ktfmt-gradle = { id = "com.ncorti.ktfmt.gradle", version.ref = "ktfmt-gradle" }
-lumo = { id = "com.nomanr.plugin.lumo", version.ref = "lumo-ui" }
 mokkery = { id = "dev.mokkery", version.ref = "mokkery" }
 test-logger = { id = "com.adarshr.test-logger", version.ref = "test-logger" }
