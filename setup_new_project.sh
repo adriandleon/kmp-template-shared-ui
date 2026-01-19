@@ -176,8 +176,8 @@ create_directory_structure() {
     print_step "Creating new directory structure..."
     
     # Use arrays for better performance
-    # AGP 9.0: androidMain is now in androidApp/src/main, not composeApp/src/androidMain
-    local -a composeapp_source_sets=("commonMain" "iosMain" "commonTest")
+    # AGP 9.0: androidApp/src/main contains the Android app, composeApp has multiplatform library code
+    local -a composeapp_source_sets=("commonMain" "iosMain" "androidMain" "commonTest" "androidInstrumentedTest")
     
     # Handle composeApp source sets
     for source_set in "${composeapp_source_sets[@]}"; do
@@ -215,9 +215,9 @@ remove_old_directories() {
     local old_path="${old_package//.//}"
     
     print_step "Removing old directory structure..."
-    
-    # AGP 9.0: androidMain is now in androidApp/src/main, not composeApp/src/androidMain
-    local -a composeapp_source_sets=("commonMain" "iosMain" "commonTest")
+
+    # AGP 9.0: androidApp/src/main contains the Android app, composeApp has multiplatform library code
+    local -a composeapp_source_sets=("commonMain" "iosMain" "androidMain" "commonTest" "androidInstrumentedTest")
     
     for source_set in "${composeapp_source_sets[@]}"; do
         local dir_to_remove="composeApp/src/$source_set/kotlin/$old_path"
@@ -334,9 +334,9 @@ update_deeplink_schemas() {
     # Android deeplink updates (AGP 9.0: AndroidManifest is in androidApp/src/main)
     local android_manifest="androidApp/src/main/AndroidManifest.xml"
     if [[ -f "$android_manifest" ]]; then
-        local old_scheme="example"
+        local old_scheme="cmptemplate"
         local new_scheme="$(echo "$new_project_name" | tr '[:upper:]' '[:lower:]')"  # Convert to lowercase
-        
+
         update_file_contents "$android_manifest" \
             "s|android:host=\"www\.example\.com\"|android:host=\"www.$new_domain\"|g" \
             "s|android:scheme=\"$old_scheme\"|android:scheme=\"$new_scheme\"|g"
@@ -345,9 +345,9 @@ update_deeplink_schemas() {
     # iOS deeplink updates
     local ios_plist="iosApp/$new_project_name/Info.plist"
     if [[ -f "$ios_plist" ]]; then
-        local old_scheme="example"
+        local old_scheme="cmptemplate"
         local new_scheme="$(echo "$new_project_name" | tr '[:upper:]' '[:lower:]')"  # Convert to lowercase
-        
+
         update_file_contents "$ios_plist" \
             "s|<string>$old_scheme</string>|<string>$new_scheme</string>|g" \
             "s|<string>com\.example\.project</string>|<string>$new_bundle_id</string>|g"
@@ -387,8 +387,8 @@ update_deeplink_comments() {
     local new_project_name="$2"
     
     print_step "Updating deeplink route comments in Kotlin files..."
-    
-    local old_scheme="example"
+
+    local old_scheme="cmptemplate"
     local new_scheme="$(echo "$new_project_name" | tr '[:upper:]' '[:lower:]')"  # Convert to lowercase
     
     # Use batch file operations
@@ -402,17 +402,33 @@ update_deeplink_comments() {
 update_app_name_strings() {
     local old_project_name="$1"
     local new_project_name="$2"
-    
+
     print_step "Updating app name in strings.xml..."
-    
+
     # AGP 9.0: strings.xml is in androidApp/src/main/res/values
     local strings_file="androidApp/src/main/res/values/strings.xml"
     if [[ -f "$strings_file" ]]; then
         update_file_contents "$strings_file" \
             "s|<string name=\"app_name\">$old_project_name</string>|<string name=\"app_name\">$new_project_name</string>|g"
     fi
-    
+
     print_success "Updated app name in strings.xml"
+}
+
+# Update compose resources package
+update_compose_resources_package() {
+    local old_package="$1"
+    local new_package="$2"
+
+    print_step "Updating compose.resources package configuration..."
+
+    local build_file="composeApp/build.gradle.kts"
+    if [[ -f "$build_file" ]]; then
+        update_file_contents "$build_file" \
+            "s|compose.resources { packageOfResClass = \"$old_package.resources\" }|compose.resources { packageOfResClass = \"$new_package.resources\" }|g"
+    fi
+
+    print_success "Updated compose.resources package configuration"
 }
 
 # Optimized Xcode project updates
@@ -536,6 +552,7 @@ update_config_files() {
         "build.gradle.kts"
         "settings.gradle.kts"
         "composeApp/build.gradle.kts"
+        "androidApp/build.gradle.kts"
     )
     
     for file in "${gradle_files[@]}"; do
@@ -548,8 +565,8 @@ update_config_files() {
         fi
     done
     
-    # Update Android manifest
-    local android_manifest="composeApp/src/androidMain/AndroidManifest.xml"
+    # Update Android manifest (AGP 9.0: AndroidManifest is in androidApp/src/main)
+    local android_manifest="androidApp/src/main/AndroidManifest.xml"
     if [[ -f "$android_manifest" ]]; then
         update_file_contents "$android_manifest" \
             "s|$old_package|$new_package|g" \
@@ -827,8 +844,8 @@ validate_transformation() {
     print_step "Validating transformation..."
     
     local new_path="${new_package//.//}"
-    # AGP 9.0: androidMain is now in androidApp/src/main, not composeApp/src/androidMain
-    local -a composeapp_source_sets=("commonMain" "iosMain" "commonTest")
+    # AGP 9.0: androidApp/src/main contains the Android app, composeApp has multiplatform library code
+    local -a composeapp_source_sets=("commonMain" "iosMain" "androidMain" "commonTest" "androidInstrumentedTest")
     local all_dirs_exist=true
     
     # Check composeApp module directories
@@ -1057,7 +1074,10 @@ main() {
     
     # Update app name in strings.xml
     update_app_name_strings "$OLD_PROJECT_NAME" "$NEW_PROJECT_NAME"
-    
+
+    # Update compose.resources package configuration
+    update_compose_resources_package "$OLD_PACKAGE" "$NEW_PACKAGE"
+
     # Create Firebase configuration files
     create_firebase_configs "$NEW_PACKAGE" "$NEW_PROJECT_NAME" "$NEW_BUNDLE_ID"
     
