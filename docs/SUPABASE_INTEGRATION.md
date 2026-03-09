@@ -56,7 +56,7 @@ Ktor Client engines are already configured for Supabase. The current Ktor versio
 
 ```toml
 [versions]
-ktor = "3.3.2"
+ktor = "3.4.1"
 
 [libraries]
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }

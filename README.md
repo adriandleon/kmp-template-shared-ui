@@ -25,7 +25,7 @@ A modern, production-ready Compose Multiplatform template project targeting Andr
 
 ### Platform Support
 - **Android**: API 26+ with modern Android features
-- **iOS**: iOS 13+ with native integration
+- **iOS**: iOS 13.0+ with native integration
 - **Shared Code**: Maximum code sharing between platforms
 
 ## 📁 Project Structure

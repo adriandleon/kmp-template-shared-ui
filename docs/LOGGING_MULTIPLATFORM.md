@@ -18,7 +18,7 @@ Define the following versions in the `libs.versions.toml` catalog file:
 
 ```toml
 [versions]
-kermit = "2.0.8"
+kermit = "2.1.0"
 [libraries]
 kermit = { group = "co.touchlab", name = "kermit", version.ref = "kermit" }
 kermit-crashlytics = { group = "co.touchlab", name = "kermit-crashlytics", version.ref = "kermit" }

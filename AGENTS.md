@@ -222,7 +222,7 @@ data/            # Data layer
 - **Shared Module**: `composeApp` uses `android.multiplatform.library` plugin (AGP 9.0 compatible)
 
 ### iOS
-- **Target**: iOS 13+
+- **Target**: iOS 13.0+
 - **Xcode Project**: `iosApp/CMP-Template.xcodeproj`
 - **Bundle ID**: Configure in `iosApp/Configuration/Config.xcconfig`
 - **Certificates**: Configure in Xcode
