@@ -30,7 +30,7 @@ A modern, production-ready Compose Multiplatform template project targeting Andr
 
 ## 📁 Project Structure
 
-> **Note**: This project uses **AGP 9.0** with the new module structure. The Android entry point is in a separate `androidApp` module, while shared code is in `composeApp` using the `android.multiplatform.library` plugin. See the [AGP 9.0 migration guide](https://kotlinlang.org/docs/multiplatform/multiplatform-project-agp-9-migration.html) for details.
+> **Note**: This project uses **AGP 9.0** with the new module structure. The Android entry point is in a separate `androidApp` module, while shared code is in `shared` using the `android.multiplatform.library` plugin. See the [AGP 9.0 migration guide](https://kotlinlang.org/docs/multiplatform/multiplatform-project-agp-9-migration.html) for details.
 
 ```
 kmp-template-shared-ui/
@@ -43,7 +43,7 @@ kmp-template-shared-ui/
 │   │       ├── res/              # Android resources
 │   │       └── AndroidManifest.xml
 │   └── build.gradle.kts
-├── composeApp/                   # Shared Compose Multiplatform module
+├── shared/                   # Shared Compose Multiplatform module
 │   ├── src/
 │   │   ├── commonMain/           # Shared code (UI, business logic, data)
 │   │   │   ├── kotlin/com/example/project/
@@ -87,7 +87,7 @@ kmp-template-shared-ui/
    ```
 
 2. **Configure your project**
-   - Update package names in `androidApp/build.gradle.kts` and `composeApp/build.gradle.kts`
+   - Update package names in `androidApp/build.gradle.kts` and `shared/build.gradle.kts`
    - Update app identifiers in `iosApp/Configuration/Config.xcconfig`
    - Configure your Firebase project (see [Firebase Integration](docs/FIREBASE_INTEGRATION.md))
 
@@ -195,7 +195,7 @@ Run tests:
 ./gradlew koverHtmlReport
 
 # Specific platform
-./gradlew :composeApp:testDebugUnitTest
+./gradlew :shared:allTests
 ./gradlew :androidApp:testDebugUnitTest
 ```
 

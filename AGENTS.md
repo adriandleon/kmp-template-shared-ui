@@ -108,7 +108,7 @@ open iosApp/CMP-Template.xcodeproj
 ./gradlew test
 
 # Specific platform tests
-./gradlew :composeApp:testDebugUnitTest
+./gradlew :shared:allTests
 ./gradlew :androidApp:testDebugUnitTest
 
 # Coverage report
@@ -120,8 +120,8 @@ open iosApp/CMP-Template.xcodeproj
 ```
 
 ### Test Structure
-- **Unit Tests**: `composeApp/src/commonTest/` and `androidApp/src/test/` directories
-- **UI Tests**: `composeApp/src/androidInstrumentedTest/` directory
+- **Unit Tests**: `shared/src/commonTest/` and `androidApp/src/test/` directories
+- **UI Tests**: `shared/src/androidInstrumentedTest/` directory
 - **Coverage**: Minimum 90% code coverage required
 - **Framework**: Kotest for unit tests, ComposeTestRule for UI tests
 
@@ -219,7 +219,7 @@ data/            # Data layer
 - **Signing**: Configure in `local.properties`
 - **ProGuard**: Enabled for release builds
 - **Module Structure**: Separate `androidApp` module for Android entry point (AGP 9.0 requirement)
-- **Shared Module**: `composeApp` uses `android.multiplatform.library` plugin (AGP 9.0 compatible)
+- **Shared Module**: `shared` uses `android.multiplatform.library` plugin (AGP 9.0 compatible)
 
 ### iOS
 - **Target**: iOS 13.0+
@@ -288,11 +288,11 @@ data/            # Data layer
 ./gradlew clean
 
 # Check dependencies
-./gradlew :composeApp:dependencies
+./gradlew :shared:dependencies
 ./gradlew :androidApp:dependencies
 
 # Run specific test
-./gradlew :composeApp:testDebugUnitTest --tests "com.example.project.features.*"
+./gradlew :shared:allTests
 ./gradlew :androidApp:testDebugUnitTest --tests "com.example.project.*"
 
 # Check linting issues

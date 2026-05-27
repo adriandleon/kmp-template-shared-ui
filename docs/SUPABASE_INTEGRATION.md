@@ -41,7 +41,7 @@ supabase-auth = { group = "io.github.jan-tennert.supabase", name = "auth-kt", ve
 supabase-postgrest = { group = "io.github.jan-tennert.supabase", name = "postgrest-kt", version.ref = "supabase" }
 ```
 
-The dependencies are already included in the `commonMain` source set in the `composeApp` module's `build.gradle.kts` file:
+The dependencies are already included in the `commonMain` source set in the `shared` module's `build.gradle.kts` file:
 
 ```kotlin
 commonMain.dependencies {
@@ -66,7 +66,7 @@ ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "kto
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ```
 
-The Ktor clients are already configured in the `composeApp` module's `build.gradle.kts`:
+The Ktor clients are already configured in the `shared` module's `build.gradle.kts`:
 
 ```kotlin
 sourceSets {
@@ -106,7 +106,7 @@ plugins {
 }
 ```
 
-Include the plugin in the composeApp module `build.gradle.kts` file:
+Include the plugin in the shared module `build.gradle.kts` file:
 
 ```kotlin
 plugins {
@@ -117,7 +117,7 @@ plugins {
 To get the secret keys, first we look in `local.properties` variables, if the variable if not present 
 then we look in the system environment variables.
 
-Add this function at the end of the composeApp module `build.gradle.kts` file:
+Add this function at the end of the shared module `build.gradle.kts` file:
 
 ```kotlin
 fun getSecret(key: String): String {
@@ -291,7 +291,7 @@ SUPABASE_URL_DEV_AND=http://10.0.2.2:54321
 SUPABASE_KEY_DEV=YOUR_PROJECT_SUPABASE_KEY
 ```
 
-- Create an xml file `composeApp/src/androidMain/res/xml/network_security_config.xml` with the content:
+- Create an xml file `shared/src/androidMain/res/xml/network_security_config.xml` with the content:
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>

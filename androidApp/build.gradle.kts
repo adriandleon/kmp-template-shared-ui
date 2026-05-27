@@ -61,7 +61,7 @@ android {
 }
 
 dependencies {
-    implementation(projects.composeApp)
+    implementation(projects.shared)
     implementation(libs.androidx.activity.compose)
     implementation(libs.ui.tooling.preview)
     implementation(libs.ktor.client.okhttp)

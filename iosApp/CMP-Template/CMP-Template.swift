@@ -7,7 +7,7 @@
 //
 
 import SwiftUI
-import ComposeApp
+import Shared
 
 @main
 struct iOSApp: App {

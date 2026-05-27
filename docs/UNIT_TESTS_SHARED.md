@@ -16,7 +16,7 @@ Table of Contents
 
 ## Tools
 
-This are the tools used for testing the multiplatform `composeApp` module:
+This are the tools used for testing the multiplatform `shared` module:
 
 - Kotest
 - Kosist
@@ -24,7 +24,7 @@ This are the tools used for testing the multiplatform `composeApp` module:
 
 ## Kotest Framework
 
-[Kotest Framework](https://kotest.io/) is used for unit tests in the multiplatform composeApp module,
+[Kotest Framework](https://kotest.io/) is used for unit tests in the multiplatform shared module,
 it's also used with the Assertions Library, the Property Testing library, and Data Driven Testing module
 
 ### Installing Kotest Dependencies
@@ -45,7 +45,7 @@ kotest-property = { group = "io.kotest", name = "kotest-property", version.ref =
 kotest = { id = "io.kotest", version.ref = "kotest" }
 ```
 
-The Kotest plugin is already included in the `composeApp` module's `build.gradle.kts` file:
+The Kotest plugin is already included in the `shared` module's `build.gradle.kts` file:
 
 ```kotlin
 plugins {
@@ -68,7 +68,7 @@ commonTest.dependencies {
 }
 ```
 
-JUnit is already enabled for Android tests in the `composeApp` module's `build.gradle.kts`:
+JUnit is already enabled for Android tests in the `shared` module's `build.gradle.kts`:
 
 ```kotlin
 android {
@@ -136,7 +136,7 @@ test-logger = "4.0.0"
 testLogger = { id = "com.adarshr.test-logger", version.ref = "test-logger" }
 ```
 
-Add the plugin in the composeApp module `build.gradle.kts` file:
+Add the plugin in the shared module `build.gradle.kts` file:
 
 ```kotlin
 plugins {
@@ -163,8 +163,8 @@ testlogger {
 
 There are some defined gradle run configurations stored in the folder `config/.run`. These are:
 
-- `config/.run/unit_tests_shared.run.xml`: Runs all unit tests in composeApp module
-- `config/.run/unit_tests_all.run.xml`: Runs all unit tests in composeApp module + all Konsist tests in konsistTest module
+- `config/.run/unit_tests_shared.run.xml`: Runs all unit tests in shared module
+- `config/.run/unit_tests_all.run.xml`: Runs all unit tests in shared module + all Konsist tests in konsistTest module
 
 > Open these files and edit the package name with your project package name:
 
@@ -174,7 +174,7 @@ There are some defined gradle run configurations stored in the folder `config/.r
 
 ## Running Tests on CI
 
-The unit tests in the multiplatform `composeApp` module runs on CI on every Pull Request push, these 
+The unit tests in the multiplatform `shared` module runs on CI on every Pull Request push, these 
 are define as two jobs in the workflow `.github/workflows/shared_test_lint.yml`
 
 The first step runs the Konsist tests located in the konsistTest module:
@@ -184,9 +184,9 @@ The first step runs the Konsist tests located in the konsistTest module:
   run: ./gradlew konsistTest:test --rerun-tasks
 ```
 
-The second step runs all the unit tests inside the `composeApp` module:
+The second step runs all the unit tests inside the `shared` module:
 
 ```yaml
 - name: Run Unit Tests
-  run: ./gradlew :composeApp:cleanTestDebugUnitTest :composeApp:testDebugUnitTest --tests 'your.project.package.*'
+  run: ./gradlew :shared:allTests
 ```

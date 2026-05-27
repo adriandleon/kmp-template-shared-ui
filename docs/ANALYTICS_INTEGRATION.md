@@ -34,7 +34,7 @@ firebase-gitlive = "2.4.0"
 firebase-analytics = { group = "dev.gitlive", name = "firebase-analytics", version.ref = "firebase-gitlive" }
 ```
 
-The dependency is automatically included in the `composeApp` module's `build.gradle.kts`:
+The dependency is automatically included in the `shared` module's `build.gradle.kts`:
 
 ```kotlin
 commonMain.dependencies {

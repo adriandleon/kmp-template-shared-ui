@@ -7,7 +7,7 @@ env:
   # Project Configuration
   PROJECT_NAME: AppTemplate
   ANDROID_APP_MODULE: androidApp
-  SHARED_MODULE: composeApp
+  SHARED_MODULE: shared
 
   # Android Configuration
   ANDROID_PACKAGE_NAME: com.example.project
