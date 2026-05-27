@@ -84,10 +84,10 @@ if (pullRequest.title.contains("WIP", false) || hasWipLabel) {
 ```
 
 Check if What's New file for release to Android Play Store has been modified. This file should be located in 
-`composeApp/release/whatsNew/` directory for different language versions.
+`shared/release/whatsNew/` directory for different language versions.
 
 ```kotlin
 if ((sharedModified || androidModified) && !whatsNewEnglish) {
-    message("🚀 Please add whats new information for release.\nYou can find it at composeApp/release/whatsNew/ for your language version")
+    message("🚀 Please add whats new information for release.\nYou can find it at shared/release/whatsNew/ for your language version")
 }
 ```

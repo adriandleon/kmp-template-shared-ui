@@ -3,7 +3,7 @@
 Table of Contents
 -----------------
 
-- [Code Coverage in ComposeApp module](#code-coverage-in-composeapp-module)
+- [Code Coverage in Shared module](#code-coverage-in-shared-module)
   - [Failing Coverage Threshold](#failing-coverage-threshold)
   - [Generating local reports](#generating-local-reports)
   - [Generating CI coverage reports](#generating-ci-coverage-reports)
@@ -11,9 +11,9 @@ Table of Contents
 - [Code Coverage in Android module](#code-coverage-in-android-module)
 - [Code Coverage in iOS module](#code-coverage-in-ios-module)
 
-## Code Coverage in ComposeApp module
+## Code Coverage in Shared module
 
-For the composeApp module, we use the [kotlinx-kover](https://github.com/Kotlin/kotlinx-kover) plugin to generate code coverage reports. 
+For the shared module, we use the [kotlinx-kover](https://github.com/Kotlin/kotlinx-kover) plugin to generate code coverage reports. 
 The Kover plugin is already configured in the project. It's added to the root project's `build.gradle.kts` file:
 
 ```kotlin
@@ -22,7 +22,7 @@ plugins {
 }
 ```
 
-And integrated into the `composeApp` module's `build.gradle.kts` file:
+And integrated into the `shared` module's `build.gradle.kts` file:
 
 ```kotlin 
 plugins {
@@ -32,7 +32,7 @@ plugins {
 
 ### Failing Coverage Threshold
 
-We set the failing coverage threshold to 90% of lines covered in the `composeApp` module's `build.gradle.kts` file.
+We set the failing coverage threshold to 90% of lines covered in the `shared` module's `build.gradle.kts` file.
 
 ```kotlin
 kover.reports {
@@ -49,7 +49,7 @@ To verify the coverage threshold, run the following command:
 ### Excluding files and classes from coverage
 
 To exclude non-testable code from the coverage report (ex. dependency injection setup files, auto-generated classes)
-this block is already configured in the `composeApp` module's `build.gradle.kts` file. 
+this block is already configured in the `shared` module's `build.gradle.kts` file. 
 
 ```kotlin
 kover.reports {
@@ -71,7 +71,7 @@ To generate the code coverage report in HTML format, run the following command:
 ./gradlew koverHtmlReport
 ```
 
-The report is generated in the file `composeApp/build/reports/kover/html/index.html` which you can open in any web browser.
+The report is generated in the file `shared/build/reports/kover/html/index.html` which you can open in any web browser.
 
 To generate the code coverage report in XML format, run the following command:
 
@@ -79,7 +79,7 @@ To generate the code coverage report in XML format, run the following command:
 ./gradlew koverXmlReport
 ```
 
-The report is generated in the file `composeApp/build/reports/kover/report.xml` which you can import in Android Studio/IntelliJ coverage tool tab.
+The report is generated in the file `shared/build/reports/kover/report.xml` which you can import in Android Studio/IntelliJ coverage tool tab.
 
 ### Generating CI coverage reports
 
@@ -102,7 +102,7 @@ coverage reports in main branch:
   uses: codecov/codecov-action@v5
   with:
     token: ${{ secrets.CODECOV_TOKEN }}
-    files: composeApp/build/reports/kover/report.xml
+    files: shared/build/reports/kover/report.xml
     disable_search: true
     fail_ci_if_error: true
 ```

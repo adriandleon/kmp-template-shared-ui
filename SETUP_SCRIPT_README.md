@@ -53,9 +53,9 @@ The setup script automates the process of customizing the template project by:
 **Before** (Template):
 ```
 androidApp/src/main/kotlin/com/example/project/
-composeApp/src/commonMain/kotlin/com/example/project/
-composeApp/src/iosMain/kotlin/com/example/project/
-composeApp/src/commonTest/kotlin/com/example/project/
+shared/src/commonMain/kotlin/com/example/project/
+shared/src/iosMain/kotlin/com/example/project/
+shared/src/commonTest/kotlin/com/example/project/
 iosApp/CMP-Template/
 iosApp/CMP-Template.xcodeproj/
 ```
@@ -63,16 +63,16 @@ iosApp/CMP-Template.xcodeproj/
 **After** (Your Project):
 ```
 androidApp/src/main/kotlin/com/yourcompany/yourapp/
-composeApp/src/commonMain/kotlin/com/yourcompany/yourapp/
-composeApp/src/iosMain/kotlin/com/yourcompany/yourapp/
-composeApp/src/commonTest/kotlin/com/yourcompany/yourapp/
+shared/src/commonMain/kotlin/com/yourcompany/yourapp/
+shared/src/iosMain/kotlin/com/yourcompany/yourapp/
+shared/src/commonTest/kotlin/com/yourcompany/yourapp/
 iosApp/MyAwesomeApp/
 iosApp/MyAwesomeApp.xcodeproj/
 ```
 
 **Complete Coverage**: The script handles all source sets (`androidApp/src/main`, `commonMain`, `iosMain`, `commonTest`) ensuring complete package migration.
 
-**Note**: With AGP 9.0, Android entry point is in a separate `androidApp` module, not in `composeApp/src/androidMain`.
+**Note**: With AGP 9.0, Android entry point is in a separate `androidApp` module, not in `shared/src/androidMain`.
 
 **Cleanup**: The script automatically removes all old empty directories, ensuring no leftover folder structure remains from the template.
 
@@ -100,9 +100,9 @@ The script updates the following types of files:
 - Xcode project file (`project.pbxproj`)
 
 #### **Compose Multiplatform Files**
-- All Kotlin source files in `composeApp/src/commonMain/kotlin/`
-- All test files in `composeApp/src/commonTest/kotlin/`
-- All iOS-specific Kotlin files in `composeApp/src/iosMain/kotlin/`
+- All Kotlin source files in `shared/src/commonMain/kotlin/`
+- All test files in `shared/src/commonTest/kotlin/`
+- All iOS-specific Kotlin files in `shared/src/iosMain/kotlin/`
 
 #### **Documentation Files**
 - `README.md`
@@ -113,7 +113,7 @@ The script updates the following types of files:
 - `config/Dangerfile.df.kts`
 
 #### **Firebase Configuration Files**
-- `composeApp/google-services.json` - Android Firebase configuration with correct package name
+- `androidApp/google-services.json` - Android Firebase configuration with correct package name
 - `iosApp/YourApp/GoogleService-Info.plist` - iOS Firebase configuration with correct bundle ID
 
 #### **API Key Configuration Files**
@@ -150,8 +150,8 @@ The script automatically updates deeplink schemas based on your app name and dom
 The script automatically updates generated resource import statements:
 
 #### **Generated Resource Imports**
-- **Old pattern**: `import cmptemplate.composeapp.generated.resources.*`
-- **New pattern**: `import yourpackage.composeapp.generated.resources.*`
+- **Old pattern**: `import cmptemplate.shared.generated.resources.*`
+- **New pattern**: `import com.yourcompany.yourapp.resources.*`
 - **Automatic detection**: Finds and updates all Kotlin files with generated resource imports
 - **Package conversion**: Converts package name to lowercase and removes dots for import statements
 
@@ -236,9 +236,9 @@ Domain: project.example.org (auto-generated from package name)
 ```
 Directory Structure:
 ├── androidApp/src/main/kotlin/org/example/project/
-├── composeApp/src/commonMain/kotlin/org/example/project/
-├── composeApp/src/iosMain/kotlin/org/example/project/
-├── composeApp/src/commonTest/kotlin/org/example/project/
+├── shared/src/commonMain/kotlin/org/example/project/
+├── shared/src/iosMain/kotlin/org/example/project/
+├── shared/src/commonTest/kotlin/org/example/project/
 ├── iosApp/MyApp/
 └── iosApp/MyApp.xcodeproj/
 
@@ -333,7 +333,7 @@ After running the script, you'll need to:
 - Open the new Xcode project: `iosApp/YourApp.xcodeproj`
 
 ### 2. Update Configuration Files
-- Replace `composeApp/google-services.json` with your actual Firebase configuration
+- Replace `androidApp/google-services.json` with your actual Firebase configuration
 - Replace `iosApp/YourApp/GoogleService-Info.plist` with your actual Firebase configuration
 - Update `local.properties` with your actual API keys (placeholders were added)
 - Note: Template files were created with correct package names and bundle IDs
@@ -397,7 +397,7 @@ chmod +x setup_new_project.sh
 - **Comment updates**: All `Deeplink URL: "example://..."` comments are updated to use your app name
 
 #### Import Statement Issues
-- **Generated resources**: Check that import statements are updated from `cmptemplate.composeapp.generated.resources` to your package name
+- **Generated resources**: Check that import statements are updated from `cmptemplate.shared.generated.resources` to your app's `.resources` package
 - **Package conversion**: Package name is converted to lowercase and dots are removed for import statements
 - **Compilation errors**: If you see import errors, ensure the script ran successfully and check the generated resource imports
 

@@ -176,13 +176,13 @@ create_directory_structure() {
     print_step "Creating new directory structure..."
     
     # Use arrays for better performance
-    # AGP 9.0: androidApp/src/main contains the Android app, composeApp has multiplatform library code
-    local -a composeapp_source_sets=("commonMain" "iosMain" "androidMain" "commonTest" "androidInstrumentedTest")
+    # AGP 9.0: androidApp/src/main contains the Android app, shared has multiplatform library code
+    local -a shared_source_sets=("commonMain" "iosMain" "androidMain" "commonTest" "androidInstrumentedTest")
     
-    # Handle composeApp source sets
-    for source_set in "${composeapp_source_sets[@]}"; do
-        local source_dir="composeApp/src/$source_set/kotlin/$old_path"
-        local target_dir="composeApp/src/$source_set/kotlin/$new_path"
+    # Handle shared source sets
+    for source_set in "${shared_source_sets[@]}"; do
+        local source_dir="shared/src/$source_set/kotlin/$old_path"
+        local target_dir="shared/src/$source_set/kotlin/$new_path"
         
         if [[ -d "$source_dir" ]]; then
             if [[ "$DRY_RUN" == "true" ]]; then
@@ -190,7 +190,7 @@ create_directory_structure() {
             else
                 mkdir -p "$target_dir"
                 cp -r "$source_dir"/* "$target_dir/" 2>/dev/null || true
-                print_success "Created composeApp/$source_set directory structure: $new_path"
+                print_success "Created shared/$source_set directory structure: $new_path"
             fi
         fi
     done
@@ -216,11 +216,11 @@ remove_old_directories() {
     
     print_step "Removing old directory structure..."
 
-    # AGP 9.0: androidApp/src/main contains the Android app, composeApp has multiplatform library code
-    local -a composeapp_source_sets=("commonMain" "iosMain" "androidMain" "commonTest" "androidInstrumentedTest")
+    # AGP 9.0: androidApp/src/main contains the Android app, shared has multiplatform library code
+    local -a shared_source_sets=("commonMain" "iosMain" "androidMain" "commonTest" "androidInstrumentedTest")
     
-    for source_set in "${composeapp_source_sets[@]}"; do
-        local dir_to_remove="composeApp/src/$source_set/kotlin/$old_path"
+    for source_set in "${shared_source_sets[@]}"; do
+        local dir_to_remove="shared/src/$source_set/kotlin/$old_path"
         if [[ -d "$dir_to_remove" ]]; then
             if [[ "$DRY_RUN" == "true" ]]; then
                 print_info "DRY RUN: Would remove $dir_to_remove"
@@ -364,19 +364,18 @@ update_import_statements() {
     print_step "Updating import statements with new package name..."
     
     local old_import_package="cmptemplate"
-    local new_import_package="$(echo "$new_package" | tr '[:upper:]' '[:lower:]')"  # Convert to lowercase
-    new_import_package="${new_import_package//./}"  # Remove dots
+    local new_resource_package="$new_package.resources"
     
-    if [[ -z "$new_import_package" ]]; then
+    if [[ -z "$new_resource_package" ]]; then
         print_error "New import package name is empty. Cannot update import statements."
         return 1
     fi
     
-    print_info "Converting package '$new_package' to import package '$new_import_package'"
+    print_info "Converting generated resource imports to '$new_resource_package'"
     
     # Use batch file operations for better performance
     update_files_batch "*.kt" \
-        "s|import $old_import_package\.composeapp\.generated\.resources|import $new_import_package\.composeapp\.generated\.resources|g"
+        "s|import $old_import_package\.shared\.generated\.resources|import $new_resource_package|g"
     
     print_success "Updated import statements"
 }
@@ -422,7 +421,7 @@ update_compose_resources_package() {
 
     print_step "Updating compose.resources package configuration..."
 
-    local build_file="composeApp/build.gradle.kts"
+    local build_file="shared/build.gradle.kts"
     if [[ -f "$build_file" ]]; then
         update_file_contents "$build_file" \
             "s|compose.resources { packageOfResClass = \"$old_package.resources\" }|compose.resources { packageOfResClass = \"$new_package.resources\" }|g"
@@ -551,7 +550,7 @@ update_config_files() {
     local -a gradle_files=(
         "build.gradle.kts"
         "settings.gradle.kts"
-        "composeApp/build.gradle.kts"
+        "shared/build.gradle.kts"
         "androidApp/build.gradle.kts"
     )
     
@@ -735,7 +734,7 @@ create_google_services_json() {
     if [[ "$DRY_RUN" == "true" ]]; then
         print_info "DRY RUN: Would create google-services.json with package name: $package_name"
     else
-        # AGP 9.0: google-services.json is in androidApp, not composeApp
+        # AGP 9.0: google-services.json is in androidApp, not shared
         echo "$google_services_content" > "androidApp/google-services.json"
         print_success "Created google-services.json with package name: $package_name (AGP 9.0 structure)"
     fi
@@ -844,17 +843,17 @@ validate_transformation() {
     print_step "Validating transformation..."
     
     local new_path="${new_package//.//}"
-    # AGP 9.0: androidApp/src/main contains the Android app, composeApp has multiplatform library code
-    local -a composeapp_source_sets=("commonMain" "iosMain" "androidMain" "commonTest" "androidInstrumentedTest")
+    # AGP 9.0: androidApp/src/main contains the Android app, shared has multiplatform library code
+    local -a shared_source_sets=("commonMain" "iosMain" "androidMain" "commonTest" "androidInstrumentedTest")
     local all_dirs_exist=true
     
-    # Check composeApp module directories
-    for source_set in "${composeapp_source_sets[@]}"; do
-        local dir="composeApp/src/$source_set/kotlin/$new_path"
+    # Check shared module directories
+    for source_set in "${shared_source_sets[@]}"; do
+        local dir="shared/src/$source_set/kotlin/$new_path"
         if [[ -d "$dir" ]]; then
-            print_success "New composeApp/$source_set directory structure created successfully"
+            print_success "New shared/$source_set directory structure created successfully"
         else
-            print_error "New composeApp/$source_set directory structure not found"
+            print_error "New shared/$source_set directory structure not found"
             all_dirs_exist=false
         fi
     done

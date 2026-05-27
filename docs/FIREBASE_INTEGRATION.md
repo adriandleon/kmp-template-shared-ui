@@ -17,7 +17,7 @@ Table of Contents
 
 [Firebase](https://firebase.google.com/) is a cloud backend-as-a-service platform that offers a suite of tools and services. The following are the services used in this project: 
 
-- [Crashlytics](https://firebase.google.com/docs/crashlytics) is used for crash reporting in Android, iOS and ComposeApp module 
+- [Crashlytics](https://firebase.google.com/docs/crashlytics) is used for crash reporting in Android, iOS and the shared module
 - [Test Lab](https://firebase.google.com/docs/test-lab) is used for running Android App UI and integration tests before release
 
 ## Installing Firebase
@@ -37,7 +37,7 @@ Now, add the configuration parameters for your Android app.
 1) After clicking on the Android icon, you'll be taken to a registration screen for your app. Ensure that you provide the correct package name and then click `Register`.
 2) As a naming convention, add the suffix `Android` to your project nickname for clarity. This helps distinguish between different projects
 3) On the next step, make sure to download the generated `google-services.json` file.
-4) Proceed to add it to your `composeApp` module. Eg: `composeApp/google-services.json`.
+4) Proceed to add it to your `androidApp` module. Eg: `androidApp/google-services.json`.
 5) Make sure to not commit the `google-services.json` file to git.
 
 ### Add configuration for iOS
@@ -85,7 +85,7 @@ plugins {
 }
 ```
 
-In the `composeApp` module's `build.gradle.kts`:
+In the `androidApp` module's `build.gradle.kts`:
 
 ```kotlin
 plugins { 
@@ -94,7 +94,7 @@ plugins {
 }
 ```
 
-The Firebase dependencies are already included in the `commonMain` source set of the `composeApp` module's `build.gradle.kts` file:
+The Firebase dependencies are already included in the `commonMain` source set of the `shared` module's `build.gradle.kts` file:
 
 ```kotlin
 commonMain.dependencies {
@@ -155,7 +155,7 @@ checking the log messages in the Xcode debug area.
 - Encode the content of the file `google-services.json` to base64 running the following command in the terminal:
 
 ```shell
-base64 -i composeApp/google-services.json
+base64 -i androidApp/google-services.json
 ```
 
 - Log in to the GitHub repository of the project and [create secrets](https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository) for Github Actions.
@@ -170,7 +170,7 @@ jobs:
   build-android-app:
     steps:
       - name: Load Google Service JSON file
-        run: echo $GOOGLE_SERVICES_JSON | base64 -di > composeApp/google-services.json
+        run: echo $GOOGLE_SERVICES_JSON | base64 -di > androidApp/google-services.json
 ```
 
 ## Authorize iOS App with Firebase in CI

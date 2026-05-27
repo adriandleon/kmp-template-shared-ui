@@ -43,7 +43,7 @@ Koin Container
 ### File Organization
 
 ```
-composeApp/src/
+shared/src/
 ├── commonMain/kotlin/com/example/project/common/di/
 │   ├── KoinApp.kt              # Koin initialization
 │   └── Modules.kt              # Module definitions

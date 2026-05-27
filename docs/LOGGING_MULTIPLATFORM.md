@@ -48,7 +48,7 @@ private fun kermitLogger(): KermitLogger {
         }
 
     KermitLogger.setLogWriters(logWriter)
-    KermitLogger.setTag("ComposeApp")
+    KermitLogger.setTag("Shared")
     return KermitLogger
 }
 ```
